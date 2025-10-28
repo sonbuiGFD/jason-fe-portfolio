@@ -16,6 +16,9 @@
 - Q: How should the site behave during CMS outages or extended maintenance? → A: Serve stale cached content with staleness indicator (maintains functionality, informs users)
 - Q: What styling approach should be used? → A: Hybrid approach using both TailwindCSS (utility-first) and SCSS (component-specific styles) with BEM naming conventions using underscores (e.g., `block__element__modifier`)
 - Q: What animation approach should be used for the site? → A: Use Motion (Framer Motion) for declarative animations including scroll-triggered animations that reveal elements when they enter the viewport
+- Q: What headless CMS and CDN should be used? → A: Use Sanity as both the headless CMS for content management and Sanity's image CDN for optimized image delivery
+- Q: What testing strategy should be adopted for fast development? → A: Keep testing simple with no unit tests initially; focus on manual testing and end-to-end scenarios to maximize development speed
+- Q: What browsers and devices should be supported? → A: Support modern browsers (Chrome, Firefox, Safari, Edge - latest 2 versions) with responsive design across mobile, tablet, and desktop devices
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -149,17 +152,19 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 
 ### Edge Cases
 
-- What happens when a case study has no images or the CDN is unreachable? → Display a placeholder image and graceful fallback with no layout shift
-- How does the site handle a CMS query that returns no results? → Display contextual empty states with helpful suggestions (e.g., "No case studies match your filter. Try clearing filters or browsing all projects.")
-- What if a blog post has malformed content or missing required fields? → Validate content in the CMS and prevent publishing; on the frontend, display a fallback message if data is unexpectedly missing
+- What happens when a case study has no images or the Sanity Image CDN is unreachable? → Display a placeholder image and graceful fallback with no layout shift
+- How does the site handle a Sanity CMS query that returns no results? → Display contextual empty states with helpful suggestions (e.g., "No case studies match your filter. Try clearing filters or browsing all projects.")
+- What if a blog post has malformed content or missing required fields in Sanity? → Validate content in Sanity Studio and prevent publishing; on the frontend, display a fallback message if data is unexpectedly missing
 - How does search behave when the index is empty or query returns no matches? → Show a "No results found for '[query]'" message with suggestions to refine the search or browse all content
 - What happens when a visitor navigates to a deleted or unpublished page via an old link? → Return a 404 page with branded messaging and links to navigate to Home, Work, Labs, or Blog
-- What happens during CMS maintenance or outages? → Serve stale cached content with a subtle staleness indicator banner (e.g., "Content may be outdated") to maintain site functionality while informing users
+- What happens during Sanity CMS maintenance or outages? → Serve stale cached content with a subtle staleness indicator banner (e.g., "Content may be outdated") to maintain site functionality while informing users
 - How does dark mode handle images with transparency or embedded color schemes? → Ensure images have appropriate backgrounds or filters; test all images in both modes
 - What if a visitor has JavaScript disabled? → Ensure core content is accessible via server-side rendering and progressive enhancement; navigation and content should still be usable
 - How does the site handle very long author names, case study titles, or tag names? → Implement text truncation with ellipsis and hover tooltips for full text
 - What happens when multiple filters are applied simultaneously (e.g., tech stack + role)? → Apply AND logic to show only items matching all filters; display count of results and allow clearing individual filters
 - How does the site handle visitors on slow networks or high-latency connections? → Implement proper loading states, skeleton screens, and progressive image loading; test on throttled connections
+- What happens when a visitor uses an unsupported browser (e.g., Internet Explorer)? → Display a friendly browser upgrade message with recommendations to use a modern browser (Chrome, Firefox, Safari, or Edge)
+- How does the site handle browser-specific CSS or JavaScript feature gaps? → Use progressive enhancement with feature detection and graceful fallbacks; polyfills may be used sparingly for critical features if needed
 
 ## Requirements _(mandatory)_
 
@@ -178,20 +183,41 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 - **Animation Performance**: All animations MUST maintain 60fps performance and not negatively impact Core Web Vitals scores (CLS ≤ 0.1). Animations MUST use GPU-accelerated properties (transform, opacity) where possible.
 - **Animation Patterns**: Common animation patterns include: hero section entrance, staggered card reveals on content indices, smooth page transitions, interactive hover states, and loading state animations.
 
+### Content Management & CDN Constraints
+
+- **Headless CMS**: System MUST use Sanity as the headless CMS for all content management, including case studies, lab projects, blog posts, and author information. Sanity provides structured content modeling, version control, and editorial workflow capabilities.
+- **Image CDN**: System MUST use Sanity's built-in image CDN (Sanity Image API) for all image delivery, leveraging automatic optimization, responsive image generation, format conversion (WebP/AVIF), and on-the-fly transformations.
+- **Content API**: System MUST query Sanity content via GROQ (Graph-Relational Object Queries) or Sanity's JavaScript client, enabling efficient content fetching with projection and filtering.
+
+### Testing & Quality Constraints
+
+- **Testing Strategy**: To maximize development velocity, the system MUST adopt a simplified testing approach focused on manual testing and end-to-end user scenarios. Unit tests are NOT required in the initial implementation phase.
+- **Quality Assurance**: Quality validation MUST rely on manual testing of user flows, browser-based accessibility audits (Lighthouse), visual regression checks, and real-device testing across mobile/desktop.
+- **Future Testing**: Automated testing may be introduced post-launch if maintenance complexity increases, focusing on critical user journeys and integration tests rather than granular unit test coverage.
+
+### Browser & Device Support Constraints
+
+- **Browser Support**: System MUST support the latest 2 versions of modern browsers: Chrome, Firefox, Safari, and Edge. Support for Internet Explorer is NOT required.
+- **Responsive Design**: System MUST provide fully responsive layouts that adapt seamlessly across mobile (320px+), tablet (768px+), and desktop (1024px+) viewports without horizontal scrolling or content overflow.
+- **Cross-Browser Testing**: System MUST be manually tested across all supported browsers on both desktop and mobile devices to ensure consistent rendering, functionality, and performance.
+- **Progressive Enhancement**: System MUST use progressive enhancement principles, ensuring core content and functionality work in all supported browsers while leveraging modern browser features (CSS Grid, Flexbox, modern JavaScript) where available.
+- **Mobile-First Approach**: System MUST be designed and developed with a mobile-first approach, ensuring optimal experience on smaller screens and progressively enhancing for larger viewports.
+
 ### Functional Requirements
 
 - **FR-001**: System MUST render a home page with an overview of the portfolio owner's background, a hero section, and navigation to Work Experience, Side-Project Labs, Blog, and About sections
 - **FR-002**: System MUST provide a global navigation component accessible from all pages with links to Home, About, Work Experience, Side-Project Labs, and Blog
 - **FR-003**: System MUST implement a responsive design that adapts to mobile (320px+), tablet (768px+), and desktop (1024px+) viewports without horizontal scrolling
+- **FR-003a**: System MUST ensure cross-browser compatibility across the latest 2 versions of Chrome, Firefox, Safari, and Edge, with consistent rendering, functionality, and user experience
 - **FR-004**: System MUST support light and dark color modes with a toggle control, persisting user preference across sessions via browser storage
 - **FR-005**: System MUST implement accessible keyboard navigation with visible focus states and logical tab order throughout all pages
 - **FR-006**: System MUST meet WCAG 2.2 AA accessibility standards, including color contrast ratios (4.5:1 for normal text, 3:1 for large text), semantic HTML, and ARIA labels where appropriate
 - **FR-007**: System MUST provide a global search feature using client-side search with a pre-built index that queries across Work Experience case studies, Side-Project Labs, and Blog posts (title, summary, tags, content), returning results grouped by content type with instant feedback
 - **FR-008**: System MUST display a footer on all pages containing social media links (GitHub, LinkedIn, Twitter), copyright notice, and accessibility statement
-- **FR-009**: System MUST implement loading states (skeletons, spinners) for all content that requires fetching from the CMS or CDN
+- **FR-009**: System MUST implement loading states (skeletons, spinners) for all content that requires fetching from Sanity CMS or Sanity Image CDN
 - **FR-010**: System MUST display contextual empty states with helpful messaging when content listings are empty due to filters or lack of published content
-- **FR-011**: System MUST handle error states gracefully, displaying user-friendly messages when CMS queries fail, images don't load, or pages are not found
-- **FR-011a**: System MUST serve stale cached content during CMS outages or maintenance windows, displaying a subtle, non-intrusive staleness indicator banner (e.g., "Content may be outdated - last updated [timestamp]") to maintain site functionality while informing users of potential data freshness issues
+- **FR-011**: System MUST handle error states gracefully, displaying user-friendly messages when Sanity CMS queries fail, images don't load from Sanity Image CDN, or pages are not found
+- **FR-011a**: System MUST serve stale cached content during Sanity CMS outages or maintenance windows, displaying a subtle, non-intrusive staleness indicator banner (e.g., "Content may be outdated - last updated [timestamp]") to maintain site functionality while informing users of potential data freshness issues
 - **FR-011b**: System MUST implement scroll-triggered animations using Motion (Framer Motion) that reveal content elements (cards, images, text blocks) when they enter the viewport with smooth fade-in, slide-in, or scale-in transitions
 - **FR-011c**: System MUST respect user accessibility preferences by disabling or reducing animations when `prefers-reduced-motion` is enabled in the user's system settings
 
@@ -226,8 +252,8 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 **Content Governance**:
 
 - **FR-028**: System MUST only display content with "published" status on public pages; content with "draft" or "review" status MUST NOT appear in listings or be accessible via direct URLs
-- **FR-029**: System MUST support content versioning in the CMS, allowing authors to view version history and revert to previous versions
-- **FR-030**: System MUST revalidate public pages when content is published, updated, or unpublished to reflect changes within a reasonable time (e.g., on-demand revalidation or short cache TTL)
+- **FR-029**: System MUST support content versioning in Sanity CMS, allowing authors to view version history and revert to previous versions using Sanity's built-in revision system
+- **FR-030**: System MUST revalidate public pages when content is published, updated, or unpublished in Sanity to reflect changes within a reasonable time (e.g., on-demand revalidation via webhook triggers or short cache TTL)
 
 **SEO and Discovery**:
 
@@ -274,3 +300,5 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 - **SC-014**: At least 60% of visitors navigate to either Work Experience or Blog sections within their first session
 - **SC-015**: The site remains functional and content-accessible with JavaScript disabled, leveraging server-side rendering for core content
 - **SC-016**: All animations maintain 60fps performance and do not cause Cumulative Layout Shift (CLS) violations, with scroll-triggered animations respecting `prefers-reduced-motion` settings for users who require reduced motion
+- **SC-017**: Development velocity remains high with simplified manual testing approach, enabling rapid iteration and feature deployment without automated unit test overhead while maintaining quality through Lighthouse audits and real-device testing
+- **SC-018**: The site renders consistently and functions correctly across the latest 2 versions of Chrome, Firefox, Safari, and Edge on both desktop and mobile platforms, with no critical visual or functional discrepancies between browsers

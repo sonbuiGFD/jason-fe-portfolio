@@ -11,6 +11,8 @@
 - [x] Written for non-technical stakeholders
 - [x] All mandatory sections completed
 
+**Note**: While the spec now includes specific technology clarifications (Sanity CMS, Motion/Framer Motion, TailwindCSS, SCSS, BEM), these are documented as **constraints** rather than implementation prescriptions. They define the "what" and "why" of technical decisions without dictating "how" to implement them.
+
 ## Requirement Completeness
 
 - [x] No [NEEDS CLARIFICATION] markers remain
@@ -53,8 +55,9 @@
 
 4. **All mandatory sections completed**: ✅ PASS
    - User Scenarios & Testing: ✅ Present with 7 prioritized stories
-   - Requirements: ✅ Present with 39 functional requirements and key entities
-   - Success Criteria: ✅ Present with 15 measurable outcomes
+   - Requirements: ✅ Present with 42 functional requirements (FR-001 through FR-039, plus FR-003a, FR-011a, FR-011b, FR-011c, FR-016a, FR-020a, FR-024a) and key entities
+   - Success Criteria: ✅ Present with 18 measurable outcomes (SC-001 through SC-018)
+   - Constraints: ✅ Present with 6 constraint categories (Scale & Volume, Styling & Design System, Animation & Motion, Content Management & CDN, Testing & Quality, Browser & Device Support)
 
 ### Requirement Completeness Assessment
 
