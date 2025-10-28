@@ -14,6 +14,7 @@
 - Q: What is the expected content volume across all content types? → A: 10-20 case studies, 50-100 blog posts, 10-20 lab projects
 - Q: How should analytics tracking handle user privacy and consent? → A: Essential analytics only, no personal data, no consent banner needed
 - Q: How should the site behave during CMS outages or extended maintenance? → A: Serve stale cached content with staleness indicator (maintains functionality, informs users)
+- Q: What styling approach should be used? → A: Hybrid approach using both TailwindCSS (utility-first) and SCSS (component-specific styles) with BEM naming conventions using underscores (e.g., `block__element__modifier`)
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -164,6 +165,10 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 ### Scale & Volume Assumptions
 
 - **Expected Content Volume**: The portfolio is designed to handle 10-20 case studies, 50-100 blog posts, and 10-20 lab projects. This scale influences caching strategies, search index sizing, and whether pagination is required for content listings.
+
+### Styling & Design System Constraints
+
+- **Styling Approach**: System MUST use a hybrid styling approach combining TailwindCSS for utility-first rapid development and SCSS for complex component-specific styles. All custom CSS classes MUST follow BEM (Block Element Modifier) naming conventions using underscores as separators (e.g., `block__element__modifier`, `card__header__large`, `navigation__item__active`). This ensures predictable specificity, maintainability, and clear component boundaries while leveraging TailwindCSS utilities for common patterns.
 
 ### Functional Requirements
 
