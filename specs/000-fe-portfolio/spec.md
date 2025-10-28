@@ -15,6 +15,7 @@
 - Q: How should analytics tracking handle user privacy and consent? → A: Essential analytics only, no personal data, no consent banner needed
 - Q: How should the site behave during CMS outages or extended maintenance? → A: Serve stale cached content with staleness indicator (maintains functionality, informs users)
 - Q: What styling approach should be used? → A: Hybrid approach using both TailwindCSS (utility-first) and SCSS (component-specific styles) with BEM naming conventions using underscores (e.g., `block__element__modifier`)
+- Q: What animation approach should be used for the site? → A: Use Motion (Framer Motion) for declarative animations including scroll-triggered animations that reveal elements when they enter the viewport
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -170,6 +171,13 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 
 - **Styling Approach**: System MUST use a hybrid styling approach combining TailwindCSS for utility-first rapid development and SCSS for complex component-specific styles. All custom CSS classes MUST follow BEM (Block Element Modifier) naming conventions using underscores as separators (e.g., `block__element__modifier`, `card__header__large`, `navigation__item__active`). This ensures predictable specificity, maintainability, and clear component boundaries while leveraging TailwindCSS utilities for common patterns.
 
+### Animation & Motion Constraints
+
+- **Animation Library**: System MUST use Motion (Framer Motion) for all declarative animations to ensure consistent, performant, and accessible motion design across the portfolio.
+- **Scroll-Triggered Animations**: System MUST implement scroll-triggered animations that reveal elements (fade-in, slide-in, scale-in) when they enter the viewport. Animations MUST respect user's `prefers-reduced-motion` settings for accessibility.
+- **Animation Performance**: All animations MUST maintain 60fps performance and not negatively impact Core Web Vitals scores (CLS ≤ 0.1). Animations MUST use GPU-accelerated properties (transform, opacity) where possible.
+- **Animation Patterns**: Common animation patterns include: hero section entrance, staggered card reveals on content indices, smooth page transitions, interactive hover states, and loading state animations.
+
 ### Functional Requirements
 
 - **FR-001**: System MUST render a home page with an overview of the portfolio owner's background, a hero section, and navigation to Work Experience, Side-Project Labs, Blog, and About sections
@@ -184,6 +192,8 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 - **FR-010**: System MUST display contextual empty states with helpful messaging when content listings are empty due to filters or lack of published content
 - **FR-011**: System MUST handle error states gracefully, displaying user-friendly messages when CMS queries fail, images don't load, or pages are not found
 - **FR-011a**: System MUST serve stale cached content during CMS outages or maintenance windows, displaying a subtle, non-intrusive staleness indicator banner (e.g., "Content may be outdated - last updated [timestamp]") to maintain site functionality while informing users of potential data freshness issues
+- **FR-011b**: System MUST implement scroll-triggered animations using Motion (Framer Motion) that reveal content elements (cards, images, text blocks) when they enter the viewport with smooth fade-in, slide-in, or scale-in transitions
+- **FR-011c**: System MUST respect user accessibility preferences by disabling or reducing animations when `prefers-reduced-motion` is enabled in the user's system settings
 
 **Work Experience**:
 
@@ -263,3 +273,4 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 - **SC-013**: Bounce rate on the home page is ≤ 40%, indicating effective navigation and clear value proposition
 - **SC-014**: At least 60% of visitors navigate to either Work Experience or Blog sections within their first session
 - **SC-015**: The site remains functional and content-accessible with JavaScript disabled, leveraging server-side rendering for core content
+- **SC-016**: All animations maintain 60fps performance and do not cause Cumulative Layout Shift (CLS) violations, with scroll-triggered animations respecting `prefers-reduced-motion` settings for users who require reduced motion
