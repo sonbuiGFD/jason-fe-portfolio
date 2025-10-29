@@ -119,7 +119,7 @@ Use a **hybrid styling approach**:
 
 ### Implementation Notes
 
-- Import TailwindCSS in `styles/globals.css` with `@tailwind base; @tailwind components; @tailwind utilities;`
+- Import TailwindCSS in `styles/globals.scss` with `@tailwind base; @tailwind components; @tailwind utilities;`
 - Define theme CSS variables in `styles/themes.scss` (light/dark variants)
 - Store component-specific SCSS in `styles/components/` with `.module.scss` extension
 - Use TailwindCSS `@apply` directive sparingly (only for frequently repeated utility combinations)
@@ -467,7 +467,7 @@ const ITEMS_PER_PAGE = 20;
 export default async function BlogPage() {
   // Fetch first 20 posts
   const posts = await sanityClient.fetch(
-    `*[_type == "blogPost" && status == "published"] 
+    `*[_type == "blogPost" && status == "published"]
      | order(publishedAt desc) [0...${ITEMS_PER_PAGE}] { ... }`
   );
 

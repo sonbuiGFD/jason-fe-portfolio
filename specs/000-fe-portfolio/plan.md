@@ -193,7 +193,7 @@ lib/
     └── events.ts                 # Telemetry event logging
 
 styles/
-├── globals.css                   # Global styles, Tailwind imports
+├── globals.scss                   # Global styles, Tailwind imports
 ├── themes.scss                   # Theme variables (light/dark)
 └── components/                   # Component-specific SCSS (BEM conventions)
     ├── _card.scss

@@ -30,18 +30,18 @@ Next.js App Router structure:
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Initialize Next.js 14+ project with TypeScript and App Router in project root
-- [ ] T002 [P] Install core dependencies: React 18+, Next.js 14+, TypeScript 5.3+, TailwindCSS 3.4+, Motion (Framer Motion) 11+
-- [ ] T003 [P] Install Sanity dependencies: @sanity/client, @sanity/image-url, next-sanity, groq
-- [ ] T004 [P] Configure TypeScript in tsconfig.json with strict mode and path aliases (@/)
-- [ ] T005 [P] Configure TailwindCSS in tailwind.config.ts with custom theme tokens and content paths
-- [ ] T006 [P] Configure ESLint in .eslintrc.json with Next.js, React, TypeScript, accessibility rules (eslint-plugin-jsx-a11y)
-- [ ] T007 [P] Configure Prettier in .prettierrc with formatting rules
-- [ ] T008 [P] Setup global styles in styles/globals.css with TailwindCSS imports and CSS variables for dark/light themes
-- [ ] T009 [P] Create SCSS theme variables in styles/themes.scss for light and dark mode color schemes
-- [ ] T010 [P] Configure Next.js in next.config.js with image domains (cdn.sanity.io), experimental features, and build optimizations
-- [ ] T011 [P] Setup environment variables template in .env.local.example with Sanity configuration placeholders
-- [ ] T012 [P] Create project folder structure per plan.md: app/, components/, lib/, styles/, sanity/, public/
+- [x] T001 Initialize Next.js 14+ project with TypeScript and App Router in project root
+- [x] T002 [P] Install core dependencies: React 18+, Next.js 14+, TypeScript 5.3+, TailwindCSS 3.4+, Motion (Framer Motion) 11+
+- [x] T003 [P] Install Sanity dependencies: @sanity/client, @sanity/image-url, next-sanity, groq
+- [x] T004 [P] Configure TypeScript in tsconfig.json with strict mode and path aliases (@/)
+- [x] T005 [P] Configure TailwindCSS in tailwind.config.ts with custom theme tokens and content paths
+- [x] T006 [P] Configure ESLint in .eslintrc.json with Next.js, React, TypeScript, accessibility rules (eslint-plugin-jsx-a11y)
+- [x] T007 [P] Configure Prettier in .prettierrc with formatting rules
+- [x] T008 [P] Setup global styles in styles/globals.scss with TailwindCSS imports and CSS variables for dark/light themes
+- [x] T009 [P] Create SCSS theme variables in styles/themes.scss for light and dark mode color schemes
+- [x] T010 [P] Configure Next.js in next.config.js with image domains (cdn.sanity.io), experimental features, and build optimizations
+- [x] T011 [P] Setup environment variables template in .env.local.example with Sanity configuration placeholders
+- [x] T012 [P] Create project folder structure per plan.md: app/, components/, lib/, styles/, sanity/, public/
 
 ---
 
@@ -96,7 +96,7 @@ Next.js App Router structure:
 - [ ] T042 [P] [US4] Create NavMenu component in components/navigation/NavMenu.tsx for desktop navigation with active states
 - [ ] T043 [P] [US4] Create MobileMenu component in components/navigation/MobileMenu.tsx with slide-out drawer and close functionality
 - [ ] T044 [US4] Integrate NavMenu and MobileMenu into Header component with responsive breakpoint logic
-- [ ] T045 [US4] Implement keyboard navigation focus styles in styles/globals.css with WCAG 2.2 AA compliant contrast (3:1 for UI components)
+- [ ] T045 [US4] Implement keyboard navigation focus styles in styles/globals.scss with WCAG 2.2 AA compliant contrast (3:1 for UI components)
 - [ ] T046 [US4] Add ARIA labels and semantic landmarks (header, nav, main, footer) across layout components
 - [ ] T047 [P] [US4] Create component-specific SCSS for navigation in styles/components/\_navigation.scss with BEM naming conventions
 - [ ] T048 [US4] Test responsive design manually across mobile (375px), tablet (768px), desktop (1440px) and verify no horizontal scrolling
