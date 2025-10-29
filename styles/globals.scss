@@ -1,5 +1,5 @@
 /* Import theme variables */
-@import "./themes.scss";
+@use "./themes.scss" as *;
 
 @tailwind base;
 @tailwind components;
@@ -52,6 +52,7 @@
 
   /* Reduce motion for users with prefers-reduced-motion */
   @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {
@@ -64,6 +65,7 @@
 }
 
 @layer components {
+
   /* Typography */
   .heading-1 {
     @apply text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl;

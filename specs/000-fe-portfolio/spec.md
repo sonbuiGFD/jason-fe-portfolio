@@ -188,6 +188,7 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 - **Headless CMS**: System MUST use Sanity as the headless CMS for all content management, including case studies, lab projects, blog posts, and author information. Sanity provides structured content modeling, version control, and editorial workflow capabilities.
 - **Image CDN**: System MUST use Sanity's built-in image CDN (Sanity Image API) for all image delivery, leveraging automatic optimization, responsive image generation, format conversion (WebP/AVIF), and on-the-fly transformations.
 - **Content API**: System MUST query Sanity content via GROQ (Graph-Relational Object Queries) or Sanity's JavaScript client, enabling efficient content fetching with projection and filtering.
+- **SVG Assets**: System MUST use SVGR (@svgr/webpack) to enable importing SVG files as React components, allowing for dynamic styling, props passing, and better performance compared to inline SVG or image tags. This enables clean component composition with icons and illustrations.
 
 ### Testing & Quality Constraints
 
