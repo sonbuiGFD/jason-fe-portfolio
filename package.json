@@ -65,6 +65,9 @@
     ],
     "*.{json,md,yml,yaml,scss,css}": [
       "prettier --write"
+    ],
+    ".husky/*": [
+      "prettier --write"
     ]
   }
 }
