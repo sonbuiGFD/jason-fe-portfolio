@@ -115,18 +115,18 @@ Next.js App Router structure:
 
 ### Implementation for User Story 1
 
-- [ ] T051 [P] [US1] Create Work index page in app/work/page.tsx with SSG/ISR, fetch published case studies with pagination (first 20 items)
-- [ ] T052 [P] [US1] Create CaseStudyCard component in components/content/CaseStudyCard.tsx with title, summary, tech stack tags, hero image, and role type
-- [ ] T053 [P] [US1] Create FilterBar component in components/content/FilterBar.tsx with tech stack and role type filter controls
-- [ ] T054 [US1] Implement client-side filtering logic in Work index page to filter by tech stack and role type, update URL params
-- [ ] T055 [US1] Add empty state handling in Work index when no case studies match filters using EmptyState component
-- [ ] T056 [US1] Create Work case study detail page in app/work/[slug]/page.tsx with SSG/ISR, fetch single case study by slug
-- [ ] T057 [US1] Implement generateStaticParams in app/work/[slug]/page.tsx to pre-render all published case study paths
-- [ ] T058 [US1] Render case study detail page sections: problem statement, approach, architecture, impact with rich text rendering
-- [ ] T059 [US1] Integrate Sanity image URL builder for hero images and inline images with next/image optimization
-- [ ] T060 [US1] Add OpenGraph and Twitter Card metadata generation in generateMetadata for case study detail pages
-- [ ] T061 [P] [US1] Create component-specific SCSS for case study cards in styles/components/\_card.scss with BEM naming conventions
-- [ ] T062 [US1] Implement scroll-triggered animations for case study sections using ScrollReveal component
+- [x] T051 [P] [US1] Create Work index page in app/work/page.tsx with SSG/ISR, fetch published case studies with pagination (first 20 items)
+- [x] T052 [P] [US1] Create CaseStudyCard component in components/content/CaseStudyCard.tsx with title, summary, tech stack tags, hero image, and role type
+- [x] T053 [P] [US1] Create FilterBar component in components/content/FilterBar.tsx with tech stack and role type filter controls
+- [x] T054 [US1] Implement client-side filtering logic in Work index page to filter by tech stack and role type, update URL params
+- [x] T055 [US1] Add empty state handling in Work index when no case studies match filters using EmptyState component
+- [x] T056 [US1] Create Work case study detail page in app/work/[slug]/page.tsx with SSG/ISR, fetch single case study by slug
+- [x] T057 [US1] Implement generateStaticParams in app/work/[slug]/page.tsx to pre-render all published case study paths
+- [x] T058 [US1] Render case study detail page sections: problem statement, approach, architecture, impact with rich text rendering
+- [x] T059 [US1] Integrate Sanity image URL builder for hero images and inline images with next/image optimization
+- [x] T060 [US1] Add OpenGraph and Twitter Card metadata generation in generateMetadata for case study detail pages
+- [x] T061 [P] [US1] Create component-specific SCSS for case study cards in styles/components/\_card.scss with BEM naming conventions
+- [x] T062 [US1] Implement scroll-triggered animations for case study sections using ScrollReveal component
 - [ ] T063 [US1] Test Work index filtering manually (apply React filter, verify only React case studies appear, check URL updates)
 - [ ] T064 [US1] Test case study detail page manually (verify all sections render, images load from Sanity CDN, metadata present)
 - [ ] T065 [US1] Run Lighthouse performance audit on Work pages and optimize to achieve Performance score ≥90, LCP ≤2.5s
