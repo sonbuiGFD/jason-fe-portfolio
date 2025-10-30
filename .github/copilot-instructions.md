@@ -4,7 +4,7 @@ Auto-generated from all feature plans. Last updated: 2025-10-29
 
 ## Active Technologies
 
-- TypeScript 5.3+, JavaScript ES2022+ + Next.js 14+ (App Router), React 18+, TailwindCSS 3.4+, Motion (Framer Motion) 11+, Sanity CMS 3+, GROQ (Sanity query language), SVGR (SVG as React components) (000-fe-portfolio)
+- TypeScript 5.3+, JavaScript ES2022+ + Next.js 14+ (App Router), React 18+, TailwindCSS 4.1+, Motion (Framer Motion) 11+, Sanity CMS 3+, GROQ (Sanity query language), SVGR (SVG as React components) (000-fe-portfolio)
 
 ## Project Structure
 
@@ -49,10 +49,10 @@ Apply this convention to:
 
 **CRITICAL: Do NOT use @apply directive**
 
-- ❌ NEVER use `@apply` in SCSS files - it causes issues with Tailwind's opacity modifiers
-- ✅ ALWAYS use direct CSS properties instead
-- ✅ Use CSS custom properties with `rgb(var(--color-name))` for theme colors
-- ✅ For opacity, use `rgb(var(--color-name) / 0.1)` syntax or standard `opacity` property
+- ❌ NEVER use `@apply` directive - Tailwind CSS v4 has removed support for `@apply`
+- ✅ ALWAYS use direct CSS properties or Tailwind utility classes in HTML instead
+- ✅ Use CSS custom properties defined in `@theme` block for theme colors
+- ✅ For opacity, use `rgb(var(--color-name-rgb) / 0.1)` syntax or standard `opacity` property
 
 **Bad Example:**
 
@@ -75,14 +75,22 @@ Apply this convention to:
 }
 ```
 
-**Using Custom Properties:**
+**Using Custom Properties (Tailwind CSS v4):**
 
-- Background: `background-color: rgb(var(--color-background))`
-- Foreground: `color: rgb(var(--color-foreground))`
-- Primary: `rgb(var(--color-primary))`
-- Border: `rgb(var(--color-border))`
-- Muted: `rgb(var(--color-muted))`
-- With opacity: `rgb(var(--color-muted) / 0.1)`
+- Background: `background-color: var(--color-background)`
+- Foreground: `color: var(--color-foreground)`
+- Primary: `var(--color-primary)`
+- Border: `var(--color-border)`
+- Muted: `var(--color-muted)`
+- With opacity (use RGB channels): `rgb(var(--color-muted-rgb) / 0.1)`
+
+**TailwindCSS v4 Configuration:**
+
+- Configuration is now CSS-based using `@theme` directive in `styles/tailwind.css`
+- No `tailwind.config.ts` file needed
+- Import Tailwind using `@import "tailwindcss"` instead of `@tailwind` directives
+- Define custom theme values using CSS custom properties within `@theme` block
+- Colors defined as `rgb()` values for better opacity support
 
 ### SVG Asset Guidelines
 
@@ -99,7 +107,8 @@ Apply this convention to:
 
 ## Recent Changes
 
-- 000-fe-portfolio: Added TypeScript 5.3+, JavaScript ES2022+ + Next.js 14+ (App Router), React 18+, TailwindCSS 3.4+, Motion (Framer Motion) 11+, Sanity CMS 3+, GROQ (Sanity query language), SVGR (SVG as React components)
+- 000-fe-portfolio: Updated to TailwindCSS 4.1 with CSS-based configuration using `@theme` directive (October 30, 2025)
+- 000-fe-portfolio: Added TypeScript 5.3+, JavaScript ES2022+ + Next.js 14+ (App Router), React 18+, Motion (Framer Motion) 11+, Sanity CMS 3+, GROQ (Sanity query language), SVGR (SVG as React components)
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

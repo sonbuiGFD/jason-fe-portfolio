@@ -1,4 +1,4 @@
-/* Import theme variables */
+/* Import SCSS theme variables - must be first in SCSS */
 @use "./themes.scss" as *;
 
 /* Import component styles */

@@ -174,7 +174,8 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 
 ### Styling & Design System Constraints
 
-- **Styling Approach**: System MUST use a hybrid styling approach combining TailwindCSS for utility-first rapid development and SCSS for complex component-specific styles. All custom CSS classes MUST follow BEM (Block Element Modifier) naming conventions using underscores as separators (e.g., `block__element__modifier`, `card__header__large`, `navigation__item__active`). This ensures predictable specificity, maintainability, and clear component boundaries while leveraging TailwindCSS utilities for common patterns.
+- **Styling Approach**: System MUST use a hybrid styling approach combining TailwindCSS v4 for utility-first rapid development and SCSS for complex component-specific styles. All custom CSS classes MUST follow BEM (Block Element Modifier) naming conventions using underscores as separators (e.g., `block__element__modifier`, `card__header__large`, `navigation__item__active`). This ensures predictable specificity, maintainability, and clear component boundaries while leveraging TailwindCSS utilities for common patterns.
+- **TailwindCSS v4 Configuration**: System MUST use CSS-based configuration via the `@theme` directive in the main CSS file instead of JavaScript-based configuration. All theme customizations (colors, fonts, spacing, border radius) MUST be defined using CSS custom properties within the `@theme` block. This aligns with Tailwind CSS v4's new architecture that eliminates the need for `tailwind.config.js/ts` files and PostCSS plugin configuration.
 
 ### Animation & Motion Constraints
 
