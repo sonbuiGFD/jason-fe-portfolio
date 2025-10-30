@@ -51,32 +51,32 @@ Next.js App Router structure:
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T013 Initialize Sanity project and create sanity.config.ts in sanity/ directory with project configuration
-- [ ] T014 [P] Implement Author schema in sanity/schemas/author.ts with validation rules per data-model.md
-- [ ] T015 [P] Implement TechStack schema in sanity/schemas/techStack.ts with category enum validation
-- [ ] T016 [P] Implement Tag schema in sanity/schemas/tag.ts with slug auto-generation
-- [ ] T017 [P] Implement WorkCaseStudy schema in sanity/schemas/workCaseStudy.ts with rich text blocks and references
-- [ ] T018 [P] Implement LabProject schema in sanity/schemas/labProject.ts with demo/repository URL fields
-- [ ] T019 [P] Implement BlogPost schema in sanity/schemas/blogPost.ts with code block support and reading time
-- [ ] T020 Export all schemas in sanity/schemas/index.ts and configure in sanity.config.ts
-- [ ] T021 Create Sanity client configuration in lib/sanity/client.ts with CDN and non-CDN client instances
-- [ ] T022 [P] Define TypeScript types in lib/sanity/types.ts matching contracts/api-types.ts
-- [ ] T023 [P] Create Sanity image URL builder helper in lib/sanity/image-builder.ts for responsive images
-- [ ] T024 [P] Implement GROQ queries in lib/sanity/queries.ts for all content types per data-model.md access patterns
-- [ ] T025 Create root layout in app/layout.tsx with metadata, font optimization, and theme provider structure
-- [ ] T026 [P] Implement ThemeProvider context in components/layout/ThemeProvider.tsx with dark/light mode toggle and localStorage persistence
-- [ ] T027 [P] Create Header component in components/layout/Header.tsx with global navigation and theme toggle
-- [ ] T028 [P] Create Footer component in components/layout/Footer.tsx with social links and accessibility statement
-- [ ] T029 [P] Create reusable Button component in components/ui/Button.tsx with variants and accessibility
-- [ ] T030 [P] Create reusable Card component in components/ui/Card.tsx with consistent styling
-- [ ] T031 [P] Implement LoadingState skeleton component in components/ui/LoadingState.tsx with animation
-- [ ] T032 [P] Implement EmptyState component in components/ui/EmptyState.tsx with contextual messaging
-- [ ] T033 [P] Implement ErrorState component in components/ui/ErrorState.tsx with retry functionality
-- [ ] T034 [P] Create ScrollReveal animation wrapper in components/animations/ScrollReveal.tsx using Motion with viewport detection
-- [ ] T035 [P] Create utility function for reading time calculation in lib/utils/reading-time.ts
-- [ ] T036 [P] Create utility function for date formatting in lib/utils/date-formatter.ts
-- [ ] T037 [P] Create utility function for slug generation in lib/utils/slug-generator.ts
-- [ ] T038 Setup Lighthouse CI configuration in .github/workflows/lighthouse.yml with performance budgets (Performance ≥90, Accessibility ≥95, SEO ≥90)
+- [x] T013 Initialize Sanity project and create sanity.config.ts in sanity/ directory with project configuration
+- [x] T014 [P] Implement Author schema in sanity/schemas/author.ts with validation rules per data-model.md
+- [x] T015 [P] Implement TechStack schema in sanity/schemas/techStack.ts with category enum validation
+- [x] T016 [P] Implement Tag schema in sanity/schemas/tag.ts with slug auto-generation
+- [x] T017 [P] Implement WorkCaseStudy schema in sanity/schemas/workCaseStudy.ts with rich text blocks and references
+- [x] T018 [P] Implement LabProject schema in sanity/schemas/labProject.ts with demo/repository URL fields
+- [x] T019 [P] Implement BlogPost schema in sanity/schemas/blogPost.ts with code block support and reading time
+- [x] T020 Export all schemas in sanity/schemas/index.ts and configure in sanity.config.ts
+- [x] T021 Create Sanity client configuration in lib/sanity/client.ts with CDN and non-CDN client instances
+- [x] T022 [P] Define TypeScript types in lib/sanity/types.ts matching contracts/api-types.ts
+- [x] T023 [P] Create Sanity image URL builder helper in lib/sanity/image-builder.ts for responsive images
+- [x] T024 [P] Implement GROQ queries in lib/sanity/queries.ts for all content types per data-model.md access patterns
+- [x] T025 Create root layout in app/layout.tsx with metadata, font optimization, and theme provider structure
+- [x] T026 [P] Implement ThemeProvider context in components/layout/ThemeProvider.tsx with dark/light mode toggle and localStorage persistence
+- [x] T027 [P] Create Header component in components/layout/Header.tsx with global navigation and theme toggle
+- [x] T028 [P] Create Footer component in components/layout/Footer.tsx with social links and accessibility statement
+- [x] T029 [P] Create reusable Button component in components/ui/Button.tsx with variants and accessibility
+- [x] T030 [P] Create reusable Card component in components/ui/Card.tsx with consistent styling
+- [x] T031 [P] Implement LoadingState skeleton component in components/ui/LoadingState.tsx with animation
+- [x] T032 [P] Implement EmptyState component in components/ui/EmptyState.tsx with contextual messaging
+- [x] T033 [P] Implement ErrorState component in components/ui/ErrorState.tsx with retry functionality
+- [x] T034 [P] Create ScrollReveal animation wrapper in components/animations/ScrollReveal.tsx using Motion with viewport detection
+- [x] T035 [P] Create utility function for reading time calculation in lib/utils/reading-time.ts
+- [x] T036 [P] Create utility function for date formatting in lib/utils/date-formatter.ts
+- [x] T037 [P] Create utility function for slug generation in lib/utils/slug-generator.ts
+- [x] T038 Setup Lighthouse CI configuration in .github/workflows/lighthouse.yml with performance budgets (Performance ≥90, Accessibility ≥95, SEO ≥90)
 - [ ] T039 [P] Configure Git pre-commit hooks for ESLint and Prettier using husky or lint-staged
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel

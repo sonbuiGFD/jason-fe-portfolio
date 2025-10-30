@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build output
+.next/
+out/
+build/
+dist/
+
+# Coverage
+coverage/
+
+# Environment files
+.env*
+
+# Cache and temporary files
+*.tsbuildinfo
+.turbo/
+.cache/
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sanity
+.sanity/
+
+# Generated files
+next-env.d.ts
+
+# Minified files
+*.min.js
+*.min.css
+
+# Markdown in specs (to preserve formatting)
+specs/
