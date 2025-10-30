@@ -45,6 +45,45 @@ Apply this convention to:
 - Component-specific styles
 - Any hand-written CSS (when not using Tailwind utility classes)
 
+### CSS/SCSS Implementation Rules
+
+**CRITICAL: Do NOT use @apply directive**
+
+- ❌ NEVER use `@apply` in SCSS files - it causes issues with Tailwind's opacity modifiers
+- ✅ ALWAYS use direct CSS properties instead
+- ✅ Use CSS custom properties with `rgb(var(--color-name))` for theme colors
+- ✅ For opacity, use `rgb(var(--color-name) / 0.1)` syntax or standard `opacity` property
+
+**Bad Example:**
+
+```scss
+.button {
+  @apply bg-primary text-white hover:bg-primary/90;
+}
+```
+
+**Good Example:**
+
+```scss
+.button {
+  background-color: rgb(var(--color-primary));
+  color: white;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+```
+
+**Using Custom Properties:**
+
+- Background: `background-color: rgb(var(--color-background))`
+- Foreground: `color: rgb(var(--color-foreground))`
+- Primary: `rgb(var(--color-primary))`
+- Border: `rgb(var(--color-border))`
+- Muted: `rgb(var(--color-muted))`
+- With opacity: `rgb(var(--color-muted) / 0.1)`
+
 ### SVG Asset Guidelines
 
 **Using SVGR for SVG Components**

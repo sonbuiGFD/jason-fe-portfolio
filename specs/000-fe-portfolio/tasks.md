@@ -91,14 +91,14 @@ Next.js App Router structure:
 
 ### Implementation for User Story 4
 
-- [ ] T040 [US4] Implement home page in app/page.tsx with hero section, overview, and scroll-triggered animations
-- [ ] T041 [P] [US4] Implement About page in app/about/page.tsx with author bio and social links
-- [ ] T042 [P] [US4] Create NavMenu component in components/navigation/NavMenu.tsx for desktop navigation with active states
-- [ ] T043 [P] [US4] Create MobileMenu component in components/navigation/MobileMenu.tsx with slide-out drawer and close functionality
-- [ ] T044 [US4] Integrate NavMenu and MobileMenu into Header component with responsive breakpoint logic
-- [ ] T045 [US4] Implement keyboard navigation focus styles in styles/globals.scss with WCAG 2.2 AA compliant contrast (3:1 for UI components)
-- [ ] T046 [US4] Add ARIA labels and semantic landmarks (header, nav, main, footer) across layout components
-- [ ] T047 [P] [US4] Create component-specific SCSS for navigation in styles/components/\_navigation.scss with BEM naming conventions
+- [x] T040 [US4] Implement home page in app/page.tsx with hero section, overview, and scroll-triggered animations
+- [x] T041 [P] [US4] Implement About page in app/about/page.tsx with author bio and social links
+- [x] T042 [P] [US4] Create NavMenu component in components/navigation/NavMenu.tsx for desktop navigation with active states
+- [x] T043 [P] [US4] Create MobileMenu component in components/navigation/MobileMenu.tsx with slide-out drawer and close functionality
+- [x] T044 [US4] Integrate NavMenu and MobileMenu into Header component with responsive breakpoint logic
+- [x] T045 [US4] Implement keyboard navigation focus styles in styles/globals.scss with WCAG 2.2 AA compliant contrast (3:1 for UI components)
+- [x] T046 [US4] Add ARIA labels and semantic landmarks (header, nav, main, footer) across layout components
+- [x] T047 [P] [US4] Create component-specific SCSS for navigation in styles/components/\_navigation.scss with BEM naming conventions
 - [ ] T048 [US4] Test responsive design manually across mobile (375px), tablet (768px), desktop (1440px) and verify no horizontal scrolling
 - [ ] T049 [US4] Test keyboard navigation manually (Tab, Enter, Escape) and verify logical focus order and visible focus states
 - [ ] T050 [US4] Run Lighthouse accessibility audit and fix any issues to achieve score ≥95

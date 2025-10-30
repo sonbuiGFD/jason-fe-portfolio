@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode colors */
+    --color-background: 255 255 255;
+    --color-foreground: 23 23 23;
+    --color-primary: 59 130 246;
+    --color-secondary: 99 102 241;
+    --color-accent: 236 72 153;
+    --color-muted: 156 163 175;
+    --color-border: 229 231 235;
+
+    /* Font families */
+    --font-sans:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono:
+      ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+      "Liberation Mono", monospace;
+  }
+
+  .dark {
+    /* Dark mode colors */
+    --color-background: 23 23 23;
+    --color-foreground: 255 255 255;
+    --color-primary: 96 165 250;
+    --color-secondary: 129 140 248;
+    --color-accent: 244 114 182;
+    --color-muted: 107 114 128;
+    --color-border: 55 65 81;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+
+  /* Focus visible styles for accessibility - WCAG 2.2 AA compliant */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+    /* Ensure 3:1 contrast ratio for focus indicators (WCAG 2.2 AA for UI components) */
+  }
+
+  /* Enhanced focus styles for interactive elements */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+
+  /* Focus within for containers */
+  :focus-within {
+    /* Container has focused child */
+  }
+
+  /* Reduce motion for users with prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Typography */
+  .heading-1 {
+    @apply text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl;
+  }
+
+  .heading-2 {
+    @apply text-3xl font-bold tracking-tight md:text-4xl;
+  }
+
+  .heading-3 {
+    @apply text-2xl font-semibold tracking-tight md:text-3xl;
+  }
+
+  .body-large {
+    @apply text-lg leading-relaxed;
+  }
+
+  .body {
+    @apply text-base leading-normal;
+  }
+
+  .body-small {
+    @apply text-sm leading-normal;
+  }
+
+  /* Container */
+  .container-custom {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Skip link for keyboard navigation */
+  .skip-link {
+    @apply fixed left-4 top-4 z-50 -translate-y-32 rounded-md bg-primary px-4 py-2 text-white transition-transform focus:translate-y-0;
+  }
+}
