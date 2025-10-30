@@ -33,11 +33,9 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
 
   // Initialize theme from localStorage or system preference
   useEffect(() => {
-    setMounted(true);
     const storedTheme = localStorage.getItem("theme") as Theme | null;
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
@@ -60,11 +58,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setTheme(theme === "light" ? "dark" : "light");
   };
 
-  // Prevent flash of unstyled content
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
+  // Always provide context, even before mount to prevent errors
+  // The theme will update once mounted
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}
