@@ -77,7 +77,7 @@ Next.js App Router structure:
 - [x] T036 [P] Create utility function for date formatting in lib/utils/date-formatter.ts
 - [x] T037 [P] Create utility function for slug generation in lib/utils/slug-generator.ts
 - [x] T038 Setup Lighthouse CI configuration in .github/workflows/lighthouse.yml with performance budgets (Performance ≥90, Accessibility ≥95, SEO ≥90)
-- [ ] T039 [P] Configure Git pre-commit hooks for ESLint and Prettier using husky or lint-staged
+- [x] T039 [P] Configure Git pre-push hooks for ESLint and Prettier using husky or lint-staged
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
