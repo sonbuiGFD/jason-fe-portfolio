@@ -8,8 +8,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -64,9 +62,6 @@
       "prettier --write"
     ],
     "*.{json,md,yml,yaml,scss,css}": [
-      "prettier --write"
-    ],
-    ".husky/*": [
       "prettier --write"
     ]
   }
