@@ -1,5 +1,5 @@
 import imageUrlBuilder from "@sanity/image-url";
-import { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import { type SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { sanityClient, sanityConfig } from "./client";
 
 /**
@@ -102,7 +102,11 @@ export function getResponsiveImageUrls(
  * @param source - Sanity image object with metadata
  * @returns Object with width and height, or undefined if not available
  */
-export function getImageDimensions(source: any):
+export function getImageDimensions(source: {
+  asset?: {
+    _ref?: string;
+  };
+}):
   | {
       width: number;
       height: number;

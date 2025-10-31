@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TechStackPreview, RoleType } from "@/lib/sanity/types";
+import { type TechStackPreview, type RoleType } from "@/lib/sanity/types";
 import { Button } from "@/components/ui/Button";
 
 interface FilterBarProps {

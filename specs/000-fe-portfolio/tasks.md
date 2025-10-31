@@ -143,18 +143,18 @@ Next.js App Router structure:
 
 ### Implementation for User Story 2
 
-- [ ] T066 [P] [US2] Create Labs index page in app/labs/page.tsx with SSG/ISR, fetch published lab projects with pagination (first 20 items)
-- [ ] T067 [P] [US2] Create LabProjectCard component in components/content/LabProjectCard.tsx with thumbnail, title, description, tech stack tags
-- [ ] T068 [US2] Implement client-side filtering logic in Labs index page to filter by tech stack, reuse FilterBar component
-- [ ] T069 [US2] Add empty state handling in Labs index when no projects match filters
-- [ ] T070 [US2] Create Labs project detail page in app/labs/[slug]/page.tsx with SSG/ISR, fetch single lab project by slug
-- [ ] T071 [US2] Implement generateStaticParams in app/labs/[slug]/page.tsx to pre-render all published lab project paths
-- [ ] T072 [US2] Render lab project detail page sections: experiment goal, key learnings, tech stack, demo/repository links
-- [ ] T073 [US2] Add OpenGraph and Twitter Card metadata generation in generateMetadata for lab project detail pages
-- [ ] T074 [US2] Implement code snippet rendering with syntax highlighting in case study and lab project detail pages
-- [ ] T075 [P] [US2] Create CodeBlock component in components/ui/CodeBlock.tsx with syntax highlighting (using prism-react-renderer or highlight.js) and copy-to-clipboard button
-- [ ] T076 [US2] Integrate CodeBlock component into rich text rendering for case studies and lab projects
-- [ ] T077 [P] [US2] Create component-specific SCSS for code blocks in styles/components/\_code-block.scss with BEM naming conventions
+- [x] T066 [P] [US2] Create Labs index page in app/labs/page.tsx with SSG/ISR, fetch published lab projects with pagination (first 20 items)
+- [x] T067 [P] [US2] Create LabProjectCard component in components/content/LabProjectCard.tsx with thumbnail, title, description, tech stack tags
+- [x] T068 [US2] Implement client-side filtering logic in Labs index page to filter by tech stack, reuse FilterBar component
+- [x] T069 [US2] Add empty state handling in Labs index when no projects match filters
+- [x] T070 [US2] Create Labs project detail page in app/labs/[slug]/page.tsx with SSG/ISR, fetch single lab project by slug
+- [x] T071 [US2] Implement generateStaticParams in app/labs/[slug]/page.tsx to pre-render all published lab project paths
+- [x] T072 [US2] Render lab project detail page sections: experiment goal, key learnings, tech stack, demo/repository links
+- [x] T073 [US2] Add OpenGraph and Twitter Card metadata generation in generateMetadata for lab project detail pages
+- [x] T074 [US2] Implement code snippet rendering with syntax highlighting in case study and lab project detail pages
+- [x] T075 [P] [US2] Create CodeBlock component in components/ui/CodeBlock.tsx with syntax highlighting (using prism-react-renderer or highlight.js) and copy-to-clipboard button
+- [x] T076 [US2] Integrate CodeBlock component into rich text rendering for case studies and lab projects
+- [x] T077 [P] [US2] Create component-specific SCSS for code blocks in styles/components/\_code-block.scss with BEM naming conventions
 - [ ] T078 [US2] Test Labs index filtering manually (apply tech stack filter, verify results, check URL updates)
 - [ ] T079 [US2] Test lab project detail page manually (verify all sections render, demo/repo links work, code syntax highlighting works)
 - [ ] T080 [US2] Test copy-to-clipboard functionality in code blocks and verify confirmation feedback

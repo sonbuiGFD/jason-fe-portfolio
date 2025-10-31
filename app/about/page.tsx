@@ -1,9 +1,9 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { Button } from "@/components/ui/Button";
 import { sanityClient } from "@/lib/sanity/client";
 import { getAuthorQuery } from "@/lib/sanity/queries";
-import { Author } from "@/lib/sanity/types";
+import type { Author } from "@/lib/sanity/types";
 
 export const metadata: Metadata = {
   title: "About | Jason Bui",

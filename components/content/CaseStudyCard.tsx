@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { WorkCaseStudyCard } from "@/lib/sanity/types";
+import { type WorkCaseStudyCard } from "@/lib/sanity/types";
 import { Card } from "@/components/ui/Card";
 import { formatDate } from "@/lib/utils/date-formatter";
 

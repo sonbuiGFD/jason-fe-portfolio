@@ -1,13 +1,13 @@
-import { Metadata } from "next";
+import { type Metadata } from "next";
 import { sanityClient } from "@/lib/sanity/client";
 import {
   getAllCaseStudiesQuery,
   getAllTechStacksQuery,
 } from "@/lib/sanity/queries";
 import {
-  WorkCaseStudyCard,
-  TechStackPreview,
-  RoleType,
+  type WorkCaseStudyCard,
+  type TechStackPreview,
+  type RoleType,
 } from "@/lib/sanity/types";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { WorkPageClient } from "./WorkPageClient";

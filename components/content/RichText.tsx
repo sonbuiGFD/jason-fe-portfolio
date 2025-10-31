@@ -1,10 +1,11 @@
 import Image from "next/image";
 import {
-  SanityBlockContent,
-  SanityBlock,
-  SanityImage,
+  type SanityBlockContent,
+  type SanityBlock,
+  type SanityImage,
 } from "@/lib/sanity/types";
 import { urlForImage } from "@/lib/sanity/image-builder";
+import { CodeBlock } from "@/components/ui/CodeBlock";
 
 interface RichTextProps {
   content: SanityBlockContent;
@@ -53,11 +54,14 @@ export function RichText({ content, className = "" }: RichTextProps) {
         if (block._type === "code") {
           const codeBlock = block as any;
           return (
-            <pre key={block._key || index} className="rich-text__code">
-              <code className={`language-${codeBlock.language || "plaintext"}`}>
-                {codeBlock.code}
-              </code>
-            </pre>
+            <CodeBlock
+              key={block._key || index}
+              code={codeBlock.code}
+              language={codeBlock.language || "typescript"}
+              filename={codeBlock.filename}
+              showLineNumbers={true}
+              enableCopy={true}
+            />
           );
         }
 

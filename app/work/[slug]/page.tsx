@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { sanityClient } from "@/lib/sanity/client";
@@ -6,7 +6,7 @@ import {
   getCaseStudyBySlugQuery,
   getAllCaseStudySlugsQuery,
 } from "@/lib/sanity/queries";
-import { WorkCaseStudyDetail } from "@/lib/sanity/types";
+import { type WorkCaseStudyDetail } from "@/lib/sanity/types";
 import { urlForImage } from "@/lib/sanity/image-builder";
 import { formatDate } from "@/lib/utils/date-formatter";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";

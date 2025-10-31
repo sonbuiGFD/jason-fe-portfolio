@@ -3,64 +3,54 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  type WorkCaseStudyCard,
+  type LabProjectCard as LabProjectCardType,
   type TechStackPreview,
-  type RoleType,
 } from "@/lib/sanity/types";
-import { CaseStudyCard } from "@/components/content/CaseStudyCard";
+import { LabProjectCard } from "@/components/content/LabProjectCard";
 import { FilterBar, type FilterBarState } from "@/components/content/FilterBar";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 
-interface WorkPageClientProps {
-  initialCaseStudies: WorkCaseStudyCard[];
+interface LabsPageClientProps {
+  initialLabProjects: LabProjectCardType[];
   techStacks: TechStackPreview[];
-  roleTypes: RoleType[];
-  initialFilters: FilterBarState;
+  initialFilter: string | null;
 }
 
 /**
- * WorkPageClient Component
+ * LabsPageClient Component
  *
- * Client-side component for Work index page with filtering.
+ * Client-side component for Labs index page with filtering.
  * Handles URL params and client-side filtering logic.
  */
-export function WorkPageClient({
-  initialCaseStudies,
+export function LabsPageClient({
+  initialLabProjects,
   techStacks,
-  roleTypes,
-  initialFilters,
-}: WorkPageClientProps) {
+  initialFilter,
+}: LabsPageClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [caseStudies, setCaseStudies] =
-    useState<WorkCaseStudyCard[]>(initialCaseStudies);
+  const [labProjects, setLabProjects] =
+    useState<LabProjectCardType[]>(initialLabProjects);
   const [isFiltering, setIsFiltering] = useState(false);
 
-  // Filter case studies based on current filters
-  const filterCaseStudies = (filters: FilterBarState) => {
+  // Filter lab projects based on current tech stack filter
+  const filterLabProjects = (filters: FilterBarState) => {
     setIsFiltering(true);
 
-    let filtered = initialCaseStudies;
+    let filtered = initialLabProjects;
 
     // Filter by tech stack
     if (filters.techStack) {
-      filtered = filtered.filter((caseStudy) =>
-        caseStudy.techStack.some(
+      filtered = filtered.filter((project) =>
+        project.techStack.some(
           (tech) => tech.slug.current === filters.techStack
         )
       );
     }
 
-    // Filter by role type
-    if (filters.roleType) {
-      filtered = filtered.filter(
-        (caseStudy) => caseStudy.roleType === filters.roleType
-      );
-    }
-
-    setCaseStudies(filtered);
+    setLabProjects(filtered);
     setIsFiltering(false);
   };
 
@@ -75,26 +65,19 @@ export function WorkPageClient({
       params.delete("tech");
     }
 
-    // Update role type param
-    if (filters.roleType) {
-      params.set("role", filters.roleType);
-    } else {
-      params.delete("role");
-    }
-
     // Update URL without page reload
     const queryString = params.toString();
-    const url = queryString ? `/work?${queryString}` : "/work";
+    const url = queryString ? `/labs?${queryString}` : "/labs";
     router.push(url, { scroll: false });
 
     // Apply filters
-    filterCaseStudies(filters);
+    filterLabProjects(filters);
   };
 
-  // Apply initial filters on mount (only once)
+  // Apply initial filter on mount (only once)
   useEffect(() => {
-    if (initialFilters.techStack || initialFilters.roleType) {
-      filterCaseStudies(initialFilters);
+    if (initialFilter) {
+      filterLabProjects({ techStack: initialFilter, roleType: null });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty deps - only run once on mount
@@ -105,27 +88,26 @@ export function WorkPageClient({
       <ScrollReveal delay={0.1}>
         <FilterBar
           techStacks={techStacks}
-          roleTypes={roleTypes}
           onFilterChange={handleFilterChange}
-          initialFilters={initialFilters}
-          showRoleTypes={true}
+          initialFilters={{ techStack: initialFilter, roleType: null }}
+          showRoleTypes={false}
         />
       </ScrollReveal>
 
-      {/* Case Studies Grid */}
+      {/* Lab Projects Grid */}
       {isFiltering ? (
         <LoadingState />
-      ) : caseStudies.length > 0 ? (
+      ) : labProjects.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {caseStudies.map((caseStudy, index) => (
-            <ScrollReveal key={caseStudy._id} delay={0.1 * (index % 3)}>
-              <CaseStudyCard caseStudy={caseStudy} />
+          {labProjects.map((project, index) => (
+            <ScrollReveal key={project._id} delay={0.1 * (index % 3)}>
+              <LabProjectCard project={project} />
             </ScrollReveal>
           ))}
         </div>
       ) : (
         <EmptyState
-          title="No case studies found"
+          title="No lab projects found"
           message="Try adjusting your filters to see more results."
         />
       )}
