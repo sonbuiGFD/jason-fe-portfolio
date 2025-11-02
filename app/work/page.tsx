@@ -65,6 +65,7 @@ export default async function WorkPage({
   const initialFilters = {
     techStack: params.tech || null,
     roleType: params.role || null,
+    tag: null,
   };
 
   return (
@@ -89,7 +90,7 @@ export default async function WorkPage({
           initialCaseStudies={caseStudies}
           techStacks={techStacks}
           roleTypes={ROLE_TYPES}
-          initialFilters={initialFilters}
+          initialFilters={{ ...initialFilters, tag: null }}
         />
       </section>
     </main>

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useTheme } from "./ThemeProvider";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavMenu } from "@/components/navigation/NavMenu";
 import { MobileMenu } from "@/components/navigation/MobileMenu";
+import { SearchModal } from "@/components/navigation/SearchModal";
 
 /**
  * Header Component
@@ -24,6 +25,7 @@ import { MobileMenu } from "@/components/navigation/MobileMenu";
 export function Header() {
   const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -32,6 +34,19 @@ export function Header() {
     { href: "/blog", label: "Blog" },
     { href: "/about", label: "About" },
   ];
+
+  // Global search keyboard shortcut (Cmd+K / Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "k") {
+        event.preventDefault();
+        setSearchModalOpen(true);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <header className="header" role="banner">
@@ -48,6 +63,31 @@ export function Header() {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
+          {/* Search Button */}
+          <button
+            onClick={() => setSearchModalOpen(true)}
+            className="header__search-toggle"
+            aria-label="Open search (Cmd+K)"
+            type="button"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+            <span className="sr-only">Search</span>
+          </button>
+
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
@@ -149,6 +189,12 @@ export function Header() {
         links={navLinks}
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
+      />
+
+      {/* Search Modal */}
+      <SearchModal
+        isOpen={searchModalOpen}
+        onClose={() => setSearchModalOpen(false)}
       />
     </header>
   );

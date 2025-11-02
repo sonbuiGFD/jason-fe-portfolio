@@ -1,14 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { type TechStackPreview, type RoleType } from "@/lib/sanity/types";
+import type {
+  TechStackPreview,
+  RoleType,
+  TagPreview,
+} from "@/lib/sanity/types";
 import { Button } from "@/components/ui/Button";
 
 interface FilterBarProps {
   /**
    * Available tech stacks to filter by
    */
-  techStacks: TechStackPreview[];
+  techStacks?: TechStackPreview[];
+
+  /**
+   * Available tags to filter by (for Blog page)
+   */
+  tags?: TagPreview[];
 
   /**
    * Available role types to filter by
@@ -29,11 +38,22 @@ interface FilterBarProps {
    * Show role type filters (for Work page only)
    */
   showRoleTypes?: boolean;
+
+  /**
+   * Show tech stack filters (default: true)
+   */
+  showTechStacks?: boolean;
+
+  /**
+   * Show tag filters (for Blog page only)
+   */
+  showTags?: boolean;
 }
 
 export interface FilterBarState {
   techStack: string | null; // slug of selected tech stack
   roleType: RoleType | null;
+  tag: string | null; // slug of selected tag
 }
 
 /**
@@ -53,18 +73,27 @@ export interface FilterBarState {
  * ```
  */
 export function FilterBar({
-  techStacks,
+  techStacks = [],
+  tags = [],
   roleTypes = [],
   onFilterChange,
   initialFilters,
   showRoleTypes = false,
+  showTechStacks = true,
+  showTags = false,
 }: FilterBarProps) {
   const [filters, setFilters] = useState<FilterBarState>(
-    initialFilters || { techStack: null, roleType: null }
+    initialFilters || { techStack: null, roleType: null, tag: null }
   );
 
   const handleTechStackChange = (techStackSlug: string | null) => {
     const newFilters = { ...filters, techStack: techStackSlug };
+    setFilters(newFilters);
+    onFilterChange(newFilters);
+  };
+
+  const handleTagChange = (tagSlug: string | null) => {
+    const newFilters = { ...filters, tag: tagSlug };
     setFilters(newFilters);
     onFilterChange(newFilters);
   };
@@ -76,35 +105,60 @@ export function FilterBar({
   };
 
   const handleClearFilters = () => {
-    const newFilters = { techStack: null, roleType: null };
+    const newFilters = { techStack: null, roleType: null, tag: null };
     setFilters(newFilters);
     onFilterChange(newFilters);
   };
 
-  const hasActiveFilters = filters.techStack || filters.roleType;
+  const hasActiveFilters = filters.techStack || filters.roleType || filters.tag;
 
   return (
     <div className="filter-bar" role="search" aria-label="Filter content">
       {/* Tech Stack Filter */}
-      <div className="filter-bar__group">
-        <label htmlFor="tech-stack-filter" className="filter-bar__label">
-          Tech Stack
-        </label>
-        <select
-          id="tech-stack-filter"
-          value={filters.techStack || ""}
-          onChange={(e) => handleTechStackChange(e.target.value || null)}
-          className="filter-bar__select"
-          aria-label="Filter by tech stack"
-        >
-          <option value="">All Technologies</option>
-          {techStacks.map((tech) => (
-            <option key={tech._id} value={tech.slug.current}>
-              {tech.name}
-            </option>
-          ))}
-        </select>
-      </div>
+      {showTechStacks && techStacks.length > 0 && (
+        <div className="filter-bar__group">
+          <label htmlFor="tech-stack-filter" className="filter-bar__label">
+            Tech Stack
+          </label>
+          <select
+            id="tech-stack-filter"
+            value={filters.techStack || ""}
+            onChange={(e) => handleTechStackChange(e.target.value || null)}
+            className="filter-bar__select"
+            aria-label="Filter by tech stack"
+          >
+            <option value="">All Technologies</option>
+            {techStacks.map((tech) => (
+              <option key={tech._id} value={tech.slug.current}>
+                {tech.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Tag Filter (Blog page only) */}
+      {showTags && tags.length > 0 && (
+        <div className="filter-bar__group">
+          <label htmlFor="tag-filter" className="filter-bar__label">
+            Topic
+          </label>
+          <select
+            id="tag-filter"
+            value={filters.tag || ""}
+            onChange={(e) => handleTagChange(e.target.value || null)}
+            className="filter-bar__select"
+            aria-label="Filter by topic"
+          >
+            <option value="">All Topics</option>
+            {tags.map((tag) => (
+              <option key={tag._id} value={tag.slug.current}>
+                {tag.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Role Type Filter (Work page only) */}
       {showRoleTypes && roleTypes.length > 0 && (

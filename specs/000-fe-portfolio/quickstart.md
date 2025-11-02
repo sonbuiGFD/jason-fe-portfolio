@@ -219,17 +219,37 @@ Open [http://localhost:3000](http://localhost:3000) to preview.
 
 ### Configure ISR Revalidation Webhook
 
-In Sanity project settings:
+To enable automatic cache invalidation when content is published, configure a Sanity webhook:
 
-1. Go to **API** → **Webhooks**
-2. Create a new webhook:
-   - **Name**: ISR Revalidation
-   - **URL**: `https://yourdomain.com/api/revalidate`
-   - **Dataset**: `production`
-   - **Trigger on**: Create, Update, Delete
-   - **Filter**: `_type in ["workCaseStudy", "labProject", "blogPost"]`
-   - **HTTP method**: POST
-   - **Secret**: (same as `REVALIDATION_SECRET` in `.env.local`)
+1. **In Sanity project settings**:
+
+   - Go to **API** → **Webhooks**
+   - Create a new webhook:
+     - **Name**: ISR Revalidation
+     - **URL**: `https://yourdomain.com/api/revalidate?secret={{secrets.REVALIDATION_SECRET}}&type={{_type}}&slug={{slug.current}}`
+     - **Dataset**: `production`
+     - **Trigger on**: Create, Update, Delete
+     - **Filter**: `_type in ["workCaseStudy", "labProject", "blogPost", "author", "techStack", "tag"]`
+     - **HTTP method**: POST
+     - **Include drafts**: No (only published content)
+
+2. **Add webhook secret to Sanity**:
+
+   - Go to **API** → **Secrets**
+   - Create secret with key `REVALIDATION_SECRET`
+   - Use the same value as in your `.env.local` file
+
+3. **Test the webhook**:
+
+   ```bash
+   # Test locally (development)
+   curl -X POST "http://localhost:3000/api/revalidate?secret=YOUR_SECRET&type=blogPost&slug=test-post"
+   
+   # Test production
+   curl -X POST "https://yourdomain.com/api/revalidate?secret=YOUR_SECRET&type=blogPost&slug=test-post"
+   ```
+
+**How it works**: When content is published in Sanity Studio, the webhook automatically invalidates relevant pages using Next.js ISR revalidation, ensuring users see updated content within seconds without manual cache clearing.
 
 ---
 

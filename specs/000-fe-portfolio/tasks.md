@@ -172,22 +172,22 @@ Next.js App Router structure:
 
 ### Implementation for User Story 3
 
-- [ ] T082 [P] [US3] Create Blog index page in app/blog/page.tsx with SSG/ISR, fetch published blog posts sorted by date with pagination (first 20 items)
-- [ ] T083 [P] [US3] Create BlogPostCard component in components/content/BlogPostCard.tsx with title, summary, tags, reading time, publish date, author
-- [ ] T084 [US3] Implement client-side filtering logic in Blog index page to filter by tags, reuse FilterBar component adapted for tags
-- [ ] T085 [US3] Add empty state handling in Blog index when no posts match filters or search query
-- [ ] T086 [US3] Create Blog post detail page in app/blog/[slug]/page.tsx with SSG/ISR, fetch single blog post by slug
-- [ ] T087 [US3] Implement generateStaticParams in app/blog/[slug]/page.tsx to pre-render all published blog post paths
-- [ ] T088 [US3] Render blog post detail page with full content, author info, publish/update dates, reading time, tags
-- [ ] T089 [US3] Integrate CodeBlock component for code snippets in blog post content with language-specific syntax highlighting
-- [ ] T090 [US3] Add OpenGraph and Twitter Card metadata generation in generateMetadata for blog post detail pages
-- [ ] T091 [P] [US3] Create RelatedPosts component in components/content/RelatedPosts.tsx to fetch and display related posts by shared tags
-- [ ] T092 [US3] Integrate RelatedPosts component at end of blog post detail page with GROQ query for related content
-- [ ] T093 [US3] Build search index generation script in lib/search/build-index.ts to query all published content and create JSON index per search-index-schema.json
-- [ ] T094 [P] [US3] Implement client-side search logic in lib/search/search-client.ts using Fuse.js with fuzzy matching (threshold: 0.3, weighted keys)
-- [ ] T095 [P] [US3] Create SearchModal component in components/navigation/SearchModal.tsx with input, results grouping by type, keyboard navigation
-- [ ] T096 [US3] Create search API route in app/api/search/route.ts to serve pre-built search index as JSON
-- [ ] T097 [US3] Integrate SearchModal into Header component with global keyboard shortcut (Cmd+K / Ctrl+K) and click trigger
+- [x] T082 [P] [US3] Create Blog index page in app/blog/page.tsx with SSG/ISR, fetch published blog posts sorted by date with pagination (first 20 items)
+- [x] T083 [P] [US3] Create BlogPostCard component in components/content/BlogPostCard.tsx with title, summary, tags, reading time, publish date, author
+- [x] T084 [US3] Implement client-side filtering logic in Blog index page to filter by tags, reuse FilterBar component adapted for tags
+- [x] T085 [US3] Add empty state handling in Blog index when no posts match filters or search query
+- [x] T086 [US3] Create Blog post detail page in app/blog/[slug]/page.tsx with SSG/ISR, fetch single blog post by slug
+- [x] T087 [US3] Implement generateStaticParams in app/blog/[slug]/page.tsx to pre-render all published blog post paths
+- [x] T088 [US3] Render blog post detail page with full content, author info, publish/update dates, reading time, tags
+- [x] T089 [US3] Integrate CodeBlock component for code snippets in blog post content with language-specific syntax highlighting
+- [x] T090 [US3] Add OpenGraph and Twitter Card metadata generation in generateMetadata for blog post detail pages
+- [x] T091 [P] [US3] Create RelatedPosts component in components/content/RelatedPosts.tsx to fetch and display related posts by shared tags
+- [x] T092 [US3] Integrate RelatedPosts component at end of blog post detail page with GROQ query for related content
+- [x] T093 [US3] Build search index generation script in lib/search/build-index.ts to query all published content and create JSON index per search-index-schema.json
+- [x] T094 [P] [US3] Implement client-side search logic in lib/search/search-client.ts using Fuse.js with fuzzy matching (threshold: 0.3, weighted keys)
+- [x] T095 [P] [US3] Create SearchModal component in components/navigation/SearchModal.tsx with input, results grouping by type, keyboard navigation
+- [x] T096 [US3] Create search API route in app/api/search/route.ts to serve pre-built search index as JSON
+- [x] T097 [US3] Integrate SearchModal into Header component with global keyboard shortcut (Cmd+K / Ctrl+K) and click trigger
 - [ ] T098 [US3] Test Blog index filtering manually (apply tag filter, verify results, check URL updates)
 - [ ] T099 [US3] Test blog post detail page manually (verify content renders, reading time accurate, related posts appear)
 - [ ] T100 [US3] Test search functionality manually (search for "React", verify grouped results, test keyboard navigation)
@@ -205,15 +205,15 @@ Next.js App Router structure:
 
 ### Implementation for User Story 5
 
-- [ ] T102 [US5] Implement status filtering in all GROQ queries in lib/sanity/queries.ts to exclude draft and review content (status == "published")
-- [ ] T103 [P] [US5] Create ISR revalidation API route in app/api/revalidate/route.ts with secret validation and tag-based revalidation
-- [ ] T104 [US5] Configure ISR revalidation in Work index and detail pages with revalidate option (e.g., 3600 seconds)
-- [ ] T105 [US5] Configure ISR revalidation in Labs index and detail pages with revalidate option
-- [ ] T106 [US5] Configure ISR revalidation in Blog index and detail pages with revalidate option
-- [ ] T107 [US5] Add 404 handling for unpublished content in detail pages (redirect to 404 or show "not found" message)
-- [ ] T108 [US5] Create custom 404 page in app/not-found.tsx with branded messaging and navigation links
-- [ ] T109 [US5] Test content governance manually in Sanity Studio (create draft content, verify not visible, publish, verify visible after revalidation)
-- [ ] T110 [US5] Document Sanity webhook configuration in quickstart.md for ISR revalidation on content publish
+- [x] T102 [US5] Implement status filtering in all GROQ queries in lib/sanity/queries.ts to exclude draft and review content (status == "published")
+- [x] T103 [P] [US5] Create ISR revalidation API route in app/api/revalidate/route.ts with secret validation and tag-based revalidation
+- [x] T104 [US5] Configure ISR revalidation in Work index and detail pages with revalidate option (e.g., 3600 seconds)
+- [x] T105 [US5] Configure ISR revalidation in Labs index and detail pages with revalidate option
+- [x] T106 [US5] Configure ISR revalidation in Blog index and detail pages with revalidate option
+- [x] T107 [US5] Add 404 handling for unpublished content in detail pages (redirect to 404 or show "not found" message)
+- [x] T108 [US5] Create custom 404 page in app/not-found.tsx with branded messaging and navigation links
+- [ ] T109 [US5] Test content governance manually in Sanity Studio (create draft content, verify not visible, publish, verify visible after revalidation) - **MANUAL TESTING REQUIRED**
+- [x] T110 [US5] Document Sanity webhook configuration in quickstart.md for ISR revalidation on content publish
 
 **Checkpoint**: Content workflow is secure - only published content visible on public site, draft/review content hidden
 

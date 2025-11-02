@@ -107,8 +107,10 @@ export function WorkPageClient({
           techStacks={techStacks}
           roleTypes={roleTypes}
           onFilterChange={handleFilterChange}
-          initialFilters={initialFilters}
+          initialFilters={{ ...initialFilters, tag: null }}
           showRoleTypes={true}
+          showTechStacks={true}
+          showTags={false}
         />
       </ScrollReveal>
 
