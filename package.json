@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:search-index": "tsx lib/search/build-index.ts",
+    "build:search-index": "tsx src/lib/search/build-index.ts",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
