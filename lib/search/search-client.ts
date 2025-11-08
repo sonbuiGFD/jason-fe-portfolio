@@ -6,7 +6,7 @@ import type {
   SearchQuery,
   SearchResult,
   SearchResponse,
-} from "../sanity/types";
+} from "../../specs/000-fe-portfolio/contracts/api-types";
 
 /**
  * Extended search query interface for internal use
@@ -62,8 +62,8 @@ export class SearchClient {
    */
   async initialize(): Promise<void> {
     try {
-      // Fetch search index from API
-      const response = await fetch("/api/search");
+      // Fetch search index from static JSON file
+      const response = await fetch("/search-index.json");
       if (!response.ok) {
         throw new Error(`Failed to fetch search index: ${response.statusText}`);
       }

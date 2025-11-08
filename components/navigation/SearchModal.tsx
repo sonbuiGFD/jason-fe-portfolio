@@ -3,8 +3,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
-import { getSearchClient } from "@/lib/search/search-client";
-import type { SearchResult } from "@/lib/sanity/types";
+import { useSearch } from "@/lib/search/search-client";
+import type {
+  SearchResult,
+  SearchResponse,
+} from "@/specs/000-fe-portfolio/contracts/api-types";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -23,17 +26,17 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [searchClient] = useState(() => getSearchClient());
+  const { search, initialize, isReady } = useSearch();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Initialize search client on mount
   useEffect(() => {
-    if (isOpen && !searchClient.isReady()) {
-      searchClient.initialize().catch(console.error);
+    if (isOpen && !isReady()) {
+      initialize().catch(console.error);
     }
-  }, [isOpen, searchClient]);
+  }, [isOpen, isReady, initialize]);
 
   // Focus input when modal opens
   useEffect(() => {
@@ -45,17 +48,17 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   // Handle search
   const handleSearch = useCallback(
     async (searchQuery: string) => {
-      if (!searchQuery.trim() || !searchClient.isReady()) {
+      if (!searchQuery.trim() || !isReady()) {
         setResults([]);
         return;
       }
 
       setIsSearching(true);
       try {
-        const response = await searchClient.search({
-          query: searchQuery,
-          limit: 10,
-        });
+        const response = (await search(
+          searchQuery,
+          10
+        )) as unknown as SearchResponse;
         setResults(response.results);
         setSelectedIndex(0);
       } catch (error) {
@@ -65,7 +68,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         setIsSearching(false);
       }
     },
-    [searchClient]
+    [search, isReady]
   );
 
   // Debounced search effect

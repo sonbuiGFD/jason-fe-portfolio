@@ -1,0 +1,43 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build search index
+        run: npm run build:search-index
+
+      - name: Build Next.js app
+        run: npm run build
+
+      - name: Test build output
+        run: |
+          # Check that all expected files exist
+          ls -la out/ || echo "No out directory (expected for non-static builds)"
+          ls -la public/search-index.json
