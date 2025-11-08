@@ -1,33 +1,22 @@
-import { type Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { sanityClient } from "@/lib/sanity/client";
-import {
-  getCaseStudyBySlugQuery,
-  getAllCaseStudySlugsQuery,
-} from "@/lib/sanity/queries";
-import { type WorkCaseStudyDetail } from "@/lib/sanity/types";
-import { urlForImage } from "@/lib/sanity/image-builder";
-import { formatDate } from "@/lib/utils/date-formatter";
-import { ScrollReveal } from "@/components/animations/ScrollReveal";
-import { RichText } from "@/components/content/RichText";
-import { Button } from "@/components/ui/Button";
 import Link from "next/link";
-
-// ISR: Revalidate every hour (3600 seconds)
-export const revalidate = 3600;
-
-interface WorkDetailPageProps {
-  params: Promise<{
-    slug: string;
-  }>;
-}
+import { ScrollReveal } from "@/components/animations/ScrollReveal";
+import { formatDate } from "@/lib/utils/date-formatter";
+import {
+  getContentBySlug,
+  getAllSlugs,
+  CONTENT_TYPES,
+  type WorkFrontmatter,
+} from "@/lib/markdown";
 
 /**
  * Generate static paths for all published case studies
+ * Pre-renders case study detail pages at build time
  */
 export async function generateStaticParams() {
-  const slugs = await sanityClient.fetch<string[]>(getAllCaseStudySlugsQuery);
+  const slugs = getAllSlugs(CONTENT_TYPES.WORK);
 
   return slugs.map((slug) => ({
     slug,
@@ -35,16 +24,20 @@ export async function generateStaticParams() {
 }
 
 /**
- * Generate metadata for case study detail page
+ * Generate metadata for case study detail pages
+ * Includes OpenGraph and Twitter Card data for social sharing
  */
 export async function generateMetadata({
   params,
-}: WorkDetailPageProps): Promise<Metadata> {
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
 
-  const caseStudy = await sanityClient.fetch<WorkCaseStudyDetail>(
-    getCaseStudyBySlugQuery,
-    { slug }
+  const caseStudy = await getContentBySlug<WorkFrontmatter>(
+    CONTENT_TYPES.WORK,
+    slug,
+    false
   );
 
   if (!caseStudy) {
@@ -53,35 +46,25 @@ export async function generateMetadata({
     };
   }
 
-  const heroImageUrl = caseStudy.heroImage
-    ? urlForImage(caseStudy.heroImage).width(1200).height(630).url()
-    : undefined;
+  const ogImage = caseStudy.frontmatter.heroImage;
 
   return {
-    title: `${caseStudy.title} | Work | Jason Bui`,
-    description: caseStudy.summary,
+    title: `${caseStudy.frontmatter.title} | Work | Jason Bui`,
+    description: caseStudy.frontmatter.summary,
     openGraph: {
-      title: caseStudy.title,
-      description: caseStudy.summary,
+      title: caseStudy.frontmatter.title,
+      description: caseStudy.frontmatter.summary,
       type: "article",
-      publishedTime: caseStudy.publishedAt,
-      authors: [caseStudy.author.name],
-      images: heroImageUrl
-        ? [
-            {
-              url: heroImageUrl,
-              width: 1200,
-              height: 630,
-              alt: caseStudy.title,
-            },
-          ]
-        : [],
+      url: `/work/${slug}`,
+      publishedTime: caseStudy.frontmatter.date,
+      authors: ["Jason Bui"],
+      images: ogImage ? [{ url: ogImage }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
-      title: caseStudy.title,
-      description: caseStudy.summary,
-      images: heroImageUrl ? [heroImageUrl] : [],
+      title: caseStudy.frontmatter.title,
+      description: caseStudy.frontmatter.summary,
+      images: ogImage ? [ogImage] : undefined,
     },
   };
 }
@@ -89,24 +72,27 @@ export async function generateMetadata({
 /**
  * Work Case Study Detail Page
  *
- * Displays a single work case study with full details.
+ * Displays full case study content with metadata and structured sections.
+ * Uses SSG for fully static pages.
  */
-export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
+export default async function WorkDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
 
-  const caseStudy = await sanityClient.fetch<WorkCaseStudyDetail>(
-    getCaseStudyBySlugQuery,
-    { slug }
+  // Fetch case study data with HTML content
+  const caseStudy = await getContentBySlug<WorkFrontmatter>(
+    CONTENT_TYPES.WORK,
+    slug,
+    true
   );
 
-  // Return 404 if case study not found or not published
+  // Return 404 if case study not found
   if (!caseStudy) {
     notFound();
   }
-
-  const heroImageUrl = caseStudy.heroImage
-    ? urlForImage(caseStudy.heroImage).width(1600).url()
-    : null;
 
   return (
     <main role="main">
@@ -124,19 +110,21 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
 
         <ScrollReveal delay={0.1}>
           <div className="mb-6">
-            <span className="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary bg-primary/10 rounded">
-              {caseStudy.roleType}
-            </span>
+            {caseStudy.frontmatter.role && (
+              <span className="inline-block px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary bg-primary/10 rounded">
+                {caseStudy.frontmatter.role}
+              </span>
+            )}
           </div>
         </ScrollReveal>
 
         <ScrollReveal delay={0.2}>
-          <h1 className="heading-1 mb-6">{caseStudy.title}</h1>
+          <h1 className="heading-1 mb-6">{caseStudy.frontmatter.title}</h1>
         </ScrollReveal>
 
         <ScrollReveal delay={0.3}>
           <p className="body-large text-muted max-w-3xl mb-8">
-            {caseStudy.summary}
+            {caseStudy.frontmatter.summary}
           </p>
         </ScrollReveal>
 
@@ -145,52 +133,58 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
           <div className="flex flex-wrap items-center gap-4 mb-8 text-sm text-muted">
             <div className="flex items-center gap-2">
               <span className="font-semibold">Author:</span>
-              <span>
-                {caseStudy.author.name}, {caseStudy.author.role}
-              </span>
+              <span>Jason Bui, Frontend Engineer</span>
             </div>
             <span aria-hidden="true">•</span>
-            {caseStudy.publishedAt && (
-              <time dateTime={caseStudy.publishedAt}>
-                {formatDate(caseStudy.publishedAt)}
-              </time>
-            )}
+            <time dateTime={caseStudy.frontmatter.date}>
+              {formatDate(caseStudy.frontmatter.date)}
+            </time>
           </div>
         </ScrollReveal>
 
         {/* Tech Stack Tags */}
-        {caseStudy.techStack && caseStudy.techStack.length > 0 && (
-          <ScrollReveal delay={0.5}>
-            <div className="flex flex-wrap gap-2 mb-12">
-              {caseStudy.techStack.map((tech) => (
-                <span
-                  key={tech._id}
-                  className="px-3 py-1 text-sm font-medium text-foreground bg-muted rounded border-l-2"
-                  style={{
-                    borderLeftColor:
-                      tech.category === "language"
-                        ? "#3b82f6"
-                        : tech.category === "framework"
-                          ? "#8b5cf6"
-                          : tech.category === "tool"
-                            ? "#10b981"
-                            : "#f59e0b",
-                  }}
-                >
-                  {tech.name}
-                </span>
-              ))}
-            </div>
-          </ScrollReveal>
-        )}
+        {caseStudy.frontmatter.techStack &&
+          caseStudy.frontmatter.techStack.length > 0 && (
+            <ScrollReveal delay={0.5}>
+              <div className="flex flex-wrap gap-2 mb-12">
+                {caseStudy.frontmatter.techStack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="px-3 py-1 text-sm font-medium text-foreground bg-muted rounded border-l-2 border-l-primary"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </ScrollReveal>
+          )}
+
+        {/* Impact Metrics */}
+        {caseStudy.frontmatter.impact &&
+          caseStudy.frontmatter.impact.length > 0 && (
+            <ScrollReveal delay={0.6}>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-12">
+                {caseStudy.frontmatter.impact.map((impact, index) => (
+                  <div
+                    key={index}
+                    className="text-center p-4 bg-muted rounded-lg"
+                  >
+                    <p className="text-lg font-semibold text-primary">
+                      {impact.metric}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
+          )}
 
         {/* Hero Image */}
-        {heroImageUrl && (
-          <ScrollReveal delay={0.6}>
+        {caseStudy.frontmatter.heroImage && (
+          <ScrollReveal delay={0.7}>
             <div className="relative w-full aspect-video rounded-lg overflow-hidden mb-16">
               <Image
-                src={heroImageUrl}
-                alt={`${caseStudy.title} - Hero Image`}
+                src={caseStudy.frontmatter.heroImage}
+                alt={`${caseStudy.frontmatter.title} - Hero Image`}
                 fill
                 priority
                 className="object-cover"
@@ -200,55 +194,25 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
         )}
       </section>
 
-      {/* Content Sections */}
+      {/* Content */}
       <section className="container-custom py-12">
-        {/* Problem Statement */}
-        {caseStudy.problemStatement && (
-          <ScrollReveal>
-            <article className="mb-16">
-              <h2 className="heading-2 mb-6">Problem Statement</h2>
-              <RichText content={caseStudy.problemStatement} />
-            </article>
-          </ScrollReveal>
-        )}
-
-        {/* Approach */}
-        {caseStudy.approach && (
-          <ScrollReveal delay={0.1}>
-            <article className="mb-16">
-              <h2 className="heading-2 mb-6">Approach</h2>
-              <RichText content={caseStudy.approach} />
-            </article>
-          </ScrollReveal>
-        )}
-
-        {/* Architecture */}
-        {caseStudy.architecture && (
-          <ScrollReveal delay={0.2}>
-            <article className="mb-16">
-              <h2 className="heading-2 mb-6">Architecture</h2>
-              <RichText content={caseStudy.architecture} />
-            </article>
-          </ScrollReveal>
-        )}
-
-        {/* Impact */}
-        {caseStudy.impact && (
-          <ScrollReveal delay={0.3}>
-            <article className="mb-16">
-              <h2 className="heading-2 mb-6">Impact</h2>
-              <RichText content={caseStudy.impact} />
-            </article>
-          </ScrollReveal>
-        )}
+        <ScrollReveal>
+          <div
+            className="max-w-4xl mx-auto prose prose-lg dark:prose-invert"
+            dangerouslySetInnerHTML={{ __html: caseStudy.htmlContent || "" }}
+          />
+        </ScrollReveal>
       </section>
 
       {/* Navigation */}
       <section className="container-custom py-12 border-t border-border">
         <ScrollReveal>
           <div className="flex justify-center">
-            <Link href="/work">
-              <Button variant="secondary">View More Case Studies</Button>
+            <Link
+              href="/work"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              View More Case Studies
             </Link>
           </div>
         </ScrollReveal>

@@ -1,10 +1,10 @@
 import Image from "next/image";
-import { type LabProjectCard as LabProjectCardType } from "@/lib/sanity/types";
+import { type ContentItem, type LabFrontmatter } from "@/lib/markdown";
 import { Card } from "@/components/ui/Card";
 import { formatDate } from "@/lib/utils/date-formatter";
 
 interface LabProjectCardProps {
-  project: LabProjectCardType;
+  project: ContentItem<LabFrontmatter>;
 }
 
 /**
@@ -20,29 +20,27 @@ interface LabProjectCardProps {
  */
 export function LabProjectCard({ project }: LabProjectCardProps) {
   const {
-    title,
     slug,
-    description,
-    thumbnailUrl,
-    techStack,
-    demoUrl,
-    repositoryUrl,
-    publishedAt,
+    frontmatter: {
+      title,
+      summary,
+      techStack,
+      thumbnail,
+      demoUrl,
+      repoUrl,
+      date,
+    },
   } = project;
 
-  const hasLinks = demoUrl || repositoryUrl;
+  const hasLinks = demoUrl || repoUrl;
 
   return (
-    <Card
-      href={`/labs/${slug.current}`}
-      as="article"
-      className="lab-project-card"
-    >
+    <Card href={`/labs/${slug}`} as="article" className="lab-project-card">
       {/* Thumbnail Image */}
-      {thumbnailUrl && (
+      {thumbnail && (
         <div className="lab-project-card__image">
           <Image
-            src={thumbnailUrl}
+            src={thumbnail}
             alt={`${title} - Project Thumbnail`}
             width={800}
             height={600}
@@ -62,7 +60,7 @@ export function LabProjectCard({ project }: LabProjectCardProps) {
                 Live Demo
               </span>
             )}
-            {repositoryUrl && (
+            {repoUrl && (
               <span className="lab-project-card__badges__badge lab-project-card__badges__badge__repo">
                 Repository
               </span>
@@ -74,18 +72,14 @@ export function LabProjectCard({ project }: LabProjectCardProps) {
         <h3 className="lab-project-card__title">{title}</h3>
 
         {/* Description */}
-        <p className="lab-project-card__description">{description}</p>
+        <p className="lab-project-card__description">{summary}</p>
 
         {/* Tech Stack Tags */}
         {techStack && techStack.length > 0 && (
           <div className="lab-project-card__tags">
             {techStack.map((tech) => (
-              <span
-                key={tech._id}
-                className="lab-project-card__tags__tag"
-                data-category={tech.category}
-              >
-                {tech.name}
+              <span key={tech} className="lab-project-card__tags__tag">
+                {tech}
               </span>
             ))}
           </div>
@@ -94,10 +88,10 @@ export function LabProjectCard({ project }: LabProjectCardProps) {
         {/* Published Date */}
         <time
           className="lab-project-card__date"
-          dateTime={publishedAt}
-          aria-label={`Published ${formatDate(publishedAt)}`}
+          dateTime={date}
+          aria-label={`Published ${formatDate(date)}`}
         >
-          {formatDate(publishedAt)}
+          {formatDate(date)}
         </time>
       </div>
     </Card>

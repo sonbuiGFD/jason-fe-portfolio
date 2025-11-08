@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import { sanityClient } from "@/lib/sanity/client";
-import { getAllBlogPostsQuery, getAllTagsQuery } from "@/lib/sanity/queries";
-import type { BlogPostCard, TagPreview } from "@/lib/sanity/types";
+import Link from "next/link";
+import Image from "next/image";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
-import { BlogPageClient } from "./BlogPageClient";
+import Pagination from "@/components/ui/Pagination";
+import {
+  getPaginatedContent,
+  CONTENT_TYPES,
+  type BlogFrontmatter,
+} from "@/lib/markdown";
+import { formatDate } from "@/lib/utils/date-formatter";
 
 export const metadata: Metadata = {
   title: "Blog | Jason Bui - Frontend Engineer Portfolio",
@@ -24,34 +29,30 @@ export const metadata: Metadata = {
   },
 };
 
-// ISR: Revalidate every hour (3600 seconds)
-export const revalidate = 3600;
+const ITEMS_PER_PAGE = 15;
 
 /**
  * Blog Index Page
  *
- * Displays all published blog posts with SSG/ISR.
- * Includes filtering by tags and search functionality.
+ * Displays all published blog posts with pagination.
+ * Fully static generation with no revalidation.
  */
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tag?: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   // Await searchParams (Next.js 15+ requirement)
   const params = await searchParams;
+  const currentPage = parseInt(params.page || "1", 10);
 
-  // Fetch blog posts (first 20 items - pagination will be added in Phase 10)
-  const blogPosts = await sanityClient.fetch<BlogPostCard[]>(
-    getAllBlogPostsQuery,
-    { offset: 0, limit: 20 }
-  );
-
-  // Fetch all tags for filter options
-  const tags = await sanityClient.fetch<TagPreview[]>(getAllTagsQuery);
-
-  // Parse filter from URL params
-  const initialFilter = params.tag || null;
+  // Fetch paginated blog posts from markdown
+  const { items: blogPosts, pagination } =
+    await getPaginatedContent<BlogFrontmatter>(
+      CONTENT_TYPES.BLOG,
+      currentPage,
+      ITEMS_PER_PAGE
+    );
 
   return (
     <main role="main">
@@ -69,12 +70,92 @@ export default async function BlogPage({
           </p>
         </ScrollReveal>
 
-        {/* Client Component for Filtering and Display */}
-        <BlogPageClient
-          initialBlogPosts={blogPosts}
-          tags={tags}
-          initialFilter={initialFilter}
-        />
+        {/* Blog Posts Grid */}
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {blogPosts.map((post, index) => (
+            <ScrollReveal key={post.slug} delay={0.1 * (index % 3)}>
+              <article className="card__container h-full">
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="block h-full hover:opacity-80 transition-opacity"
+                >
+                  {/* Hero Image */}
+                  {post.frontmatter.heroImage && (
+                    <div className="relative w-full aspect-video mb-4 rounded-lg overflow-hidden bg-muted">
+                      <Image
+                        src={post.frontmatter.heroImage}
+                        alt={post.frontmatter.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div className="space-y-3">
+                    {/* Tags */}
+                    {post.frontmatter.tags &&
+                      post.frontmatter.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {post.frontmatter.tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag}
+                              className="text-xs px-2 py-1 rounded-full bg-muted text-foreground"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                    {/* Title */}
+                    <h2 className="heading-3">{post.frontmatter.title}</h2>
+
+                    {/* Summary */}
+                    <p className="body-small text-muted line-clamp-3">
+                      {post.frontmatter.summary}
+                    </p>
+
+                    {/* Metadata */}
+                    <div className="flex items-center gap-3 text-sm text-muted">
+                      <time dateTime={post.frontmatter.date}>
+                        {formatDate(post.frontmatter.date)}
+                      </time>
+                      {post.readingTime && (
+                        <>
+                          <span>•</span>
+                          <span>{post.readingTime} min read</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              </article>
+            </ScrollReveal>
+          ))}
+        </div>
+
+        {/* Empty State */}
+        {blogPosts.length === 0 && (
+          <ScrollReveal delay={0.3}>
+            <div className="text-center py-20">
+              <p className="body-large text-muted">
+                No blog posts found. Check back soon for new content!
+              </p>
+            </div>
+          </ScrollReveal>
+        )}
+
+        {/* Pagination */}
+        {pagination.totalPages > 1 && (
+          <ScrollReveal delay={0.4}>
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              basePath="/blog"
+            />
+          </ScrollReveal>
+        )}
       </section>
     </main>
   );

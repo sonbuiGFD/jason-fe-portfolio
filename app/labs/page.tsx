@@ -1,12 +1,11 @@
 import { type Metadata } from "next";
-import { sanityClient } from "@/lib/sanity/client";
-import {
-  getAllLabProjectsQuery,
-  getAllTechStacksQuery,
-} from "@/lib/sanity/queries";
-import { type LabProjectCard, type TechStackPreview } from "@/lib/sanity/types";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { LabsPageClient } from "./LabsPageClient";
+import {
+  getPaginatedContent,
+  CONTENT_TYPES,
+  type LabFrontmatter,
+} from "@/lib/markdown";
 
 export const metadata: Metadata = {
   title: "Side-Project Labs | Jason Bui - Frontend Engineer Portfolio",
@@ -27,36 +26,31 @@ export const metadata: Metadata = {
   },
 };
 
-// ISR: Revalidate every hour (3600 seconds)
-export const revalidate = 3600;
-
 /**
  * Labs Index Page
  *
- * Displays all published lab projects with SSG/ISR.
- * Includes filtering by tech stack.
+ * Displays all published lab projects with static generation and pagination.
+ * No filtering functionality - replaced with pagination for better performance.
  */
 export default async function LabsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tech?: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   // Await searchParams (Next.js 15+ requirement)
   const params = await searchParams;
 
-  // Fetch lab projects (first 20 items - pagination will be added in Phase 10)
-  const labProjects = await sanityClient.fetch<LabProjectCard[]>(
-    getAllLabProjectsQuery,
-    { offset: 0, limit: 20 }
-  );
+  // Parse page from URL params (default to 1)
+  const currentPage = parseInt(params.page || "1", 10);
+  const itemsPerPage = 12; // Labs: 12 items per page
 
-  // Fetch all tech stacks for filter options
-  const techStacks = await sanityClient.fetch<TechStackPreview[]>(
-    getAllTechStacksQuery
-  );
-
-  // Parse filter from URL params
-  const initialFilter = params.tech || null;
+  // Fetch paginated lab projects
+  const { items: labProjects, pagination } =
+    await getPaginatedContent<LabFrontmatter>(
+      CONTENT_TYPES.LABS,
+      currentPage,
+      itemsPerPage
+    );
 
   return (
     <main role="main">
@@ -70,16 +64,17 @@ export default async function LabsPage({
           <p className="body-large text-muted max-w-3xl mb-12">
             My experimental playground for exploring new technologies,
             techniques, and ideas. Each project represents a learning journey
-            with documented goals and key insights. Filter by technology to
-            discover specific explorations.
+            with documented goals and key insights. Browse through my technical
+            explorations and experiments.
           </p>
         </ScrollReveal>
 
-        {/* Client Component for Filtering and Display */}
+        {/* Client Component for Display and Pagination */}
         <LabsPageClient
           initialLabProjects={labProjects}
-          techStacks={techStacks}
-          initialFilter={initialFilter}
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
         />
       </section>
     </main>

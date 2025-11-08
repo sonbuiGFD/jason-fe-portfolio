@@ -2,8 +2,9 @@
 
 **Feature Branch**: `000-fe-portfolio`  
 **Created**: October 29, 2025  
-**Status**: Draft  
-**Input**: User description: "Create a specification titled 'FE Engineer Portfolio (Next.js + Headless CMS + CDN + TailwindCss + SCSS)'"
+**Updated**: November 8, 2025  
+**Status**: Updated - Markdown-based Architecture  
+**Input**: User description: "Create a specification titled 'FE Engineer Portfolio (Next.js + Markdown + Static Generation + TailwindCss + SCSS)'"
 
 ## Clarifications
 
@@ -16,7 +17,9 @@
 - Q: How should the site behave during CMS outages or extended maintenance? → A: Serve stale cached content with staleness indicator (maintains functionality, informs users)
 - Q: What styling approach should be used? → A: Hybrid approach using both TailwindCSS (utility-first) and SCSS (component-specific styles) with BEM naming conventions using underscores (e.g., `block__element__modifier`)
 - Q: What animation approach should be used for the site? → A: Use Motion (Framer Motion) for declarative animations including scroll-triggered animations that reveal elements when they enter the viewport
-- Q: What headless CMS and CDN should be used? → A: Use Sanity as both the headless CMS for content management and Sanity's image CDN for optimized image delivery
+- Q: What content management approach should be used? → A: Use markdown files stored in the repository with frontmatter for metadata; all pages rendered as fully static at build time with no revalidation
+- Q: How should content updates trigger site rebuilds? → A: Use GitHub Actions to automatically rebuild and deploy the site when content changes are pushed to the repository
+- Q: Should content have filtering capabilities? → A: No filtering needed for blog, labs, or work sections; implement pagination instead for better performance and simpler architecture
 - Q: What testing strategy should be adopted for fast development? → A: Keep testing simple with no unit tests initially; focus on manual testing and end-to-end scenarios to maximize development speed
 - Q: What browsers and devices should be supported? → A: Support modern browsers (Chrome, Firefox, Safari, Edge - latest 2 versions) with responsive design across mobile, tablet, and desktop devices
 
@@ -32,11 +35,11 @@ A recruiter visits the portfolio to quickly assess the candidate's frontend engi
 
 **Acceptance Scenarios**:
 
-1. **Given** a recruiter lands on the home page, **When** they click "Work Experience" in navigation, **Then** they see a filterable index of case studies with clear titles, tech stacks, and impact summaries
-2. **Given** the recruiter is on the Work Experience index, **When** they apply a filter (e.g., "React" or "Lead Engineer"), **Then** only matching case studies appear and URL updates to reflect the filter
-3. **Given** a filtered view with no matches, **When** no case studies match the criteria, **Then** a helpful empty state appears with suggestions to clear filters or try alternatives
+1. **Given** a recruiter lands on the home page, **When** they click "Work Experience" in navigation, **Then** they see a paginated index of case studies with clear titles, tech stacks, and impact summaries
+2. **Given** the recruiter is on the Work Experience index with multiple pages, **When** they click "Next Page" or a page number, **Then** the next set of case studies loads and URL updates to reflect the page number
+3. **Given** the recruiter is on a page beyond the first, **When** they want to go back, **Then** pagination controls show "Previous Page" and direct page number links
 4. **Given** the recruiter clicks a case study card, **When** the detail page loads, **Then** they see a structured narrative with problem statement, approach, architecture decisions, impact metrics, and tech stack
-5. **Given** the recruiter is reading a case study, **When** they scroll through the page, **Then** all images load from CDN with appropriate loading states and the page maintains WCAG 2.2 AA contrast and keyboard navigation
+5. **Given** the recruiter is reading a case study, **When** they scroll through the page, **Then** all images load with appropriate loading states and the page maintains WCAG 2.2 AA contrast and keyboard navigation
 
 ---
 
@@ -68,9 +71,9 @@ A learner browses the blog to find tutorials, insights, or thought leadership on
 
 **Acceptance Scenarios**:
 
-1. **Given** a learner visits the Blog index, **When** the page loads, **Then** they see a list of blog posts sorted by publish date with titles, summaries, tags, and estimated reading time
+1. **Given** a learner visits the Blog index, **When** the page loads, **Then** they see a paginated list of blog posts sorted by publish date with titles, summaries, tags, and estimated reading time
 2. **Given** the learner wants to find specific content, **When** they enter a search query (e.g., "accessibility"), **Then** posts matching the query appear and empty state shows helpful suggestions if no matches found
-3. **Given** the learner wants to browse by topic, **When** they click a tag (e.g., "CSS"), **Then** only posts with that tag appear and the URL updates to reflect the filter
+3. **Given** the learner is viewing a paginated blog list, **When** they click "Next Page", **Then** the next set of blog posts loads and URL updates to reflect the page number
 4. **Given** the learner clicks a blog post, **When** the detail page loads, **Then** they see the full article with proper typography, code syntax highlighting, images, author info, and publish date
 5. **Given** the learner finishes reading a post, **When** they scroll to the end, **Then** they see related posts based on tags and clear navigation back to the blog index
 
@@ -96,21 +99,21 @@ Any visitor uses global navigation, search, and responsive design to access cont
 
 ---
 
-### User Story 5 - Content Governance and Editorial Workflow (Priority: P2)
+### User Story 5 - Content Management and Publishing Workflow (Priority: P2)
 
-A content author (the portfolio owner) manages content through the headless CMS with statuses (draft, review, published), versioning, and controlled publishing, ensuring only approved content appears on the public site.
+A content author (the portfolio owner) manages content through markdown files in the repository with Git version control, creating and editing content locally, ensuring only committed content appears on the public site after automated builds.
 
-**Why this priority**: Critical for maintaining content quality and preventing accidental publication of incomplete work, but doesn't directly impact visitor experience if executed correctly behind the scenes.
+**Why this priority**: Critical for maintaining content quality and leveraging Git's version control capabilities, but doesn't directly impact visitor experience if executed correctly. Simpler than CMS-based workflows.
 
-**Independent Test**: Can be tested by creating a blog post in draft status, verifying it doesn't appear on the public site, changing status to published, and confirming it appears. Delivers value by enabling safe content management.
+**Independent Test**: Can be tested by creating a new markdown file in a draft branch, verifying it doesn't appear on the public site, merging to main branch, and confirming the site rebuilds and publishes the new content. Delivers value by enabling version-controlled content management.
 
 **Acceptance Scenarios**:
 
-1. **Given** a content item is in "draft" status, **When** a visitor navigates to the relevant index page, **Then** the draft content does not appear in listings or search results
-2. **Given** a content item is in "review" status, **When** a visitor tries to access it via direct URL, **Then** they see a 404 or "content not found" message
-3. **Given** a content item is in "published" status, **When** a visitor navigates to the relevant index or searches for it, **Then** the content appears and is accessible
-4. **Given** a published content item is updated, **When** the author saves changes, **Then** the CMS creates a new version and the public site reflects the latest published version after revalidation
-5. **Given** a content item has multiple versions, **When** the author views version history in the CMS, **Then** they see timestamps, author, and can revert to previous versions if needed
+1. **Given** a content author creates a new markdown file in a feature branch, **When** they push the branch to GitHub, **Then** the content does not appear on the public site until merged to main
+2. **Given** a content author wants to preview changes, **When** they run the dev server locally, **Then** they can see all markdown files rendered including drafts and works-in-progress
+3. **Given** a content author merges changes to the main branch, **When** the merge completes, **Then** GitHub Actions automatically triggers a build and deployment
+4. **Given** a published content item is updated, **When** the author commits and pushes changes to main, **Then** the site rebuilds and reflects the latest version
+5. **Given** a content author needs to revert changes, **When** they use Git to revert commits, **Then** the previous version is restored and the site rebuilds with the reverted content
 
 ---
 
@@ -184,11 +187,13 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 - **Animation Performance**: All animations MUST maintain 60fps performance and not negatively impact Core Web Vitals scores (CLS ≤ 0.1). Animations MUST use GPU-accelerated properties (transform, opacity) where possible.
 - **Animation Patterns**: Common animation patterns include: hero section entrance, staggered card reveals on content indices, smooth page transitions, interactive hover states, and loading state animations.
 
-### Content Management & CDN Constraints
+### Content Management & Static Generation Constraints
 
-- **Headless CMS**: System MUST use Sanity as the headless CMS for all content management, including case studies, lab projects, blog posts, and author information. Sanity provides structured content modeling, version control, and editorial workflow capabilities.
-- **Image CDN**: System MUST use Sanity's built-in image CDN (Sanity Image API) for all image delivery, leveraging automatic optimization, responsive image generation, format conversion (WebP/AVIF), and on-the-fly transformations.
-- **Content API**: System MUST query Sanity content via GROQ (Graph-Relational Object Queries) or Sanity's JavaScript client, enabling efficient content fetching with projection and filtering.
+- **Content Storage**: System MUST use markdown files stored in a `content/` directory within the repository, organized by content type (blog/, work/, labs/). Each markdown file MUST contain YAML frontmatter for metadata (title, date, tags, author, etc.) and markdown content for the body.
+- **Static Site Generation**: System MUST use Next.js static generation (SSG) with `generateStaticParams` to pre-render all pages at build time. NO incremental static regeneration (ISR) or on-demand revalidation is required.
+- **Build Triggers**: System MUST rebuild and redeploy the entire site via GitHub Actions when changes are pushed to the main branch, ensuring content updates are reflected after deployment completes.
+- **Image Optimization**: System MUST use Next.js Image Optimization for all images, leveraging automatic responsive image generation, format conversion (WebP/AVIF), and optimization. Images should be stored in `public/images/` or referenced via URLs with proper optimization.
+- **Markdown Processing**: System MUST use gray-matter for parsing frontmatter and a markdown processor (remark/rehype ecosystem) for converting markdown to HTML with support for syntax highlighting, custom components, and responsive images.
 - **SVG Assets**: System MUST use SVGR (@svgr/webpack) to enable importing SVG files as React components, allowing for dynamic styling, props passing, and better performance compared to inline SVG or image tags. This enables clean component composition with icons and illustrations.
 
 ### Testing & Quality Constraints
@@ -216,46 +221,48 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 - **FR-006**: System MUST meet WCAG 2.2 AA accessibility standards, including color contrast ratios (4.5:1 for normal text, 3:1 for large text), semantic HTML, and ARIA labels where appropriate
 - **FR-007**: System MUST provide a global search feature using client-side search with a pre-built index that queries across Work Experience case studies, Side-Project Labs, and Blog posts (title, summary, tags, content), returning results grouped by content type with instant feedback
 - **FR-008**: System MUST display a footer on all pages containing social media links (GitHub, LinkedIn, Twitter), copyright notice, and accessibility statement
-- **FR-009**: System MUST implement loading states (skeletons, spinners) for all content that requires fetching from Sanity CMS or Sanity Image CDN
-- **FR-010**: System MUST display contextual empty states with helpful messaging when content listings are empty due to filters or lack of published content
-- **FR-011**: System MUST handle error states gracefully, displaying user-friendly messages when Sanity CMS queries fail, images don't load from Sanity Image CDN, or pages are not found
-- **FR-011a**: System MUST serve stale cached content during Sanity CMS outages or maintenance windows, displaying a subtle, non-intrusive staleness indicator banner (e.g., "Content may be outdated - last updated [timestamp]") to maintain site functionality while informing users of potential data freshness issues
+- **FR-009**: System MUST implement loading states (skeletons, spinners) for client-side features like search and page transitions, though most content is pre-rendered
+- **FR-010**: System MUST display contextual empty states with helpful messaging when content listings are empty due to lack of published content
+- **FR-011**: System MUST handle error states gracefully, displaying user-friendly messages when images don't load or pages are not found (404)
 - **FR-011b**: System MUST implement scroll-triggered animations using Motion (Framer Motion) that reveal content elements (cards, images, text blocks) when they enter the viewport with smooth fade-in, slide-in, or scale-in transitions
 - **FR-011c**: System MUST respect user accessibility preferences by disabling or reducing animations when `prefers-reduced-motion` is enabled in the user's system settings
 
 **Work Experience**:
 
-- **FR-012**: System MUST provide a Work Experience index page listing all published case studies with title, summary, tech stack tags, impact metrics, and thumbnail image
-- **FR-013**: System MUST allow visitors to filter case studies by role type (e.g., Lead Engineer, Senior Engineer) and tech stack (e.g., React, TypeScript, Next.js)
-- **FR-014**: System MUST update the URL with filter parameters (e.g., `/work?tech=react&role=lead`) and support direct access via filtered URLs
+- **FR-012**: System MUST provide a Work Experience index page with pagination, listing case studies with title, summary, tech stack tags, impact metrics, and thumbnail image (default 10 items per page)
+- **FR-012a**: System MUST implement pagination controls with Previous/Next buttons and page numbers, updating the URL with page parameters (e.g., `/work?page=2`)
+- **FR-013**: [REMOVED - Filtering not required]
+- **FR-014**: [REMOVED - Filtering not required]
 - **FR-015**: System MUST provide a case study detail page accessible via clean slug-based URLs (e.g., `/work/modernizing-checkout-flow`) with sections for problem statement, approach, architecture decisions, impact metrics, tech stack, and visual assets (diagrams, screenshots)
 - **FR-016**: System MUST render case study detail pages with proper semantic structure (headings, sections, lists) and accessible image alt text
-- **FR-016a**: System MUST generate unique, human-readable slugs for each case study based on the title, ensuring URL uniqueness and SEO-friendly paths
+- **FR-016a**: System MUST derive slugs from markdown filenames (e.g., `modernizing-checkout-flow.md` → `/work/modernizing-checkout-flow`), ensuring URL uniqueness and SEO-friendly paths
 
 **Side-Project Labs**:
 
-- **FR-017**: System MUST provide a Side-Project Labs index page displaying all published lab projects in a responsive grid with thumbnails, titles, tech stacks, and brief descriptions
-- **FR-018**: System MUST allow visitors to filter lab projects by tech stack or project type
+- **FR-017**: System MUST provide a Side-Project Labs index page with pagination, displaying lab projects in a responsive grid with thumbnails, titles, tech stacks, and brief descriptions (default 12 items per page)
+- **FR-017a**: System MUST implement pagination controls with Previous/Next buttons and page numbers, updating the URL with page parameters (e.g., `/labs?page=2`)
+- **FR-018**: [REMOVED - Filtering not required]
 - **FR-019**: System MUST provide a lab project detail page accessible via clean slug-based URLs (e.g., `/labs/css-grid-explorer`) with sections for experiment goal, approach, key learnings, tech stack, and links to live demos or repositories (if public)
 - **FR-020**: System MUST render lab project detail pages with proper semantic structure and accessible visual assets
-- **FR-020a**: System MUST generate unique, human-readable slugs for each lab project based on the title, ensuring URL uniqueness and SEO-friendly paths
+- **FR-020a**: System MUST derive slugs from markdown filenames (e.g., `css-grid-explorer.md` → `/labs/css-grid-explorer`), ensuring URL uniqueness and SEO-friendly paths
 
 **Blog**:
 
-- **FR-021**: System MUST provide a Blog index page listing all published posts sorted by publish date (newest first) with title, summary, author info, tags, estimated reading time, and publication date
-- **FR-022**: System MUST allow visitors to filter blog posts by tags (e.g., "Performance", "React", "Accessibility")
+- **FR-021**: System MUST provide a Blog index page with pagination, listing posts sorted by publish date (newest first) with title, summary, author info, tags, estimated reading time, and publication date (default 15 items per page)
+- **FR-021a**: System MUST implement pagination controls with Previous/Next buttons and page numbers, updating the URL with page parameters (e.g., `/blog?page=2`)
+- **FR-022**: [REMOVED - Filtering not required]
 - **FR-023**: System MUST provide a blog post detail page accessible via clean slug-based URLs (e.g., `/blog/react-performance-tips`) with full article content, syntax-highlighted code snippets, images, author information, publication date, and related posts
-- **FR-024**: System MUST calculate and display estimated reading time for each blog post based on word count
-- **FR-024a**: System MUST generate unique, human-readable slugs for each blog post based on the title, ensuring URL uniqueness and SEO-friendly paths
-- **FR-025**: System MUST support code syntax highlighting for common languages (JavaScript, TypeScript, CSS, HTML, JSON) within blog posts
+- **FR-024**: System MUST calculate and display estimated reading time for each blog post based on word count from markdown content
+- **FR-024a**: System MUST derive slugs from markdown filenames (e.g., `react-performance-tips.md` → `/blog/react-performance-tips`), ensuring URL uniqueness and SEO-friendly paths
+- **FR-025**: System MUST support code syntax highlighting for common languages (JavaScript, TypeScript, CSS, HTML, JSON) within blog posts using remark/rehype plugins
 - **FR-026**: System MUST provide a "Copy Code" button for code blocks that copies content to clipboard and shows confirmation feedback
-- **FR-027**: System MUST display related blog posts at the end of each post based on shared tags
+- **FR-027**: System MUST display related blog posts at the end of each post based on shared tags (maximum 3 related posts)
 
-**Content Governance**:
+**Content Management**:
 
-- **FR-028**: System MUST only display content with "published" status on public pages; content with "draft" or "review" status MUST NOT appear in listings or be accessible via direct URLs
-- **FR-029**: System MUST support content versioning in Sanity CMS, allowing authors to view version history and revert to previous versions using Sanity's built-in revision system
-- **FR-030**: System MUST revalidate public pages when content is published, updated, or unpublished in Sanity to reflect changes within a reasonable time (e.g., on-demand revalidation via webhook triggers or short cache TTL)
+- **FR-028**: System MUST only include markdown files from the `content/` directory in the build; work-in-progress files can be excluded by keeping them in separate branches or using draft prefixes in filenames (e.g., `_draft-post-name.md`)
+- **FR-029**: System MUST leverage Git version control for content versioning, allowing authors to view commit history and revert to previous versions using standard Git commands
+- **FR-030**: System MUST automatically rebuild and redeploy the site via GitHub Actions when changes are pushed to the main branch, ensuring content updates are published after successful deployment
 
 **SEO and Discovery**:
 
@@ -274,13 +281,13 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 
 ### Key Entities
 
-- **Author**: Represents the portfolio owner or content creator with attributes like name, bio, profile image, social media links, and role/title
-- **WorkCaseStudy**: Represents a detailed case study of professional work with attributes including title, unique slug (URL-safe identifier), summary, problem statement, approach narrative, architecture decisions, impact metrics, tech stack tags, role type, hero image, and publication date. Related to Author and TechStack entities.
-- **LabProject**: Represents a side project or experiment with attributes including title, unique slug (URL-safe identifier), description, experiment goal, key learnings, tech stack tags, thumbnail image, links to demo/repository, and publication date. Related to Author and TechStack entities.
-- **BlogPost**: Represents a blog article with attributes including title, unique slug (URL-safe identifier), summary, full content (Markdown or rich text), author, publication date, last updated date, tags, estimated reading time, and hero image. Related to Author and Tag entities.
-- **TechStack**: Represents a technology, framework, or tool (e.g., React, TypeScript, Next.js) used in case studies, lab projects, or blog posts. Used for filtering and categorization. Has attributes like name, slug (URL-safe identifier), logo/icon, and optional description.
-- **Tag**: Represents a topic or category for blog posts (e.g., "Performance", "Accessibility", "CSS"). Used for filtering and grouping content. Has attributes like name, slug, and optional description.
-- **ContentStatus**: Represents the editorial workflow state of content items (draft, review, published). Determines visibility on public pages.
+- **Author**: Represents the portfolio owner or content creator with attributes stored in markdown frontmatter like name, bio, profile image, social media links, and role/title
+- **WorkCaseStudy**: Represents a detailed case study markdown file (`content/work/*.md`) with frontmatter including title, slug (derived from filename), summary, date, tech stack tags, role type, and hero image; markdown content includes problem statement, approach narrative, architecture decisions, and impact metrics
+- **LabProject**: Represents a side project markdown file (`content/labs/*.md`) with frontmatter including title, slug (derived from filename), description, date, tech stack tags, thumbnail image, demo/repo links; markdown content includes experiment goal, approach, and key learnings
+- **BlogPost**: Represents a blog article markdown file (`content/blog/*.md`) with frontmatter including title, slug (derived from filename), summary, author, date, tags, and hero image; markdown content is the full article with code snippets and images
+- **TechStack**: Array of strings in frontmatter representing technologies, frameworks, or tools (e.g., ["React", "TypeScript", "Next.js"]) used in case studies, lab projects, or blog posts
+- **Tag**: Array of strings in frontmatter representing topics or categories for content (e.g., ["Performance", "Accessibility", "CSS"]) used for grouping and related content suggestions
+- **Pagination**: Represents pagination state with attributes including current page number, total pages, items per page, and total items count
 
 ## Success Criteria _(mandatory)_
 
@@ -294,7 +301,7 @@ The portfolio owner tracks visitor engagement through telemetry events (page vie
 - **SC-006**: Social share previews (OpenGraph, Twitter Cards) display correctly on LinkedIn, Twitter, and Facebook when case study or blog post links are shared
 - **SC-007**: The sitemap.xml and RSS feed validate successfully using official validator tools (e.g., XML Sitemap Validator, W3C Feed Validator)
 - **SC-008**: Empty states and error messages are displayed within 500ms when applicable, providing clear guidance without technical jargon
-- **SC-009**: Filtering on Work Experience or Blog indices returns results or empty states within 300ms without full page reloads
+- **SC-009**: Pagination navigation on Work Experience, Labs, or Blog indices loads instantly (fully static pages) without client-side data fetching
 - **SC-010**: Portfolio visits increase by 40% within 3 months of launch, measured via telemetry page view events
 - **SC-011**: Inbound contact/interview requests (measured via resume downloads or contact form submissions) increase by 25% within 3 months of launch
 - **SC-012**: Average session duration is ≥ 4 minutes, indicating visitors engage with multiple pages or read content thoroughly
