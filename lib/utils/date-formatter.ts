@@ -11,6 +11,7 @@
  * @returns Formatted date string
  */
 export function formatDate(dateString: string | Date): string {
+  if (!dateString) return "";
   const date =
     typeof dateString === "string" ? new Date(dateString) : dateString;
 
