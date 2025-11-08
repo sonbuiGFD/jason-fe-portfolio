@@ -3,7 +3,6 @@ import tseslint from "typescript-eslint";
 import nextPlugin from "@next/eslint-plugin-next";
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
-// @ts-expect-error - no types available for eslint-plugin-jsx-a11y
 import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
 import prettierConfig from "eslint-config-prettier";
 
@@ -71,6 +70,12 @@ export default tseslint.config(
   // Custom configuration
   {
     files: ["**/*.{js,mjs,cjs,jsx,ts,tsx}"],
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: process.cwd(),
+        // project: ["./tsconfig.json"], // Temporarily disabled to avoid conflicts
+      },
+    },
     plugins: {
       "@next/next": nextPlugin,
       react: reactPlugin,

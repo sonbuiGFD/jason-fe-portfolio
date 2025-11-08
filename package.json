@@ -1,7 +1,7 @@
 {
   "name": "jason-fe-portfolio",
   "version": "1.0.0",
-  "description": "FE portfolio nextjs sanity and cdn",
+  "description": "Modern static portfolio website built with Next.js, TypeScript, and TailwindCSS featuring markdown-based content management",
   "private": true,
   "type": "module",
   "scripts": {
@@ -52,6 +52,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.38.0",
     "@svgr/webpack": "^8.1.0",
+    "@types/eslint-plugin-jsx-a11y": "^6.10.1",
     "@types/node": "^24.9.2",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",

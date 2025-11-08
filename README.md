@@ -4,13 +4,14 @@ A modern, static portfolio website built with Next.js 16, TypeScript, and Tailwi
 
 ## 🚀 Features
 
-- **Static Site Generation**: Fast, SEO-friendly pages generated at build time
-- **Markdown Content**: Easy-to-write content using Markdown with frontmatter
+- **Static Site Generation**: Fast, SEO-friendly pages generated at build time with no external dependencies
+- **Markdown Content**: Easy-to-write content using Markdown with frontmatter, version controlled in Git
 - **Search Functionality**: Client-side fuzzy search across all content
 - **Responsive Design**: Mobile-first design with TailwindCSS
 - **Dark Mode Support**: Automatic theme switching
 - **Performance Optimized**: Code splitting, image optimization, and lazy loading
 - **TypeScript**: Full type safety throughout the application
+- **No Runtime Costs**: Fully static, no database or API calls
 
 ## 🛠️ Tech Stack
 
@@ -24,7 +25,7 @@ A modern, static portfolio website built with Next.js 16, TypeScript, and Tailwi
 
 ## 📁 Project Structure
 
-```
+```text
 ├── app/                    # Next.js App Router pages
 │   ├── about/             # About page
 │   ├── blog/              # Blog listing and detail pages
@@ -158,7 +159,7 @@ npm run build:search-index  # Build search index
 
 ## 📦 Deployment
 
-This project is configured for deployment to platforms that support Next.js:
+This project uses static site generation (SSG) and can be deployed to any platform that supports static files or Next.js:
 
 ### Vercel (Recommended)
 
@@ -166,9 +167,16 @@ This project is configured for deployment to platforms that support Next.js:
 2. Vercel will automatically detect Next.js and configure the build
 3. The build process will:
    - Install dependencies
+   - Generate static pages from markdown content
    - Build the search index
-   - Generate static pages
    - Deploy the application
+
+### Netlify
+
+1. Connect your GitHub repository to Netlify
+2. Set the build command: `npm run build`
+3. Set the publish directory: `.next` (or `out` for static export)
+4. Add environment variables in Netlify dashboard
 
 ### Other Platforms
 
@@ -180,6 +188,61 @@ npm run build
 
 # The build output will be in the `.next` directory
 ```
+
+### Content Updates
+
+Since this is a static site, content updates require rebuilding:
+
+1. Edit markdown files in the `content/` directory
+2. Commit and push changes to trigger automatic deployment
+3. The build process will regenerate all pages with new content
+
+## 🔄 Content Management Workflow
+
+### Adding New Content
+
+1. Create a markdown file in the appropriate directory:
+
+   ```bash
+   touch content/blog/my-new-post.md
+   ```
+
+2. Add frontmatter and content:
+
+   ```markdown
+   ---
+   title: "My New Post"
+   date: "2025-11-08"
+   author: "Jason Bui"
+   summary: "Brief description"
+   tags: ["Tag1", "Tag2"]
+   heroImage: "/images/blog/hero.jpg"
+   ---
+
+   # Your content here...
+   ```
+
+3. Add images to `/public/images/`
+
+4. Test locally:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Commit and push:
+
+   ```bash
+   git add content/blog/my-new-post.md public/images/blog/hero.jpg
+   git commit -m "Add new blog post: My New Post"
+   git push origin main
+   ```
+
+6. GitHub Actions automatically rebuilds and deploys
+
+### Drafts
+
+Keep drafts in separate branches or prefix with underscore: `_draft-post-name.md` (auto-ignored)
 
 ## 🎨 Styling Guidelines
 
@@ -223,11 +286,12 @@ Uses CSS custom properties defined in `styles/themes.scss`:
 Create a `.env.local` file for local development:
 
 ```env
-# Next.js
-NODE_ENV=development
+# Site Configuration
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_NAME=Jason Bui - Frontend Engineer
 
-# Optional: Revalidation secret for ISR (if using webhooks)
-REVALIDATION_SECRET=your-secret-here
+# Analytics (optional - Vercel Analytics or Plausible)
+NEXT_PUBLIC_VERCEL_ANALYTICS_ID=
 ```
 
 ### TailwindCSS
