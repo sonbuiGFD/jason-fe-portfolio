@@ -1,0 +1,42 @@
+# ESLint ignore patterns
+
+# Node.js
+node_modules/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Generated files
+*.d.ts
+next-env.d.ts
+*.tsbuildinfo
+
+# Coverage
+coverage/
+
+# Logs
+*.log
+
+# Dependencies
+.pnp/
+.pnp.js
+
+# Environment files
+.env*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sanity
+.sanity/
+
+# Public assets (generated)
+public/search-index.json

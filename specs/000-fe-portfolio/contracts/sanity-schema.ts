@@ -1,11 +1,12 @@
 /**
- * Sanity Schema Contract
+ * Sanity CMS Schema Definitions
  *
- * This file defines the Sanity CMS schema for the portfolio website.
- * It serves as a contract for content structure and validation rules.
+ * This file contains TypeScript-based schema definitions for Sanity CMS.
+ * These schemas define the content types, fields, and validation rules
+ * for the FE Engineer Portfolio.
  *
- * Implementation note: This schema should be placed in the Sanity Studio
- * project under `sanity/schemas/` directory.
+ * Installation: These schemas should be placed in `sanity/schemas/` directory
+ * and imported in `sanity.config.ts`
  */
 
 import { defineField, defineType } from "sanity";
@@ -23,88 +24,7 @@ export const authorSchema = defineType({
       name: "name",
       title: "Name",
       type: "string",
-      validation: (Rule) => Rule.required().min(2).max(50),
-    }),
-    defineField({
-      name: "role",
-      title: "Role/Title",
-      type: "string",
       validation: (Rule) => Rule.required().min(2).max(100),
-    }),
-    defineField({
-      name: "bio",
-      title: "Bio",
-      type: "array",
-      of: [{ type: "block" }],
-      validation: (Rule) => Rule.required(),
-      description: "Professional bio (200-500 words)",
-    }),
-    defineField({
-      name: "profilePhoto",
-      title: "Profile Photo",
-      type: "image",
-      options: {
-        hotspot: true,
-      },
-      validation: (Rule) => Rule.required(),
-      description: "Square aspect ratio, minimum 400x400px",
-    }),
-    defineField({
-      name: "socialLinks",
-      title: "Social Links",
-      type: "object",
-      fields: [
-        {
-          name: "linkedin",
-          title: "LinkedIn URL",
-          type: "url",
-          validation: (Rule) => Rule.required().uri({ scheme: ["https"] }),
-        },
-        {
-          name: "github",
-          title: "GitHub URL",
-          type: "url",
-          validation: (Rule) => Rule.required().uri({ scheme: ["https"] }),
-        },
-        {
-          name: "twitter",
-          title: "Twitter URL",
-          type: "url",
-          validation: (Rule) => Rule.uri({ scheme: ["https"] }),
-        },
-      ],
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "resumeUrl",
-      title: "Resume URL",
-      type: "url",
-      validation: (Rule) =>
-        Rule.required()
-          .uri({ scheme: ["https"] })
-          .custom((url) => {
-            if (!url) return true;
-            return url.endsWith(".pdf") || "URL must point to a PDF file";
-          }),
-      description: "URL to hosted PDF resume",
-    }),
-  ],
-});
-
-// ============================================================================
-// Tag Schema
-// ============================================================================
-
-export const tagSchema = defineType({
-  name: "tag",
-  title: "Tag",
-  type: "document",
-  fields: [
-    defineField({
-      name: "name",
-      title: "Name",
-      type: "string",
-      validation: (Rule) => Rule.required().min(2).max(30),
     }),
     defineField({
       name: "slug",
@@ -117,24 +37,66 @@ export const tagSchema = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "description",
-      title: "Description",
+      name: "role",
+      title: "Role",
       type: "string",
-      validation: (Rule) => Rule.min(50).max(200),
+      validation: (Rule) => Rule.required().max(100),
     }),
     defineField({
-      name: "category",
-      title: "Category",
-      type: "string",
+      name: "bio",
+      title: "Bio",
+      type: "text",
+      rows: 4,
+      validation: (Rule) => Rule.required().min(50).max(500),
+    }),
+    defineField({
+      name: "profileImage",
+      title: "Profile Image",
+      type: "image",
       options: {
-        list: [
-          { title: "Technology", value: "technology" },
-          { title: "Topic", value: "topic" },
-          { title: "Skill", value: "skill" },
-        ],
+        hotspot: true,
       },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "email",
+      title: "Email",
+      type: "string",
+      validation: (Rule) => Rule.email(),
+    }),
+    defineField({
+      name: "socialLinks",
+      title: "Social Links",
+      type: "object",
+      fields: [
+        defineField({
+          name: "github",
+          title: "GitHub",
+          type: "url",
+          validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
+        }),
+        defineField({
+          name: "linkedin",
+          title: "LinkedIn",
+          type: "url",
+          validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
+        }),
+        defineField({
+          name: "twitter",
+          title: "Twitter",
+          type: "url",
+          validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
+        }),
+      ],
     }),
   ],
+  preview: {
+    select: {
+      title: "name",
+      subtitle: "role",
+      media: "profileImage",
+    },
+  },
 });
 
 // ============================================================================
@@ -173,19 +135,74 @@ export const techStackSchema = defineType({
           { title: "Tool", value: "tool" },
           { title: "Platform", value: "platform" },
         ],
+        layout: "radio",
       },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "logo",
-      title: "Logo",
+      name: "icon",
+      title: "Icon",
       type: "image",
       options: {
         hotspot: true,
       },
-      description: "SVG preferred, square aspect ratio",
+    }),
+    defineField({
+      name: "description",
+      title: "Description",
+      type: "text",
+      rows: 2,
+      validation: (Rule) => Rule.max(200),
     }),
   ],
+  preview: {
+    select: {
+      title: "name",
+      subtitle: "category",
+      media: "icon",
+    },
+  },
+});
+
+// ============================================================================
+// Tag Schema
+// ============================================================================
+
+export const tagSchema = defineType({
+  name: "tag",
+  title: "Tag",
+  type: "document",
+  fields: [
+    defineField({
+      name: "name",
+      title: "Name",
+      type: "string",
+      validation: (Rule) => Rule.required().min(2).max(50),
+    }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      options: {
+        source: "name",
+        maxLength: 96,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "description",
+      title: "Description",
+      type: "text",
+      rows: 2,
+      validation: (Rule) => Rule.max(200),
+    }),
+  ],
+  preview: {
+    select: {
+      title: "name",
+      subtitle: "description",
+    },
+  },
 });
 
 // ============================================================================
@@ -201,7 +218,7 @@ export const workCaseStudySchema = defineType({
       name: "title",
       title: "Title",
       type: "string",
-      validation: (Rule) => Rule.required().min(5).max(80),
+      validation: (Rule) => Rule.required().min(5).max(100),
     }),
     defineField({
       name: "slug",
@@ -210,49 +227,15 @@ export const workCaseStudySchema = defineType({
       options: {
         source: "title",
         maxLength: 96,
-        // Custom slug generation with numeric suffix for duplicates
-        slugify: (input) => {
-          const base = input
-            .toLowerCase()
-            .replace(/\s+/g, "-")
-            .replace(/[^\w-]+/g, "");
-          return base;
-        },
       },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "company",
-      title: "Company",
-      type: "string",
-      validation: (Rule) => Rule.required().min(2).max(50),
-    }),
-    defineField({
-      name: "role",
-      title: "Role",
-      type: "string",
-      validation: (Rule) => Rule.required().min(2).max(50),
-      description: 'e.g., "Lead Frontend Engineer", "Senior IC"',
-    }),
-    defineField({
-      name: "publishStatus",
-      title: "Publish Status",
-      type: "string",
-      options: {
-        list: [
-          { title: "Draft", value: "draft" },
-          { title: "Published", value: "published" },
-          { title: "Archived", value: "archived" },
-        ],
-      },
-      initialValue: "draft",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "publishDate",
-      title: "Publish Date",
-      type: "datetime",
-      validation: (Rule) => Rule.required(),
+      name: "summary",
+      title: "Summary",
+      type: "text",
+      rows: 3,
+      validation: (Rule) => Rule.required().min(50).max(300),
     }),
     defineField({
       name: "heroImage",
@@ -261,24 +244,14 @@ export const workCaseStudySchema = defineType({
       options: {
         hotspot: true,
       },
-      fields: [
-        {
-          name: "alt",
-          type: "string",
-          title: "Alt Text",
-          validation: (Rule) => Rule.required(),
-        },
-      ],
       validation: (Rule) => Rule.required(),
-      description: "Aspect ratio 16:9, minimum 1200x675px",
     }),
     defineField({
-      name: "challenge",
-      title: "Challenge",
+      name: "problemStatement",
+      title: "Problem Statement",
       type: "array",
       of: [{ type: "block" }],
       validation: (Rule) => Rule.required(),
-      description: "Describe the problem (100-300 words)",
     }),
     defineField({
       name: "approach",
@@ -287,72 +260,30 @@ export const workCaseStudySchema = defineType({
       of: [
         { type: "block" },
         {
-          type: "code",
-          options: {
-            language: "typescript",
-            languageAlternatives: [
-              { title: "JavaScript", value: "javascript" },
-              { title: "TypeScript", value: "typescript" },
-              { title: "CSS", value: "css" },
-              { title: "HTML", value: "html" },
-            ],
-          },
+          type: "image",
+          options: { hotspot: true },
         },
       ],
       validation: (Rule) => Rule.required(),
-      description: "Describe technical solution (300-800 words)",
+    }),
+    defineField({
+      name: "architecture",
+      title: "Architecture",
+      type: "array",
+      of: [
+        { type: "block" },
+        {
+          type: "image",
+          options: { hotspot: true },
+        },
+      ],
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "impact",
       title: "Impact",
-      type: "object",
-      fields: [
-        {
-          name: "metrics",
-          title: "Metrics",
-          type: "array",
-          of: [
-            {
-              type: "object",
-              fields: [
-                {
-                  name: "label",
-                  type: "string",
-                  title: "Label",
-                  validation: (Rule) => Rule.required(),
-                },
-                {
-                  name: "before",
-                  type: "string",
-                  title: "Before",
-                  validation: (Rule) => Rule.required(),
-                },
-                {
-                  name: "after",
-                  type: "string",
-                  title: "After",
-                  validation: (Rule) => Rule.required(),
-                },
-                {
-                  name: "improvement",
-                  type: "string",
-                  title: "Improvement",
-                  validation: (Rule) => Rule.required(),
-                },
-              ],
-            },
-          ],
-          validation: (Rule) => Rule.required().min(1).max(5),
-        },
-        {
-          name: "narrative",
-          title: "Narrative",
-          type: "array",
-          of: [{ type: "block" }],
-          validation: (Rule) => Rule.required(),
-          description: "Summarize impact (100-200 words)",
-        },
-      ],
+      type: "array",
+      of: [{ type: "block" }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -360,70 +291,55 @@ export const workCaseStudySchema = defineType({
       title: "Tech Stack",
       type: "array",
       of: [{ type: "reference", to: [{ type: "techStack" }] }],
-      validation: (Rule) => Rule.required().min(3).max(10),
+      validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
-      name: "roleDetails",
-      title: "Role & Responsibilities",
-      type: "array",
-      of: [{ type: "block" }],
+      name: "roleType",
+      title: "Role Type",
+      type: "string",
+      options: {
+        list: [
+          { title: "Lead Engineer", value: "Lead Engineer" },
+          { title: "Senior Engineer", value: "Senior Engineer" },
+          { title: "Engineer", value: "Engineer" },
+        ],
+        layout: "radio",
+      },
       validation: (Rule) => Rule.required(),
-      description: "Describe your role (100-300 words)",
     }),
     defineField({
-      name: "visuals",
-      title: "Visuals",
-      type: "array",
-      of: [
-        {
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            {
-              name: "alt",
-              type: "string",
-              title: "Alt Text",
-              validation: (Rule) => Rule.required(),
-            },
-            {
-              name: "caption",
-              type: "string",
-              title: "Caption",
-            },
-          ],
-        },
-      ],
-      validation: (Rule) => Rule.max(8),
-      description: "Screenshots, diagrams (0-8 items)",
+      name: "status",
+      title: "Status",
+      type: "string",
+      options: {
+        list: [
+          { title: "Draft", value: "draft" },
+          { title: "Review", value: "review" },
+          { title: "Published", value: "published" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "draft",
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "tags",
-      title: "Tags",
-      type: "array",
-      of: [{ type: "reference", to: [{ type: "tag" }] }],
-      validation: (Rule) => Rule.required().min(2).max(8),
+      name: "author",
+      title: "Author",
+      type: "reference",
+      to: [{ type: "author" }],
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "relatedProjects",
-      title: "Related Projects",
-      type: "array",
-      of: [{ type: "reference", to: [{ type: "labProject" }] }],
-      validation: (Rule) => Rule.max(3),
+      name: "publishedAt",
+      title: "Published At",
+      type: "datetime",
     }),
   ],
   preview: {
     select: {
       title: "title",
-      company: "company",
+      subtitle: "status",
       media: "heroImage",
-      status: "publishStatus",
-    },
-    prepare({ title, company, media, status }) {
-      return {
-        title,
-        subtitle: `${company} - ${status}`,
-        media,
-      };
     },
   },
 });
@@ -441,7 +357,7 @@ export const labProjectSchema = defineType({
       name: "title",
       title: "Title",
       type: "string",
-      validation: (Rule) => Rule.required().min(5).max(80),
+      validation: (Rule) => Rule.required().min(5).max(100),
     }),
     defineField({
       name: "slug",
@@ -450,33 +366,15 @@ export const labProjectSchema = defineType({
       options: {
         source: "title",
         maxLength: 96,
-        slugify: (input) =>
-          input
-            .toLowerCase()
-            .replace(/\s+/g, "-")
-            .replace(/[^\w-]+/g, ""),
       },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "publishStatus",
-      title: "Publish Status",
-      type: "string",
-      options: {
-        list: [
-          { title: "Draft", value: "draft" },
-          { title: "Published", value: "published" },
-          { title: "Archived", value: "archived" },
-        ],
-      },
-      initialValue: "draft",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "publishDate",
-      title: "Publish Date",
-      type: "datetime",
-      validation: (Rule) => Rule.required(),
+      name: "description",
+      title: "Description",
+      type: "text",
+      rows: 3,
+      validation: (Rule) => Rule.required().min(50).max(300),
     }),
     defineField({
       name: "thumbnail",
@@ -485,93 +383,80 @@ export const labProjectSchema = defineType({
       options: {
         hotspot: true,
       },
-      fields: [
-        {
-          name: "alt",
-          type: "string",
-          title: "Alt Text",
-          validation: (Rule) => Rule.required(),
-        },
-      ],
       validation: (Rule) => Rule.required(),
-      description: "Aspect ratio 16:9, minimum 800x450px",
     }),
     defineField({
-      name: "description",
-      title: "Description",
+      name: "experimentGoal",
+      title: "Experiment Goal",
       type: "array",
       of: [{ type: "block" }],
       validation: (Rule) => Rule.required(),
-      description: "What was built (100-300 words)",
     }),
     defineField({
       name: "keyLearnings",
       title: "Key Learnings",
       type: "array",
-      of: [{ type: "block" }],
+      of: [
+        { type: "block" },
+        {
+          type: "image",
+          options: { hotspot: true },
+        },
+      ],
       validation: (Rule) => Rule.required(),
-      description: "What was learned (100-300 words)",
     }),
     defineField({
       name: "techStack",
       title: "Tech Stack",
       type: "array",
       of: [{ type: "reference", to: [{ type: "techStack" }] }],
-      validation: (Rule) => Rule.required().min(2).max(8),
+      validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
-      name: "liveDemoUrl",
-      title: "Live Demo URL",
+      name: "demoUrl",
+      title: "Demo URL",
       type: "url",
-      validation: (Rule) => Rule.uri({ scheme: ["https"] }),
+      validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
     }),
     defineField({
-      name: "sourceCodeUrl",
-      title: "Source Code URL",
+      name: "repositoryUrl",
+      title: "Repository URL",
       type: "url",
-      validation: (Rule) => Rule.uri({ scheme: ["https"] }),
+      validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
     }),
     defineField({
-      name: "maintenanceStatus",
-      title: "Maintenance Status",
+      name: "status",
+      title: "Status",
       type: "string",
       options: {
         list: [
-          { title: "Active", value: "active" },
-          { title: "Archived", value: "archived" },
+          { title: "Draft", value: "draft" },
+          { title: "Review", value: "review" },
+          { title: "Published", value: "published" },
         ],
+        layout: "radio",
       },
-      initialValue: "active",
+      initialValue: "draft",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "tags",
-      title: "Tags",
-      type: "array",
-      of: [{ type: "reference", to: [{ type: "tag" }] }],
-      validation: (Rule) => Rule.required().min(2).max(8),
+      name: "author",
+      title: "Author",
+      type: "reference",
+      to: [{ type: "author" }],
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "relatedBlogPosts",
-      title: "Related Blog Posts",
-      type: "array",
-      of: [{ type: "reference", to: [{ type: "blogPost" }] }],
-      validation: (Rule) => Rule.max(3),
+      name: "publishedAt",
+      title: "Published At",
+      type: "datetime",
     }),
   ],
   preview: {
     select: {
       title: "title",
+      subtitle: "status",
       media: "thumbnail",
-      status: "publishStatus",
-      maintenance: "maintenanceStatus",
-    },
-    prepare({ title, media, status, maintenance }) {
-      return {
-        title,
-        subtitle: `${status} - ${maintenance}`,
-        media,
-      };
     },
   },
 });
@@ -589,7 +474,7 @@ export const blogPostSchema = defineType({
       name: "title",
       title: "Title",
       type: "string",
-      validation: (Rule) => Rule.required().min(5).max(120),
+      validation: (Rule) => Rule.required().min(5).max(150),
     }),
     defineField({
       name: "slug",
@@ -598,32 +483,88 @@ export const blogPostSchema = defineType({
       options: {
         source: "title",
         maxLength: 96,
-        slugify: (input) =>
-          input
-            .toLowerCase()
-            .replace(/\s+/g, "-")
-            .replace(/[^\w-]+/g, ""),
       },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "publishStatus",
-      title: "Publish Status",
+      name: "summary",
+      title: "Summary",
+      type: "text",
+      rows: 3,
+      validation: (Rule) => Rule.required().min(50).max(300),
+    }),
+    defineField({
+      name: "heroImage",
+      title: "Hero Image",
+      type: "image",
+      options: {
+        hotspot: true,
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "content",
+      title: "Content",
+      type: "array",
+      of: [
+        { type: "block" },
+        {
+          type: "image",
+          options: { hotspot: true },
+        },
+        {
+          type: "code",
+          options: {
+            language: "typescript",
+            languageAlternatives: [
+              { title: "TypeScript", value: "typescript" },
+              { title: "JavaScript", value: "javascript" },
+              { title: "JSX", value: "jsx" },
+              { title: "TSX", value: "tsx" },
+              { title: "CSS", value: "css" },
+              { title: "SCSS", value: "scss" },
+              { title: "HTML", value: "html" },
+              { title: "JSON", value: "json" },
+              { title: "Shell", value: "sh" },
+            ],
+          },
+        },
+      ],
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "tags",
+      title: "Tags",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "tag" }] }],
+      validation: (Rule) => Rule.required().min(1),
+    }),
+    defineField({
+      name: "techStack",
+      title: "Tech Stack",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "techStack" }] }],
+    }),
+    defineField({
+      name: "readingTime",
+      title: "Reading Time (minutes)",
+      type: "number",
+      description: "Auto-calculated based on content word count",
+      readOnly: true,
+    }),
+    defineField({
+      name: "status",
+      title: "Status",
       type: "string",
       options: {
         list: [
           { title: "Draft", value: "draft" },
+          { title: "Review", value: "review" },
           { title: "Published", value: "published" },
-          { title: "Archived", value: "archived" },
         ],
+        layout: "radio",
       },
       initialValue: "draft",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "publishDate",
-      title: "Publish Date",
-      type: "datetime",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -634,111 +575,33 @@ export const blogPostSchema = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "heroImage",
-      title: "Hero Image",
-      type: "image",
-      options: {
-        hotspot: true,
-      },
-      fields: [
-        {
-          name: "alt",
-          type: "string",
-          title: "Alt Text",
-          validation: (Rule) => Rule.required(),
-        },
-      ],
-      description: "Optional, aspect ratio 16:9, minimum 1200x675px",
+      name: "publishedAt",
+      title: "Published At",
+      type: "datetime",
     }),
     defineField({
-      name: "excerpt",
-      title: "Excerpt",
-      type: "string",
-      validation: (Rule) => Rule.required().min(100).max(200),
-      description: "Plain text summary (100-200 characters)",
-    }),
-    defineField({
-      name: "content",
-      title: "Content",
-      type: "array",
-      of: [
-        { type: "block" },
-        {
-          type: "code",
-          options: {
-            language: "typescript",
-            languageAlternatives: [
-              { title: "JavaScript", value: "javascript" },
-              { title: "TypeScript", value: "typescript" },
-              { title: "CSS", value: "css" },
-              { title: "HTML", value: "html" },
-              { title: "Python", value: "python" },
-              { title: "Bash", value: "bash" },
-            ],
-          },
-        },
-        {
-          type: "image",
-          options: { hotspot: true },
-          fields: [
-            {
-              name: "alt",
-              type: "string",
-              title: "Alt Text",
-              validation: (Rule) => Rule.required(),
-            },
-            {
-              name: "caption",
-              type: "string",
-              title: "Caption",
-            },
-          ],
-        },
-      ],
-      validation: (Rule) => Rule.required(),
-      description: "500-5000 words",
-    }),
-    defineField({
-      name: "readingTime",
-      title: "Reading Time (minutes)",
-      type: "number",
-      validation: (Rule) => Rule.required().positive().integer(),
-      description: "Calculated from word count (word count / 225)",
-      // Note: This should be auto-calculated in Sanity Studio or on save
-    }),
-    defineField({
-      name: "tags",
-      title: "Tags",
-      type: "array",
-      of: [{ type: "reference", to: [{ type: "tag" }] }],
-      validation: (Rule) => Rule.required().min(1).max(8),
+      name: "updatedAt",
+      title: "Updated At",
+      type: "datetime",
     }),
   ],
   preview: {
     select: {
       title: "title",
-      author: "author.name",
+      subtitle: "status",
       media: "heroImage",
-      status: "publishStatus",
-    },
-    prepare({ title, author, media, status }) {
-      return {
-        title,
-        subtitle: `${author} - ${status}`,
-        media,
-      };
     },
   },
 });
 
 // ============================================================================
-// Schema Export
+// Export all schemas
 // ============================================================================
 
 export const schemaTypes = [
   authorSchema,
-  tagSchema,
   techStackSchema,
+  tagSchema,
   workCaseStudySchema,
   labProjectSchema,
   blogPostSchema,

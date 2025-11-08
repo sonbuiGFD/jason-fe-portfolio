@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Search Index Schema",
+  "description": "JSON schema for the client-side search index used in the FE Engineer Portfolio",
+  "type": "object",
+  "properties": {
+    "workCaseStudies": {
+      "type": "array",
+      "description": "Array of work case studies for search",
+      "items": {
+        "$ref": "#/definitions/SearchIndexItem"
+      }
+    },
+    "labProjects": {
+      "type": "array",
+      "description": "Array of lab projects for search",
+      "items": {
+        "$ref": "#/definitions/SearchIndexItem"
+      }
+    },
+    "blogPosts": {
+      "type": "array",
+      "description": "Array of blog posts for search",
+      "items": {
+        "$ref": "#/definitions/SearchIndexItem"
+      }
+    }
+  },
+  "required": ["workCaseStudies", "labProjects", "blogPosts"],
+  "additionalProperties": false,
+  "definitions": {
+    "SearchIndexItem": {
+      "type": "object",
+      "description": "A single searchable item in the index",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Sanity document ID"
+        },
+        "type": {
+          "type": "string",
+          "description": "Content type",
+          "enum": ["work", "lab", "blog"]
+        },
+        "title": {
+          "type": "string",
+          "description": "Content title (searchable)",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "description": "Absolute URL path to content detail page",
+          "pattern": "^/(work|labs|blog)/[a-z0-9-]+$"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Brief summary (searchable)",
+          "minLength": 1
+        },
+        "tags": {
+          "type": "array",
+          "description": "Array of tag/tech stack names (searchable)",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "content": {
+          "type": "string",
+          "description": "First 500 characters of content (searchable)",
+          "maxLength": 500
+        }
+      },
+      "required": ["_id", "type", "title", "url", "summary", "tags", "content"],
+      "additionalProperties": false
+    }
+  }
+}

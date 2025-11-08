@@ -1,363 +1,306 @@
-# Feature Specification: Portfolio Website
+# Feature Specification: FE Engineer Portfolio
 
-**Feature Branch**: `001-fe-portfolio`  
-**Created**: October 28, 2025  
+**Feature Branch**: `000-fe-portfolio`  
+**Created**: October 29, 2025  
 **Status**: Draft  
-**Input**: User description: "FE Engineer Portfolio (Next.js + Headless CMS + CDN)"
+**Input**: User description: "Create a specification titled 'FE Engineer Portfolio (Next.js + Headless CMS + CDN + TailwindCss + SCSS)'"
+
+## Clarifications
+
+### Session 2025-10-29
+
+- Q: What URL pattern should be used for individual case studies, lab projects, and blog posts? → A: Clean slug-based paths: `/work/modernizing-checkout-flow`, `/labs/css-grid-explorer`, `/blog/react-performance-tips`
+- Q: What type of search implementation should be used? → A: Client-side search with pre-built index (simple, fast, sufficient for portfolio scale)
+- Q: What is the expected content volume across all content types? → A: 10-20 case studies, 50-100 blog posts, 10-20 lab projects
+- Q: How should analytics tracking handle user privacy and consent? → A: Essential analytics only, no personal data, no consent banner needed
+- Q: How should the site behave during CMS outages or extended maintenance? → A: Serve stale cached content with staleness indicator (maintains functionality, informs users)
+- Q: What styling approach should be used? → A: Hybrid approach using both TailwindCSS (utility-first) and SCSS (component-specific styles) with BEM naming conventions using underscores (e.g., `block__element__modifier`)
+- Q: What animation approach should be used for the site? → A: Use Motion (Framer Motion) for declarative animations including scroll-triggered animations that reveal elements when they enter the viewport
+- Q: What headless CMS and CDN should be used? → A: Use Sanity as both the headless CMS for content management and Sanity's image CDN for optimized image delivery
+- Q: What testing strategy should be adopted for fast development? → A: Keep testing simple with no unit tests initially; focus on manual testing and end-to-end scenarios to maximize development speed
+- Q: What browsers and devices should be supported? → A: Support modern browsers (Chrome, Firefox, Safari, Edge - latest 2 versions) with responsive design across mobile, tablet, and desktop devices
 
 ## User Scenarios & Testing _(mandatory)_
 
-### User Story 1 - Recruiter Quick Assessment (Priority: P1)
+### User Story 1 - Portfolio Discovery by Recruiter (Priority: P1)
 
-A recruiter lands on the portfolio site and needs to quickly assess the candidate's capabilities, experience depth, and quality bar within 2-3 minutes to decide whether to proceed with screening.
+A recruiter visits the portfolio to quickly assess the candidate's frontend engineering capabilities, focusing on breadth of experience and quality of work.
 
-**Why this priority**: This is the primary conversion goal—turning visitors into interview opportunities. Without this, the entire portfolio fails its core purpose.
+**Why this priority**: This is the primary use case driving portfolio visits and directly impacts conversion to interview opportunities. Without compelling case studies and clear navigation, the portfolio fails its core purpose.
 
-**Independent Test**: Can be fully tested by navigating from homepage to one case study and back, verifying that key information (years of experience, primary skills, impact metrics) is visible without scrolling on multiple pages. Delivers immediate value: credibility establishment.
+**Independent Test**: Can be fully tested by navigating from home page to Work Experience index, filtering by a tech stack (e.g., React), opening a case study detail page, and verifying all content loads with proper formatting, images, and social sharing capabilities. Delivers immediate value by showcasing work quality.
 
 **Acceptance Scenarios**:
 
-1. **Given** a recruiter visits the homepage, **When** they scan the hero section and about preview, **Then** they see the candidate's primary role (Frontend Engineer), years of experience, and 2-3 key technical skills within 5 seconds
-2. **Given** a recruiter is on the homepage, **When** they scroll to the Work Experience section, **Then** they see a filterable list of case studies with clear role, company, and impact preview (e.g., "Led redesign → 40% conversion increase")
-3. **Given** a recruiter clicks on a featured case study, **When** the detail page loads, **Then** they see structured sections: Challenge, Approach, Impact (with metrics), Tech Context, and Role—all within 1 viewport height
-4. **Given** a recruiter is reading a case study, **When** they scroll through the page, **Then** they encounter visual elements (screenshots, diagrams, metrics callouts) that reinforce credibility every 2-3 paragraphs
-5. **Given** a recruiter completes reading one case study, **When** they look for next steps, **Then** they see clear CTAs: "View Resume," "Contact Me," "See More Work"
+1. **Given** a recruiter lands on the home page, **When** they click "Work Experience" in navigation, **Then** they see a filterable index of case studies with clear titles, tech stacks, and impact summaries
+2. **Given** the recruiter is on the Work Experience index, **When** they apply a filter (e.g., "React" or "Lead Engineer"), **Then** only matching case studies appear and URL updates to reflect the filter
+3. **Given** a filtered view with no matches, **When** no case studies match the criteria, **Then** a helpful empty state appears with suggestions to clear filters or try alternatives
+4. **Given** the recruiter clicks a case study card, **When** the detail page loads, **Then** they see a structured narrative with problem statement, approach, architecture decisions, impact metrics, and tech stack
+5. **Given** the recruiter is reading a case study, **When** they scroll through the page, **Then** all images load from CDN with appropriate loading states and the page maintains WCAG 2.2 AA contrast and keyboard navigation
 
 ---
 
-### User Story 2 - Engineer Deep Dive Evaluation (Priority: P1)
+### User Story 2 - Technical Deep Dive by Peer Engineer (Priority: P2)
 
-A peer engineer or technical interviewer needs to evaluate the candidate's technical thinking, architectural decisions, and delivery practices through detailed case studies and side projects.
+A peer engineer explores the portfolio to evaluate technical depth, decision-making rationale, and delivery practices through detailed case studies and side projects.
 
-**Why this priority**: Technical depth is the differentiator for senior roles. This story validates that the portfolio isn't just marketing fluff but demonstrates real engineering rigor.
+**Why this priority**: Establishes technical credibility with the engineering community and supports referral-based hiring. This audience seeks evidence of engineering rigor beyond surface-level descriptions.
 
-**Independent Test**: Can be tested by reading a case study's technical sections (architecture, decisions, tradeoffs) and verifying that specific frameworks, patterns, and metrics are present. Delivers value: technical credibility and conversation starters for interviews.
+**Independent Test**: Can be tested by navigating to a case study detail page, verifying the presence of architecture diagrams, technical decisions sections, and measurable outcomes; then exploring Side-Project Labs to see experimental work. Delivers value by demonstrating technical thinking.
 
 **Acceptance Scenarios**:
 
-1. **Given** an engineer visits a case study, **When** they reach the "Technical Approach" section, **Then** they see architecture diagrams, technology stack details, and clear explanations of the technical approaches and decisions made
-2. **Given** an engineer is reading about technical decisions, **When** they look for rationale, **Then** they find explanations of why certain technologies/approaches were chosen and what alternatives were considered
-3. **Given** an engineer wants to see measurable outcomes, **When** they reach the Impact section, **Then** they see quantified metrics: performance improvements (e.g., LCP reduced from 4.2s to 1.8s), conversion lifts, or user satisfaction scores
-4. **Given** an engineer visits the Side-Project Labs section, **When** they browse projects, **Then** each project card shows: what was built, what was learned, and links to live demo or source code
-5. **Given** an engineer is evaluating code quality, **When** they read blog posts tagged "architecture" or "best practices," **Then** they see code snippets with syntax highlighting, explanations of patterns, and links to related case studies
+1. **Given** an engineer is reading a case study, **When** they reach the architecture section, **Then** they see diagrams, decision rationale, and trade-offs explained in plain language with technical depth
+2. **Given** an engineer wants to see experimental work, **When** they navigate to Side-Project Labs, **Then** they see a grid of projects with thumbnails, tech stacks, and brief descriptions of learnings
+3. **Given** an engineer clicks a lab project, **When** the detail page loads, **Then** they see the experiment goal, approach, key learnings, and links to live demos or repositories (if public)
+4. **Given** an engineer is reading any content, **When** they encounter code snippets, **Then** syntax highlighting renders correctly and copy-to-clipboard functionality works
+5. **Given** an engineer shares a case study link on social media, **When** the link is previewed, **Then** OpenGraph and Twitter Card metadata display the case study title, description, and hero image
 
 ---
 
-### User Story 3 - Content Discovery and Navigation (Priority: P2)
+### User Story 3 - Content Discovery by Learner (Priority: P3)
 
-A visitor wants to find specific content by topic, technology, or content type (blog post vs. case study vs. lab project) without getting lost or frustrated.
+A learner browses the blog to find tutorials, insights, or thought leadership on frontend engineering topics, filtering by tags and searching for specific keywords.
 
-**Why this priority**: Content discoverability ensures visitors can find relevant work even if they don't follow the primary recruiter flow. This increases dwell time and engagement depth.
+**Why this priority**: Supports inbound SEO traffic and establishes thought leadership, but is secondary to showcasing professional work. Requires content to exist before it can drive meaningful engagement.
 
-**Independent Test**: Can be tested by using search/filter controls on list pages and verifying that results update instantly, empty states are helpful, and navigation remains consistent. Delivers value: self-guided exploration leading to increased portfolio engagement.
+**Independent Test**: Can be tested by navigating to the Blog section, searching for a keyword (e.g., "React hooks"), filtering by a tag (e.g., "Performance"), and reading a blog post with proper formatting, code snippets, and reading time estimate. Delivers value by providing educational content.
 
 **Acceptance Scenarios**:
 
-1. **Given** a visitor is on the Work Experience index, **When** they apply filters (e.g., "React," "Lead Role," "Performance"), **Then** the list updates in under 200ms with matching case studies, showing result count
-2. **Given** a visitor applies filters that return no results, **When** the empty state appears, **Then** they see a branded message, suggested tags to try, and a "View All" link
-3. **Given** a visitor is on any page, **When** they use the global search in the navigation, **Then** they see a dropdown with results grouped by content type (Work, Labs, Blog) with titles and previews
-4. **Given** a visitor is reading a blog post, **When** they click on a tag (e.g., "TypeScript"), **Then** they're taken to a filtered view showing all content with that tag across all sections
-5. **Given** a visitor wants to browse by topic, **When** they visit the Blog index, **Then** they see posts organized with filters for tags, reading time estimates, and publish dates
+1. **Given** a learner visits the Blog index, **When** the page loads, **Then** they see a list of blog posts sorted by publish date with titles, summaries, tags, and estimated reading time
+2. **Given** the learner wants to find specific content, **When** they enter a search query (e.g., "accessibility"), **Then** posts matching the query appear and empty state shows helpful suggestions if no matches found
+3. **Given** the learner wants to browse by topic, **When** they click a tag (e.g., "CSS"), **Then** only posts with that tag appear and the URL updates to reflect the filter
+4. **Given** the learner clicks a blog post, **When** the detail page loads, **Then** they see the full article with proper typography, code syntax highlighting, images, author info, and publish date
+5. **Given** the learner finishes reading a post, **When** they scroll to the end, **Then** they see related posts based on tags and clear navigation back to the blog index
 
 ---
 
-### User Story 4 - Responsive and Accessible Experience (Priority: P2)
+### User Story 4 - Site-Wide Navigation and Responsiveness (Priority: P1)
 
-A visitor using assistive technology, keyboard navigation, or a mobile device needs to access all content and features without barriers or degraded experiences.
+Any visitor uses global navigation, search, and responsive design to access content across devices and preferences (dark/light mode), with accessible keyboard navigation and screen reader support.
 
-**Why this priority**: Accessibility demonstrates professional ethics and expands audience reach. Mobile traffic is significant for portfolio sites. WCAG 2.2 AA compliance is a constitutional requirement.
+**Why this priority**: Foundational requirement for all user journeys. Without accessible navigation and responsive design, none of the other stories can function properly.
 
-**Independent Test**: Can be tested using keyboard-only navigation and screen readers to complete primary flows (homepage → case study → back). Delivers value: inclusive access and constitutional compliance.
+**Independent Test**: Can be tested by navigating the site on mobile and desktop, toggling dark/light mode, using keyboard-only navigation, and running accessibility audits (e.g., Lighthouse). Delivers value by ensuring usability for all visitors.
 
 **Acceptance Scenarios**:
 
-1. **Given** a keyboard user lands on any page, **When** they press Tab, **Then** focus indicators are clearly visible with 3:1 contrast ratio, and focus order follows logical reading sequence
-2. **Given** a screen reader user navigates a case study, **When** they query page structure, **Then** they hear proper landmark regions (header, navigation, main, aside, footer) and heading hierarchy (h1 → h2 → h3)
-3. **Given** a mobile user visits the site, **When** they navigate between pages, **Then** touch targets are ≥44×44px, text is readable without zooming, and interactive elements respond within 200ms (INP requirement)
-4. **Given** a user enables dark mode, **When** pages load, **Then** all content has sufficient color contrast (4.5:1 for normal text, 3:1 for large text), and no elements are invisible
-5. **Given** a user with reduced motion preferences, **When** they visit the site, **Then** animations respect `prefers-reduced-motion` and non-essential animations are disabled
+1. **Given** a visitor lands on any page, **When** they view the header, **Then** they see a responsive navigation menu with links to Home, About, Work Experience, Side-Project Labs, Blog, and a search icon
+2. **Given** a visitor on mobile, **When** they tap the menu icon, **Then** a slide-out or overlay menu appears with all navigation links and closes when dismissed
+3. **Given** a visitor wants to change theme, **When** they click the theme toggle (sun/moon icon), **Then** the site switches between light and dark modes and the preference persists across page loads
+4. **Given** a visitor uses keyboard navigation, **When** they press Tab, **Then** focus indicators are clearly visible and follow a logical order through header, main content, and footer
+5. **Given** a visitor uses a screen reader, **When** they navigate the page, **Then** all landmarks (header, nav, main, footer) are announced and images have descriptive alt text
+6. **Given** a visitor on any page, **When** they scroll to the footer, **Then** they see social media links (GitHub, LinkedIn, Twitter), copyright notice, and accessibility statement
+7. **Given** a visitor clicks the global search icon, **When** the search modal opens, **Then** they can search across Work, Labs, and Blog content and see results grouped by type
 
 ---
 
-### User Story 5 - Social Sharing and Discovery (Priority: P3)
+### User Story 5 - Content Governance and Editorial Workflow (Priority: P2)
 
-A visitor or content creator wants to share portfolio content on social media or discover it through search engines, expecting professional preview cards and accurate metadata.
+A content author (the portfolio owner) manages content through the headless CMS with statuses (draft, review, published), versioning, and controlled publishing, ensuring only approved content appears on the public site.
 
-**Why this priority**: Social sharing amplifies reach beyond direct traffic. SEO optimization increases organic discovery. Professional OpenGraph cards reflect attention to detail.
+**Why this priority**: Critical for maintaining content quality and preventing accidental publication of incomplete work, but doesn't directly impact visitor experience if executed correctly behind the scenes.
 
-**Independent Test**: Can be tested by pasting URLs into social media platforms (Twitter, LinkedIn) and verifying preview cards render correctly with title, description, and hero image. Delivers value: increased portfolio visibility and inbound traffic.
+**Independent Test**: Can be tested by creating a blog post in draft status, verifying it doesn't appear on the public site, changing status to published, and confirming it appears. Delivers value by enabling safe content management.
 
 **Acceptance Scenarios**:
 
-1. **Given** a visitor shares a case study URL on LinkedIn, **When** the platform fetches metadata, **Then** the preview card shows: case study title, 150-character description, hero image (1200×630px), and site name
-2. **Given** a search engine crawler visits the site, **When** it parses metadata, **Then** it finds canonical URLs, OpenGraph tags, Twitter Card tags, and structured data (JSON-LD for Person, Article, BreadcrumbList)
-3. **Given** an RSS reader fetches the blog feed, **When** it parses the XML, **Then** it receives valid RSS 2.0 with titles, descriptions, publish dates, full content or excerpts, and author information
-4. **Given** a search engine requests the sitemap, **When** it accesses /sitemap.xml, **Then** it receives a valid XML sitemap with all published pages, lastmod dates, and priority hints
-5. **Given** a visitor lands on the site from search, **When** they check the URL, **Then** they see canonical URLs without query parameters or session tokens
+1. **Given** a content item is in "draft" status, **When** a visitor navigates to the relevant index page, **Then** the draft content does not appear in listings or search results
+2. **Given** a content item is in "review" status, **When** a visitor tries to access it via direct URL, **Then** they see a 404 or "content not found" message
+3. **Given** a content item is in "published" status, **When** a visitor navigates to the relevant index or searches for it, **Then** the content appears and is accessible
+4. **Given** a published content item is updated, **When** the author saves changes, **Then** the CMS creates a new version and the public site reflects the latest published version after revalidation
+5. **Given** a content item has multiple versions, **When** the author views version history in the CMS, **Then** they see timestamps, author, and can revert to previous versions if needed
 
 ---
 
-### User Story 6 - Content Governance and Publishing (Priority: P3)
+### User Story 6 - SEO and Content Discovery by Search Engines (Priority: P2)
 
-A content author (the portfolio owner) needs to manage content through editorial workflows (draft → review → publish), with content statuses reflected accurately on the site.
+Search engines and social media platforms crawl the portfolio to index content, display rich previews, and drive organic traffic through proper metadata, sitemaps, and RSS feeds.
 
-**Why this priority**: Content governance prevents accidental publication of drafts and enables confident content iteration. This is essential for maintaining portfolio quality over time.
+**Why this priority**: Essential for long-term discoverability and inbound traffic, but secondary to the core portfolio content and navigation experience. Impact compounds over time.
 
-**Independent Test**: Can be tested by creating a draft post in the CMS, verifying it doesn't appear in production, then publishing it and confirming it appears within 60 seconds (ISR requirement). Delivers value: safe content management without deployment bottlenecks.
+**Independent Test**: Can be tested by validating sitemap.xml, RSS feed for blog, and OpenGraph metadata using validator tools; running Lighthouse SEO audit; and testing social share previews on Twitter/LinkedIn. Delivers value by improving search rankings and shareability.
 
 **Acceptance Scenarios**:
 
-1. **Given** an author creates a new blog post in the CMS with status "Draft," **When** the production site rebuilds, **Then** the draft post does NOT appear in blog lists or be accessible via direct URL
-2. **Given** an author changes a post status from "Draft" to "Published," **When** the CMS webhook fires, **Then** the site revalidates within 60 seconds and the post appears in blog lists and search results
-3. **Given** an author updates a published case study, **When** they save changes in the CMS, **Then** ISR revalidation triggers and changes appear on the site within 60 seconds without full rebuild
-4. **Given** an author wants to preview draft content, **When** they use the CMS preview feature, **Then** they see a preview URL that renders draft content without affecting production
-5. **Given** an author archives old content, **When** they change status to "Archived" in CMS, **Then** the content is removed from public lists but remains accessible via direct URL with a "This content is archived" notice
+1. **Given** a search engine crawls the site, **When** it accesses `/sitemap.xml`, **Then** it finds a valid XML sitemap with all public pages (Work, Labs, Blog posts) and canonical URLs
+2. **Given** a visitor shares a page on social media, **When** the link is previewed, **Then** OpenGraph and Twitter Card tags display the correct title, description, and image
+3. **Given** a visitor subscribes to the blog RSS feed, **When** they access `/blog/rss.xml`, **Then** they receive a valid RSS feed with the latest published posts
+4. **Given** a search engine indexes a page, **When** it parses the HTML, **Then** it finds proper semantic markup with `<title>`, `<meta name="description">`, canonical URL, and structured data where applicable
+5. **Given** a visitor runs a Lighthouse SEO audit, **When** the audit completes, **Then** the site scores 90+ on SEO with no critical issues
+
+---
+
+### User Story 7 - Observability and Success Tracking (Priority: P3)
+
+The portfolio owner tracks visitor engagement through telemetry events (page views, case study reads, resume downloads, link copying) to measure success against defined KPIs and inform content strategy.
+
+**Why this priority**: Important for measuring portfolio effectiveness and informing iterative improvements, but doesn't directly impact visitor experience. Can be added after core features are stable.
+
+**Independent Test**: Can be tested by triggering telemetry events (e.g., viewing a case study, clicking "Copy Link", downloading resume) and verifying events are logged with correct metadata. Delivers value by enabling data-driven decisions.
+
+**Acceptance Scenarios**:
+
+1. **Given** a visitor views a case study, **When** the page loads, **Then** a telemetry event logs the page view with case study ID, referrer, and timestamp
+2. **Given** a visitor clicks "Copy Link" on a case study, **When** the link copies to clipboard, **Then** a telemetry event logs the share action with page URL and user agent
+3. **Given** a visitor downloads the resume (if available), **When** they click the download button, **Then** a telemetry event logs the download with timestamp and referrer
+4. **Given** the portfolio owner reviews analytics, **When** they access the analytics dashboard, **Then** they see metrics for total visits, top case studies, average dwell time, and conversion rates
+5. **Given** a visitor scrolls through a long case study, **When** they reach specific milestones (25%, 50%, 75%, 100%), **Then** telemetry events log the scroll depth
 
 ---
 
 ### Edge Cases
 
-- **What happens when a case study has no hero image?** Display a branded placeholder with a gradient and the project title overlaid, ensuring consistent card layouts
-- **How does the system handle very long case study titles (>80 characters)?** Truncate with ellipsis on cards, show full title only on detail pages
-- **What if two pieces of content have the same title?** Slugs are auto-generated from titles in kebab-case; duplicate titles automatically receive numeric suffixes (e.g., `my-project`, `my-project-2`, `my-project-3`) to ensure unique URLs
-- **What if a blog post has no tags?** Display "Untagged" label and exclude from tag filter dropdowns, but still show in "All Posts" view
-- **How does search handle zero results?** Show empty state with: "No results for '[query]'. Try browsing [Work / Labs / Blog] or searching for [suggested terms based on popular tags]"
-- **What happens when Sanity webhook fails or on-demand revalidation errors?** Log error to monitoring service, retry up to 3 times with exponential backoff (1s, 2s, 4s delays), fall back to stale cache if all retries fail; content updates will appear on next successful webhook or manual revalidation
-- **How does the site handle images failing to load from CDN?** Display alt text with branded fallback icon, prevent layout shift, log 404 to error tracking
-- **What if JavaScript fails to load?** Core content (text, images, navigation) must render server-side and be accessible, progressive enhancement for filters/search
-- **How does keyboard navigation work with modal overlays (e.g., image lightboxes)?** Focus trap within modal, Esc key closes, focus returns to trigger element
-- **What happens when a user's connection is slow (3G)?** Show loading skeletons during data fetching, prioritize above-fold content, lazy load below-fold images
-- **How does dark mode work if user preference changes mid-session?** Respect system preference on initial load, allow manual toggle that persists in localStorage, reapply without page refresh
+- What happens when a case study has no images or the Sanity Image CDN is unreachable? → Display a placeholder image and graceful fallback with no layout shift
+- How does the site handle a Sanity CMS query that returns no results? → Display contextual empty states with helpful suggestions (e.g., "No case studies match your filter. Try clearing filters or browsing all projects.")
+- What if a blog post has malformed content or missing required fields in Sanity? → Validate content in Sanity Studio and prevent publishing; on the frontend, display a fallback message if data is unexpectedly missing
+- How does search behave when the index is empty or query returns no matches? → Show a "No results found for '[query]'" message with suggestions to refine the search or browse all content
+- What happens when a visitor navigates to a deleted or unpublished page via an old link? → Return a 404 page with branded messaging and links to navigate to Home, Work, Labs, or Blog
+- What happens during Sanity CMS maintenance or outages? → Serve stale cached content with a subtle staleness indicator banner (e.g., "Content may be outdated") to maintain site functionality while informing users
+- How does dark mode handle images with transparency or embedded color schemes? → Ensure images have appropriate backgrounds or filters; test all images in both modes
+- What if a visitor has JavaScript disabled? → Ensure core content is accessible via server-side rendering and progressive enhancement; navigation and content should still be usable
+- How does the site handle very long author names, case study titles, or tag names? → Implement text truncation with ellipsis and hover tooltips for full text
+- What happens when multiple filters are applied simultaneously (e.g., tech stack + role)? → Apply AND logic to show only items matching all filters; display count of results and allow clearing individual filters
+- How does the site handle visitors on slow networks or high-latency connections? → Implement proper loading states, skeleton screens, and progressive image loading; test on throttled connections
+- What happens when a visitor uses an unsupported browser (e.g., Internet Explorer)? → Display a friendly browser upgrade message with recommendations to use a modern browser (Chrome, Firefox, Safari, or Edge)
+- How does the site handle browser-specific CSS or JavaScript feature gaps? → Use progressive enhancement with feature detection and graceful fallbacks; polyfills may be used sparingly for critical features if needed
 
 ## Requirements _(mandatory)_
 
+### Scale & Volume Assumptions
+
+- **Expected Content Volume**: The portfolio is designed to handle 10-20 case studies, 50-100 blog posts, and 10-20 lab projects. This scale influences caching strategies, search index sizing, and whether pagination is required for content listings.
+
+### Styling & Design System Constraints
+
+- **Styling Approach**: System MUST use a hybrid styling approach combining TailwindCSS v4 for utility-first rapid development and SCSS for complex component-specific styles. All custom CSS classes MUST follow BEM (Block Element Modifier) naming conventions using underscores as separators (e.g., `block__element__modifier`, `card__header__large`, `navigation__item__active`). This ensures predictable specificity, maintainability, and clear component boundaries while leveraging TailwindCSS utilities for common patterns.
+- **TailwindCSS v4 Configuration**: System MUST use CSS-based configuration via the `@theme` directive in the main CSS file instead of JavaScript-based configuration. All theme customizations (colors, fonts, spacing, border radius) MUST be defined using CSS custom properties within the `@theme` block. This aligns with Tailwind CSS v4's new architecture that eliminates the need for `tailwind.config.js/ts` files and PostCSS plugin configuration.
+
+### Animation & Motion Constraints
+
+- **Animation Library**: System MUST use Motion (Framer Motion) for all declarative animations to ensure consistent, performant, and accessible motion design across the portfolio.
+- **Scroll-Triggered Animations**: System MUST implement scroll-triggered animations that reveal elements (fade-in, slide-in, scale-in) when they enter the viewport. Animations MUST respect user's `prefers-reduced-motion` settings for accessibility.
+- **Animation Performance**: All animations MUST maintain 60fps performance and not negatively impact Core Web Vitals scores (CLS ≤ 0.1). Animations MUST use GPU-accelerated properties (transform, opacity) where possible.
+- **Animation Patterns**: Common animation patterns include: hero section entrance, staggered card reveals on content indices, smooth page transitions, interactive hover states, and loading state animations.
+
+### Content Management & CDN Constraints
+
+- **Headless CMS**: System MUST use Sanity as the headless CMS for all content management, including case studies, lab projects, blog posts, and author information. Sanity provides structured content modeling, version control, and editorial workflow capabilities.
+- **Image CDN**: System MUST use Sanity's built-in image CDN (Sanity Image API) for all image delivery, leveraging automatic optimization, responsive image generation, format conversion (WebP/AVIF), and on-the-fly transformations.
+- **Content API**: System MUST query Sanity content via GROQ (Graph-Relational Object Queries) or Sanity's JavaScript client, enabling efficient content fetching with projection and filtering.
+- **SVG Assets**: System MUST use SVGR (@svgr/webpack) to enable importing SVG files as React components, allowing for dynamic styling, props passing, and better performance compared to inline SVG or image tags. This enables clean component composition with icons and illustrations.
+
+### Testing & Quality Constraints
+
+- **Testing Strategy**: To maximize development velocity, the system MUST adopt a simplified testing approach focused on manual testing and end-to-end user scenarios. Unit tests are NOT required in the initial implementation phase.
+- **Quality Assurance**: Quality validation MUST rely on manual testing of user flows, browser-based accessibility audits (Lighthouse), visual regression checks, and real-device testing across mobile/desktop.
+- **Future Testing**: Automated testing may be introduced post-launch if maintenance complexity increases, focusing on critical user journeys and integration tests rather than granular unit test coverage.
+
+### Browser & Device Support Constraints
+
+- **Browser Support**: System MUST support the latest 2 versions of modern browsers: Chrome, Firefox, Safari, and Edge. Support for Internet Explorer is NOT required.
+- **Responsive Design**: System MUST provide fully responsive layouts that adapt seamlessly across mobile (320px+), tablet (768px+), and desktop (1024px+) viewports without horizontal scrolling or content overflow.
+- **Cross-Browser Testing**: System MUST be manually tested across all supported browsers on both desktop and mobile devices to ensure consistent rendering, functionality, and performance.
+- **Progressive Enhancement**: System MUST use progressive enhancement principles, ensuring core content and functionality work in all supported browsers while leveraging modern browser features (CSS Grid, Flexbox, modern JavaScript) where available.
+- **Mobile-First Approach**: System MUST be designed and developed with a mobile-first approach, ensuring optimal experience on smaller screens and progressively enhancing for larger viewports.
+
 ### Functional Requirements
 
-#### Navigation & Global Features
+- **FR-001**: System MUST render a home page with an overview of the portfolio owner's background, a hero section, and navigation to Work Experience, Side-Project Labs, Blog, and About sections
+- **FR-002**: System MUST provide a global navigation component accessible from all pages with links to Home, About, Work Experience, Side-Project Labs, and Blog
+- **FR-003**: System MUST implement a responsive design that adapts to mobile (320px+), tablet (768px+), and desktop (1024px+) viewports without horizontal scrolling
+- **FR-003a**: System MUST ensure cross-browser compatibility across the latest 2 versions of Chrome, Firefox, Safari, and Edge, with consistent rendering, functionality, and user experience
+- **FR-004**: System MUST support light and dark color modes with a toggle control, persisting user preference across sessions via browser storage
+- **FR-005**: System MUST implement accessible keyboard navigation with visible focus states and logical tab order throughout all pages
+- **FR-006**: System MUST meet WCAG 2.2 AA accessibility standards, including color contrast ratios (4.5:1 for normal text, 3:1 for large text), semantic HTML, and ARIA labels where appropriate
+- **FR-007**: System MUST provide a global search feature using client-side search with a pre-built index that queries across Work Experience case studies, Side-Project Labs, and Blog posts (title, summary, tags, content), returning results grouped by content type with instant feedback
+- **FR-008**: System MUST display a footer on all pages containing social media links (GitHub, LinkedIn, Twitter), copyright notice, and accessibility statement
+- **FR-009**: System MUST implement loading states (skeletons, spinners) for all content that requires fetching from Sanity CMS or Sanity Image CDN
+- **FR-010**: System MUST display contextual empty states with helpful messaging when content listings are empty due to filters or lack of published content
+- **FR-011**: System MUST handle error states gracefully, displaying user-friendly messages when Sanity CMS queries fail, images don't load from Sanity Image CDN, or pages are not found
+- **FR-011a**: System MUST serve stale cached content during Sanity CMS outages or maintenance windows, displaying a subtle, non-intrusive staleness indicator banner (e.g., "Content may be outdated - last updated [timestamp]") to maintain site functionality while informing users of potential data freshness issues
+- **FR-011b**: System MUST implement scroll-triggered animations using Motion (Framer Motion) that reveal content elements (cards, images, text blocks) when they enter the viewport with smooth fade-in, slide-in, or scale-in transitions
+- **FR-011c**: System MUST respect user accessibility preferences by disabling or reducing animations when `prefers-reduced-motion` is enabled in the user's system settings
 
-- **FR-001**: Site MUST provide persistent navigation with links to: Home, About, Work, Labs, Blog, and Contact
-- **FR-002**: Navigation MUST be accessible on all devices with mobile-optimized menu (hamburger on small screens)
-- **FR-003**: Site MUST support dark and light theme modes, respecting user's system preference (`prefers-color-scheme`) on first visit
-- **FR-004**: Theme preference MUST persist across sessions using localStorage
-- **FR-005**: Global search MUST allow users to search across all content types (Work, Labs, Blog) and return results within 500ms
-- **FR-006**: Search results MUST be grouped by content type with titles, previews (first 100 characters), and relevance indicators
-- **FR-007**: Site footer MUST display social links (LinkedIn, GitHub, Twitter), copyright notice, and link to resume/CV
-- **FR-008**: All pages MUST display loading states (skeletons or spinners) during data fetching
-- **FR-009**: All pages MUST display error states (with branded error message and retry CTA) when data fetching fails
-- **FR-010**: All list pages MUST display empty states (with helpful message and suggested actions) when no content matches filters
+**Work Experience**:
 
-#### Home & About Pages
+- **FR-012**: System MUST provide a Work Experience index page listing all published case studies with title, summary, tech stack tags, impact metrics, and thumbnail image
+- **FR-013**: System MUST allow visitors to filter case studies by role type (e.g., Lead Engineer, Senior Engineer) and tech stack (e.g., React, TypeScript, Next.js)
+- **FR-014**: System MUST update the URL with filter parameters (e.g., `/work?tech=react&role=lead`) and support direct access via filtered URLs
+- **FR-015**: System MUST provide a case study detail page accessible via clean slug-based URLs (e.g., `/work/modernizing-checkout-flow`) with sections for problem statement, approach, architecture decisions, impact metrics, tech stack, and visual assets (diagrams, screenshots)
+- **FR-016**: System MUST render case study detail pages with proper semantic structure (headings, sections, lists) and accessible image alt text
+- **FR-016a**: System MUST generate unique, human-readable slugs for each case study based on the title, ensuring URL uniqueness and SEO-friendly paths
 
-- **FR-011**: Homepage MUST display hero section with: name, primary role title, brief tagline, and CTA to view work or contact
-- **FR-012**: Homepage MUST showcase 3-4 featured case studies or projects with preview cards linking to detail pages
-- **FR-013**: About page MUST display: professional bio, skills/expertise, career timeline, and profile photo
-- **FR-014**: About page MUST link to full resume/CV (PDF download) and social profiles
+**Side-Project Labs**:
 
-#### Work Experience Section
+- **FR-017**: System MUST provide a Side-Project Labs index page displaying all published lab projects in a responsive grid with thumbnails, titles, tech stacks, and brief descriptions
+- **FR-018**: System MUST allow visitors to filter lab projects by tech stack or project type
+- **FR-019**: System MUST provide a lab project detail page accessible via clean slug-based URLs (e.g., `/labs/css-grid-explorer`) with sections for experiment goal, approach, key learnings, tech stack, and links to live demos or repositories (if public)
+- **FR-020**: System MUST render lab project detail pages with proper semantic structure and accessible visual assets
+- **FR-020a**: System MUST generate unique, human-readable slugs for each lab project based on the title, ensuring URL uniqueness and SEO-friendly paths
 
-- **FR-015**: Work index page MUST display all published case studies as cards with: title, company, role, impact preview (1 sentence), hero image, and tags
-- **FR-016**: Work index MUST support filtering by: role (e.g., Lead, IC), technology/stack (e.g., React, TypeScript), and impact area (e.g., Performance, Accessibility)
-- **FR-017**: Filters MUST update results in real-time (under 200ms) without full page reload
-- **FR-018**: Case study detail pages MUST include sections: Challenge, Approach, Impact (with metrics), Tech Stack, Role/Responsibilities, and Visuals (screenshots/diagrams)
-- **FR-019**: Case study metrics MUST be presented visually (e.g., callout boxes, before/after comparisons)
-- **FR-020**: Case studies MUST support related projects/links (e.g., "See also: [Lab Project X]")
+**Blog**:
 
-#### Side-Project Labs Section
+- **FR-021**: System MUST provide a Blog index page listing all published posts sorted by publish date (newest first) with title, summary, author info, tags, estimated reading time, and publication date
+- **FR-022**: System MUST allow visitors to filter blog posts by tags (e.g., "Performance", "React", "Accessibility")
+- **FR-023**: System MUST provide a blog post detail page accessible via clean slug-based URLs (e.g., `/blog/react-performance-tips`) with full article content, syntax-highlighted code snippets, images, author information, publication date, and related posts
+- **FR-024**: System MUST calculate and display estimated reading time for each blog post based on word count
+- **FR-024a**: System MUST generate unique, human-readable slugs for each blog post based on the title, ensuring URL uniqueness and SEO-friendly paths
+- **FR-025**: System MUST support code syntax highlighting for common languages (JavaScript, TypeScript, CSS, HTML, JSON) within blog posts
+- **FR-026**: System MUST provide a "Copy Code" button for code blocks that copies content to clipboard and shows confirmation feedback
+- **FR-027**: System MUST display related blog posts at the end of each post based on shared tags
 
-- **FR-021**: Labs index page MUST display all published lab projects as cards with: title, brief description, key learnings, tech stack, and thumbnail
-- **FR-022**: Labs index MUST support filtering by technology and learning focus (e.g., "Animation," "Performance," "WebGL")
-- **FR-023**: Lab project detail pages MUST include: project description, what was built, what was learned, tech stack, and links to live demo and/or source code
-- **FR-024**: Lab projects MUST indicate if they're actively maintained or archived experiments
-- **FR-025**: Lab projects MUST link to related blog posts (e.g., "Read the build log: [Blog Post Title]")
+**Content Governance**:
 
-#### Blog Section
+- **FR-028**: System MUST only display content with "published" status on public pages; content with "draft" or "review" status MUST NOT appear in listings or be accessible via direct URLs
+- **FR-029**: System MUST support content versioning in Sanity CMS, allowing authors to view version history and revert to previous versions using Sanity's built-in revision system
+- **FR-030**: System MUST revalidate public pages when content is published, updated, or unpublished in Sanity to reflect changes within a reasonable time (e.g., on-demand revalidation via webhook triggers or short cache TTL)
 
-- **FR-026**: Blog index page MUST display all published posts as cards with: title, publish date, reading time estimate, excerpt (150 characters), and tags
-- **FR-027**: Blog index MUST support filtering by tags and sorting by date (newest/oldest)
-- **FR-028**: Blog posts MUST display: title, author, publish date, reading time, tags, and hero image (if present)
-- **FR-029**: Blog posts MUST render code snippets with syntax highlighting and copy-to-clipboard functionality
-- **FR-030**: Blog posts MUST support rich text formatting: headings, lists, blockquotes, links, images, and embedded media
-- **FR-031**: Blog posts MUST display related posts at the end (based on shared tags)
-- **FR-032**: Blog posts MUST include social share buttons (Twitter, LinkedIn) and "Copy Link" functionality
-- **FR-033**: Each blog post MUST generate an RSS feed item with full content or excerpt
+**SEO and Discovery**:
 
-#### Content Governance
+- **FR-031**: System MUST generate a valid `sitemap.xml` file containing all public pages with canonical URLs and last modification dates
+- **FR-032**: System MUST generate OpenGraph and Twitter Card metadata for all pages, including title, description, and hero image
+- **FR-033**: System MUST include canonical URL meta tags on all pages to prevent duplicate content indexing
+- **FR-034**: System MUST generate an RSS feed at `/blog/rss.xml` containing the latest published blog posts with titles, summaries, publication dates, and links
+- **FR-035**: System MUST implement proper semantic HTML with descriptive `<title>` and `<meta name="description">` tags for all pages
+- **FR-036**: System MUST provide social sharing buttons (or copy link functionality) on case studies, lab projects, and blog posts
 
-- **FR-034**: Site MUST filter out content with status "Draft" in production builds
-- **FR-035**: Sanity webhook MUST trigger on-demand ISR revalidation (revalidatePath or revalidateTag) when content is published or updated
-- **FR-036**: On-demand revalidation MUST complete within 60 seconds of Sanity webhook event, causing affected pages to regenerate on next request
-- **FR-037**: Site MUST support Sanity preview mode for viewing unpublished content via authenticated preview URLs
-- **FR-038**: Archived content MUST be removed from public lists but remain accessible via direct URL with "Archived" notice
-- **FR-039**: Content versioning MUST be tracked in Sanity (version history visible to author)
+**Observability**:
 
-#### SEO & Discovery
-
-- **FR-040**: All pages MUST include meta tags: title, description, canonical URL, OpenGraph (og:title, og:description, og:image, og:type), and Twitter Card (summary_large_image)
-- **FR-041**: OpenGraph images MUST be 1200×630px, hosted on CDN, and unique per page (not generic placeholder)
-- **FR-042**: Site MUST generate sitemap.xml with all published pages, lastmod dates, and priority hints
-- **FR-043**: Site MUST generate robots.txt allowing all crawlers except for draft/preview routes
-- **FR-044**: Blog section MUST generate RSS 2.0 feed at /rss.xml with titles, descriptions, publish dates, and full content or excerpts
-- **FR-045**: Site MUST include structured data (JSON-LD) for: Person (homepage/about), Article (blog posts), and BreadcrumbList (navigation)
-
-#### Accessibility
-
-- **FR-046**: All pages MUST use semantic HTML with proper landmark regions: header, nav, main, aside, footer
-- **FR-047**: All pages MUST have heading hierarchy with one h1 per page, followed by h2, h3, etc. in logical order
-- **FR-048**: All interactive elements MUST be keyboard-accessible with visible focus indicators (3:1 contrast ratio)
-- **FR-049**: Focus order MUST follow logical reading sequence (top to bottom, left to right)
-- **FR-050**: All images MUST have descriptive alt text; decorative images MUST have alt="" or role="presentation"
-- **FR-051**: Color contrast MUST meet WCAG 2.2 AA standards: 4.5:1 for normal text, 3:1 for large text (≥18pt)
-- **FR-052**: Site MUST respect `prefers-reduced-motion` by disabling non-essential animations
-- **FR-053**: Modal overlays MUST implement focus traps and restore focus to trigger element on close
-- **FR-054**: All form inputs MUST have associated labels and error messages announced to screen readers
-
-#### Performance
-
-- **FR-055**: All images MUST use `next/image` with explicit width, height, and CDN URLs
-- **FR-056**: Images MUST be delivered in WebP or AVIF formats with fallbacks, using responsive srcsets
-- **FR-057**: Above-the-fold images MUST use `priority` attribute to preload; below-the-fold images MUST lazy load
-- **FR-058**: Site MUST use SSG (Static Site Generation) for all pages with on-demand ISR revalidation triggered by Sanity webhooks (no time-based revalidation)
-- **FR-059**: Site MUST define caching headers: public, max-age for static assets; stale-while-revalidate for ISR-regenerated pages
-- **FR-060**: Third-party scripts MUST be lazy-loaded when non-critical (e.g., analytics after page interactive)
-- **FR-061**: Site MUST use `preconnect` for CMS and CDN origins
-- **FR-062**: Fonts MUST use Next.js Font Optimization (next/font) with Google Fonts, automatically self-hosted at build time to eliminate external requests, prevent layout shift, and ensure optimal loading performance
-
-#### Observability & Telemetry
-
-- **FR-063**: Site MUST track Core Web Vitals (LCP, INP, CLS) in production via Vercel Analytics or Web Vitals library
-- **FR-064**: Site MUST log telemetry events for: page views, case study reads, lab project clicks, blog post reads, resume downloads, and "Copy Link" actions
-- **FR-065**: Error boundaries MUST catch React errors and log to error tracking service (e.g., Sentry)
-- **FR-066**: Sanity webhook failures and on-demand revalidation errors MUST be logged to monitoring service with retry attempts (up to 3 retries with exponential backoff)
-- **FR-067**: Performance regressions (Core Web Vitals exceeding thresholds) MUST trigger alerts
+- **FR-037**: System MUST log telemetry events for key user actions, including page views, case study reads, blog post reads, resume downloads, and link copies, using privacy-first analytics that collects no personal data or cookies
+- **FR-038**: System MUST include non-personal metadata in telemetry events such as page URL, referrer (domain only), timestamp, and general user agent information (browser/device type), without tracking individual users or creating persistent identifiers
+- **FR-039**: System MUST define success metrics and KPIs to track portfolio effectiveness, including total visits, average dwell time, case study completion rates, and inbound contact conversions
 
 ### Key Entities
 
-- **WorkCaseStudy**: Represents a detailed work experience entry. Attributes: title, slug (auto-generated from title in kebab-case, unique with numeric suffix for duplicates), company, role, challenge description, approach description, impact metrics, tech stack, hero image, tags, publish status, publish date, related projects.
-
-- **LabProject**: Represents a side-project or experiment. Attributes: title, slug (auto-generated from title in kebab-case, unique with numeric suffix for duplicates), description, key learnings, tech stack, thumbnail image, live demo URL, source code URL, maintenance status (active/archived), tags, publish status, publish date, related blog posts.
-
-- **BlogPost**: Represents a blog article. Attributes: title, slug (auto-generated from title in kebab-case, unique with numeric suffix for duplicates), author, publish date, reading time estimate, excerpt, content (rich text), hero image, tags, publish status, related posts.
-
-- **Author**: Represents the portfolio owner. Attributes: name, role/title, bio, profile photo, social links (LinkedIn, GitHub, Twitter), resume/CV URL.
-
-- **Tag**: Represents a categorization label. Attributes: name, slug, usage count (number of content items tagged). Relationships: used by WorkCaseStudy, LabProject, BlogPost.
-
-- **TechStack**: Represents a technology or framework. Attributes: name, category (language, framework, tool, platform), logo/icon. Relationships: associated with WorkCaseStudy, LabProject.
-
-- **ContentStatus**: Enum representing content lifecycle. Values: Draft, Published, Archived.
+- **Author**: Represents the portfolio owner or content creator with attributes like name, bio, profile image, social media links, and role/title
+- **WorkCaseStudy**: Represents a detailed case study of professional work with attributes including title, unique slug (URL-safe identifier), summary, problem statement, approach narrative, architecture decisions, impact metrics, tech stack tags, role type, hero image, and publication date. Related to Author and TechStack entities.
+- **LabProject**: Represents a side project or experiment with attributes including title, unique slug (URL-safe identifier), description, experiment goal, key learnings, tech stack tags, thumbnail image, links to demo/repository, and publication date. Related to Author and TechStack entities.
+- **BlogPost**: Represents a blog article with attributes including title, unique slug (URL-safe identifier), summary, full content (Markdown or rich text), author, publication date, last updated date, tags, estimated reading time, and hero image. Related to Author and Tag entities.
+- **TechStack**: Represents a technology, framework, or tool (e.g., React, TypeScript, Next.js) used in case studies, lab projects, or blog posts. Used for filtering and categorization. Has attributes like name, slug (URL-safe identifier), logo/icon, and optional description.
+- **Tag**: Represents a topic or category for blog posts (e.g., "Performance", "Accessibility", "CSS"). Used for filtering and grouping content. Has attributes like name, slug, and optional description.
+- **ContentStatus**: Represents the editorial workflow state of content items (draft, review, published). Determines visibility on public pages.
 
 ## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
-- **SC-001**: Recruiters and hiring managers can complete an initial assessment (view homepage + one case study) in under 3 minutes, with key information (role, skills, impact) visible within first viewport
-
-- **SC-002**: 90% of visitors who land on a case study page scroll at least 50% through the content, indicating engagement with detailed work examples
-
-- **SC-003**: Visitors spend an average of 4+ minutes on the site (dwell time), indicating quality engagement rather than bounce
-
-- **SC-004**: The portfolio generates at least 20% increase in inbound interview requests or recruiter contacts within 3 months of launch, compared to previous portfolio or no portfolio baseline
-
-- **SC-005**: Page load performance meets Core Web Vitals thresholds at 75th percentile mobile: LCP ≤2.5s, INP ≤200ms, CLS ≤0.1 (as defined in project constitution)
-
-- **SC-006**: 100% of pages pass WCAG 2.2 AA accessibility checks in automated testing (Axe DevTools), with zero critical violations
-
-- **SC-007**: Search functionality returns results within 500ms for 95% of queries, enabling fast content discovery
-
-- **SC-008**: Social shares generate OpenGraph preview cards with correct title, description, and image on 100% of tested platforms (Twitter, LinkedIn, Facebook)
-
-- **SC-009**: On-demand revalidation via Sanity webhooks completes within 60 seconds of content publish events for 99% of updates, with affected pages regenerating on next request, enabling rapid content iteration without full rebuilds
-
-- **SC-010**: Zero draft or archived content appears in production builds unless explicitly accessed via preview URLs, ensuring content governance
-
-- **SC-011**: Resume download is completed by 30% of visitors who view at least one case study, indicating conversion from browsing to recruiting action
-
-- **SC-012**: Blog posts with code snippets have a 40% higher engagement rate (scroll depth + time on page) than text-only posts, validating technical depth
-
-## Constitution Compliance
-
-This specification aligns with the project constitution as follows:
-
-### Principle 1: Code Quality & Type Safety
-
-- **Alignment**: Spec requires no implementation details in this phase, but planning and implementation will enforce strict type safety, automated code quality checks, and standardized commit practices as defined in the constitution.
-- **Verification**: CI quality gates (FR-046 to FR-054 implicitly rely on linting/type checks) will catch violations before merge.
-
-### Principle 2: Testing Standards & Accessibility
-
-- **Alignment**: FR-046 to FR-054 explicitly mandate WCAG 2.2 AA compliance, keyboard navigation, visible focus states, semantic HTML, and screen reader support.
-- **Success Criteria**: SC-006 requires 100% pass rate on automated accessibility checks.
-- **Verification**: Axe DevTools checks in CI will validate compliance; manual keyboard/screen reader testing will verify functional accessibility.
-
-### Principle 3: UX Consistency & Design System
-
-- **Alignment**: Spec requires consistent patterns across blog, work, and labs sections (FR-015, FR-021, FR-026 define similar card layouts). Dark/light themes must have visual parity (FR-003, FR-004). Empty/error/loading states explicitly designed (FR-008, FR-009, FR-010).
-- **Assumption**: Design tokens will be defined during planning phase to enforce spacing, typography, and color scales.
-- **Verification**: Visual regression testing and manual QA will validate consistency.
-
-### Principle 4: Performance Requirements
-
-- **Alignment**: FR-055 to FR-062 directly implement constitution performance requirements: `next/image`, CDN delivery, WebP/AVIF formats, SSG/ISR, caching headers, lazy loading, preconnect/preload, font optimization.
-- **Success Criteria**: SC-005 enforces Core Web Vitals thresholds at 75th percentile mobile (LCP ≤2.5s, INP ≤200ms, CLS ≤0.1).
-- **Verification**: Lighthouse CI and Vercel Analytics will monitor compliance; performance budgets will block PRs that regress metrics.
-
-### Principle 5: Content Management & CMS Integration
-
-- **Alignment**: FR-034 to FR-039 mandate all content sourced from CMS, draft filtering in production, ISR revalidation within 60 seconds via webhooks, preview mode for drafts, and content versioning.
-- **Success Criteria**: SC-009 requires 99% of ISR revalidations complete within 60 seconds; SC-010 ensures zero draft leakage.
-- **Verification**: Automated tests will validate draft filtering; webhook logs and monitoring will track revalidation times.
-
-### Performance Standards
-
-- **Core Web Vitals**: SC-005 directly enforces constitutional thresholds (LCP ≤2.5s, INP ≤200ms, CLS ≤0.1 at P75 mobile).
-- **Image Optimization**: FR-055 to FR-057 implement all constitutional image requirements (CDN, next/image, WebP/AVIF, explicit dimensions, responsive srcsets, lazy loading).
-- **Browser Compatibility**: Spec assumes modern browsers (last 2 versions of Chrome, Firefox, Safari, Edge); graceful degradation for older browsers will be implemented during planning.
-
-### CI/CD & Quality Gates
-
-- **Alignment**: Spec does not define CI configuration (implementation detail), but assumes all quality gates (linting, type checking, testing, accessibility, performance, build) will be enforced per constitution.
-- **Specification Compliance**: This spec includes this Constitution Compliance section as required.
-
-## Clarifications
-
-### Session 2025-10-28
-
-- Q: Which headless CMS should be used for content management? → A: Sanity
-- Q: What security headers and privacy compliance approach should the site implement? → A: Minimal security (default Next.js headers only)
-- Q: What font loading strategy should be used for web typography? → A: Next.js Font Optimization with Google Fonts
-- Q: How should content URL slugs be generated and what happens if there's a duplicate? → A: Auto-generate from title + append number suffix for duplicates
-- Q: What ISR (Incremental Static Regeneration) strategy should be used for content updates? → A: On-demand revalidation via CMS webhooks
-
-## Assumptions
-
-1. **CMS Platform**: Uses Sanity as the headless CMS for content management. Sanity provides webhook support for ISR revalidation, real-time collaboration, excellent TypeScript support, flexible schema modeling with Portable Text for rich content, and strong Next.js integration.
-
-2. **CDN Provider**: Assumes a CDN (e.g., Cloudflare, Vercel Image Optimization, Cloudinary) is configured for image delivery. Spec does not mandate specific CDN.
-
-3. **Hosting**: Assumes deployment to Vercel or similar Next.js-optimized platform that supports ISR, edge functions, and Vercel Analytics.
-
-4. **Authentication for Preview Mode**: Assumes CMS provides secure preview URLs (e.g., signed tokens) to enable Next.js draft mode without exposing unpublished content.
-
-5. **Resume/CV Availability**: Assumes a PDF resume is available and will be hosted on CDN or in `/public` directory for download.
-
-6. **Analytics/Telemetry Service**: Assumes Vercel Analytics or Google Analytics is used for telemetry. Alternative: Web Vitals library with custom backend.
-
-7. **Error Tracking**: Assumes Sentry or similar error tracking service is configured for production error logging.
-
-8. **Security & Privacy**: Uses default Next.js security headers without custom CSP or enhanced privacy controls. No cookie consent banner required; analytics tracking follows standard practices without explicit opt-in.
-
-9. **Social Profile URLs**: Assumes LinkedIn, GitHub, and Twitter profiles are active and will be provided during implementation.
-
-10. **Content Volume**: Assumes initial content: 5-10 case studies, 5-10 lab projects, 10-20 blog posts. Spec scales to hundreds of items but initial design optimized for dozens.
-
-11. **Tag Taxonomy**: Assumes a flat tag taxonomy (no hierarchical categories). Tags are created ad-hoc by content author in CMS.
-
-12. **Search Implementation**: Assumes client-side search (Fuse.js or similar) for simplicity. Spec is compatible with Algolia or Elasticsearch if needed for scale.
-
-13. **Reading Time Calculation**: Assumes reading time is calculated based on word count (average 200-250 words/minute) during build or in CMS.
-
-14. **Related Content Logic**: Assumes related posts/projects are determined by shared tags (simple similarity). Advanced recommendation algorithms are out of scope for v1.
-
-15. **Browser Support**: Assumes modern browsers (last 2 versions). Polyfills for older browsers will be conditionally loaded during implementation.
-
-16. **Internationalization (i18n)**: Assumes English-only content for v1. Multi-language support is out of scope but spec is compatible with future i18n.
+- **SC-001**: Recruiters can navigate from home page to a case study detail page and complete reading the full content in under 5 minutes (average dwell time on case studies ≥ 3 minutes)
+- **SC-002**: The site achieves Core Web Vitals scores at the 75th percentile on mobile devices: Largest Contentful Paint (LCP) ≤ 2.5s, First Input Delay (FID) ≤ 100ms, Cumulative Layout Shift (CLS) ≤ 0.1
+- **SC-003**: All pages achieve a Lighthouse Accessibility score ≥ 95 and SEO score ≥ 90 with no critical issues
+- **SC-004**: The site supports keyboard-only navigation with 100% of interactive elements accessible via Tab key and visible focus states meeting WCAG 2.2 AA contrast requirements
+- **SC-005**: Blog posts with code snippets render syntax highlighting correctly in under 1 second after page load, and "Copy Code" functionality works with 100% reliability
+- **SC-006**: Social share previews (OpenGraph, Twitter Cards) display correctly on LinkedIn, Twitter, and Facebook when case study or blog post links are shared
+- **SC-007**: The sitemap.xml and RSS feed validate successfully using official validator tools (e.g., XML Sitemap Validator, W3C Feed Validator)
+- **SC-008**: Empty states and error messages are displayed within 500ms when applicable, providing clear guidance without technical jargon
+- **SC-009**: Filtering on Work Experience or Blog indices returns results or empty states within 300ms without full page reloads
+- **SC-010**: Portfolio visits increase by 40% within 3 months of launch, measured via telemetry page view events
+- **SC-011**: Inbound contact/interview requests (measured via resume downloads or contact form submissions) increase by 25% within 3 months of launch
+- **SC-012**: Average session duration is ≥ 4 minutes, indicating visitors engage with multiple pages or read content thoroughly
+- **SC-013**: Bounce rate on the home page is ≤ 40%, indicating effective navigation and clear value proposition
+- **SC-014**: At least 60% of visitors navigate to either Work Experience or Blog sections within their first session
+- **SC-015**: The site remains functional and content-accessible with JavaScript disabled, leveraging server-side rendering for core content
+- **SC-016**: All animations maintain 60fps performance and do not cause Cumulative Layout Shift (CLS) violations, with scroll-triggered animations respecting `prefers-reduced-motion` settings for users who require reduced motion
+- **SC-017**: Development velocity remains high with simplified manual testing approach, enabling rapid iteration and feature deployment without automated unit test overhead while maintaining quality through Lighthouse audits and real-device testing
+- **SC-018**: The site renders consistently and functions correctly across the latest 2 versions of Chrome, Firefox, Safari, and Edge on both desktop and mobile platforms, with no critical visual or functional discrepancies between browsers

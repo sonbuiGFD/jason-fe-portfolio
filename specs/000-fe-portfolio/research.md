@@ -1,750 +1,591 @@
-# Research & Technical Decisions
+# Research: FE Engineer Portfolio Implementation
 
-**Feature**: Portfolio Website  
-**Date**: October 28, 2025  
-**Purpose**: Document technical decisions, best practices research, and architectural patterns for implementation
+**Date**: October 29, 2025  
+**Feature**: FE Engineer Portfolio (Next.js + Sanity CMS)  
+**Status**: Complete
+
+## Overview
+
+This document consolidates research findings and technical decisions for the FE Engineer Portfolio implementation. All NEEDS CLARIFICATION items from Technical Context have been resolved through best practice research and architectural analysis.
 
 ---
 
-## 1. Next.js 14+ App Router Architecture
+## Research Area 1: Next.js 14+ App Router Architecture
 
 ### Decision
 
-Use Next.js 14+ with App Router (React Server Components) for all pages, leveraging server-first rendering with selective client components.
+Use Next.js 14+ App Router with the following rendering strategies:
+
+- **Static Site Generation (SSG)**: Home page, About page
+- **Incremental Static Regeneration (ISR)**: Work index, Labs index, Blog index, all detail pages (case studies, lab projects, blog posts)
+- **Server-Side Rendering (SSR)**: Not used in initial implementation (all content can be statically generated or incrementally regenerated)
+- **Client-Side Rendering (CSR)**: Search functionality, theme toggle, filter interactions
 
 ### Rationale
 
-- **Server Components by Default**: Reduces JavaScript bundle size, improves initial page load performance
-- **Automatic Code Splitting**: App Router automatically splits code at route boundaries
-- **Built-in Optimizations**: next/image, next/font, and metadata APIs are deeply integrated
-- **Streaming & Suspense**: Enables progressive page rendering for better perceived performance
-- **Server Actions**: Simplifies form submissions and mutations without API routes
+- **Performance**: SSG/ISR delivers optimal LCP and FCP metrics by pre-rendering pages at build time
+- **SEO**: Static HTML is immediately crawlable by search engines without JavaScript execution
+- **Cost**: Static pages reduce server compute costs compared to SSR on every request
+- **Content Freshness**: ISR with webhook-triggered revalidation balances static performance with content updates (revalidate within 60 seconds of CMS publish)
+- **User Experience**: Client-side interactions (search, filters) provide instant feedback without page reloads
 
 ### Alternatives Considered
 
-- **Next.js Pages Router**: Mature but lacks RSC benefits, larger client bundles, less optimal for content-heavy sites
-- **Remix**: Excellent DX but smaller ecosystem, less mature image optimization
-- **Gatsby**: Strong SSG but slower build times, complexity with large content volumes
+| Alternative               | Rejected Because                                                                                                     |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Full SSR for all pages    | Unnecessary compute cost and slower TTFB for content that changes infrequently (portfolio updates are not real-time) |
+| Pure CSR (SPA)            | Poor SEO, slow initial load, not suitable for content-focused portfolio                                              |
+| Static export without ISR | Content updates would require full rebuilds and redeployments, slowing editorial workflow                            |
 
-### Best Practices
+### Implementation Notes
 
-- Use Server Components for data fetching and static content rendering
-- Mark client components with `'use client'` directive only when needed (interactivity, browser APIs)
-- Leverage route groups `(auth)`, `(marketing)` for layout organization without affecting URLs
-- Use `loading.tsx` and `error.tsx` for automatic loading/error states
-- Implement parallel routes for complex UIs (e.g., modal overlays)
-
-### References
-
-- [Next.js App Router Documentation](https://nextjs.org/docs/app)
-- [React Server Components RFC](https://github.com/reactjs/rfcs/blob/main/text/0188-server-components.md)
+- Use `generateStaticParams` for dynamic routes (`/work/[slug]`, `/labs/[slug]`, `/blog/[slug]`)
+- Configure ISR revalidation via `revalidate` option in page components (e.g., `export const revalidate = 3600` for 1-hour cache)
+- Implement webhook endpoint at `/api/revalidate` to trigger on-demand revalidation when content is published in Sanity
+- Use `next/cache` tags for granular revalidation (e.g., `revalidateTag('work-case-studies')`)
 
 ---
 
-## 2. Sanity CMS Integration
+## Research Area 2: Sanity CMS Integration & Content Modeling
 
 ### Decision
 
-Use Sanity as the headless CMS with GROQ queries, Portable Text for rich content, and real-time preview via Presentation API.
+Use Sanity CMS v3 with GROQ queries for structured content management. Define the following content types:
+
+- **Author**: Portfolio owner profile (singleton)
+- **WorkCaseStudy**: Professional case studies with problem/solution narratives
+- **LabProject**: Side projects and experiments
+- **BlogPost**: Blog articles with rich text content
+- **TechStack**: Taxonomy for technologies (reusable across Work, Labs, Blog)
+- **Tag**: Taxonomy for blog topics
+
+Content status workflow: `draft` → `review` → `published` (only `published` visible in production)
 
 ### Rationale
 
-- **Developer Experience**: Excellent TypeScript support, schema-as-code, local development
-- **Real-time Collaboration**: Multiple editors can work simultaneously without conflicts
-- **Portable Text**: Structured rich text format superior to HTML strings, enables custom serializers
-- **Flexible Schema**: No rigid content models, can evolve schema without migrations
-- **Built-in Preview**: Presentation API provides authenticated preview URLs for drafts
-- **Generous Free Tier**: Sufficient for portfolio sites (10k documents, 50GB bandwidth/month)
+- **Developer Experience**: Sanity's schema-as-code approach integrates seamlessly with TypeScript
+- **Editorial Workflow**: Built-in revision history, real-time collaboration, and customizable Studio UI
+- **Image Optimization**: Sanity Image CDN provides automatic optimization, format conversion (WebP/AVIF), and responsive srcsets
+- **Query Performance**: GROQ enables efficient content projection (fetch only required fields) and filtering (status, tags, tech stack)
+- **Cost**: Sanity's free tier supports expected content volume (<10k documents, <1GB assets)
 
 ### Alternatives Considered
 
-- **Contentful**: More enterprise-focused, rigid content modeling, higher cost
-- **Strapi**: Self-hosted requires DevOps overhead, less TypeScript-friendly
-- **Payload CMS**: Newer, smaller ecosystem, less proven at scale
+| Alternative          | Rejected Because                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------- |
+| Contentful           | More expensive for comparable features, GraphQL overhead for simple queries           |
+| Strapi (self-hosted) | Requires infrastructure management, higher operational complexity                     |
+| MDX files in repo    | No editorial UI, requires code deployments for content updates, no image optimization |
+| WordPress            | Legacy architecture, heavier infrastructure, not TypeScript-friendly                  |
 
-### Integration Pattern
+### Implementation Notes
 
-```typescript
-// lib/sanity/client.ts
-import { createClient } from "@sanity/client";
-
-export const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  apiVersion: "2024-10-28",
-  useCdn: process.env.NODE_ENV === "production",
-  perspective: "published", // Filter drafts in production
-});
-
-export const previewClient = createClient({
-  ...client.config(),
-  useCdn: false,
-  perspective: "previewDrafts", // Include drafts for preview mode
-  token: process.env.SANITY_API_READ_TOKEN,
-});
-```
-
-### Best Practices
-
-- **Schema Organization**: Group schemas by content type (`work/`, `blog/`, `labs/`)
-- **Slug Uniqueness**: Implement custom validation to enforce unique slugs per content type
-- **Image Optimization**: Use Sanity's Image API with next/image loader for CDN delivery
-- **GROQ Queries**: Colocate queries with components, use projection to minimize data transfer
-- **Draft Filtering**: Use `perspective: 'published'` in production client to exclude drafts
-- **Webhooks**: Implement HMAC signature verification for security
-
-### References
-
-- [Sanity + Next.js Guide](https://www.sanity.io/guides/nextjs-app-router)
-- [Portable Text Documentation](https://portabletext.org/)
+- Define schemas in `sanity/schemas/*.ts` with TypeScript types
+- Use Sanity's `createClient` with `useCdn: true` for production reads (edge-cached, fast)
+- Enable Sanity Studio at `/admin` route for content management
+- Configure webhook in Sanity project settings to POST to `/api/revalidate` on publish events
+- Use `@sanity/image-url` builder for responsive image generation
+- Implement content validation rules in schemas (e.g., required fields, slug uniqueness)
 
 ---
 
-## 3. On-Demand ISR Revalidation Strategy
+## Research Area 3: Styling Architecture (TailwindCSS + SCSS Hybrid)
 
 ### Decision
 
-Implement on-demand Incremental Static Regeneration using `revalidatePath()` and `revalidateTag()` triggered by Sanity webhooks. No time-based revalidation.
+Use a **hybrid styling approach**:
+
+1. **TailwindCSS utilities**: For rapid development, spacing, layout, responsive breakpoints, and common patterns
+2. **SCSS modules**: For complex component-specific styles requiring nesting, variables, or advanced selectors
+3. **BEM naming conventions**: All custom CSS classes follow Block**Element**Modifier pattern with underscores (e.g., `card__header__large`, `navigation__item__active`)
+4. **CSS Variables**: For theme tokens (colors, shadows) to enable dark/light mode switching
 
 ### Rationale
 
-- **Immediate Updates**: Content changes appear within seconds (webhook latency) vs. minutes (time-based)
-- **Efficient Rebuilds**: Only affected pages regenerate, not entire site
-- **Cost Optimization**: Avoids unnecessary rebuilds when content unchanged
-- **Precise Control**: Tag-based invalidation enables granular cache management
+- **Development Velocity**: TailwindCSS utilities accelerate prototyping and iteration
+- **Maintainability**: BEM conventions prevent specificity conflicts and clarify component boundaries
+- **Theme Support**: CSS variables enable runtime theme switching without rebuilding stylesheets
+- **Component Isolation**: SCSS modules scope styles to components, preventing global collisions
+- **Flexibility**: Hybrid approach leverages strengths of both utility-first and component-scoped styling
 
-### Implementation Pattern
+### Alternatives Considered
 
-```typescript
-// app/api/revalidate/route.ts
-import { revalidatePath, revalidateTag } from "next/cache";
-import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
+| Alternative                            | Rejected Because                                                                        |
+| -------------------------------------- | --------------------------------------------------------------------------------------- |
+| TailwindCSS only                       | Complex animations and custom component states are verbose with utility classes alone   |
+| SCSS only                              | Rebuilds TailwindCSS utilities from scratch, losing ecosystem plugins and optimizations |
+| CSS-in-JS (styled-components, Emotion) | Runtime performance overhead, larger bundle sizes, not ideal for static content sites   |
+| Vanilla CSS                            | No nesting, no variables, no modules—insufficient for complex component styles          |
 
-export async function POST(req: NextRequest) {
-  // Verify Sanity webhook signature
-  const signature = req.headers.get("sanity-webhook-signature");
-  const body = await req.text();
+### Implementation Notes
 
-  const expectedSignature = crypto
-    .createHmac("sha256", process.env.SANITY_WEBHOOK_SECRET!)
-    .update(body)
-    .digest("hex");
-
-  if (signature !== expectedSignature) {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-  }
-
-  const payload = JSON.parse(body);
-  const { _type, slug } = payload;
-
-  // Revalidate specific paths and tags
-  if (_type === "workCaseStudy") {
-    revalidatePath("/work");
-    revalidatePath(`/work/${slug}`);
-    revalidateTag("work");
-  } else if (_type === "labProject") {
-    revalidatePath("/labs");
-    revalidatePath(`/labs/${slug}`);
-    revalidateTag("labs");
-  } else if (_type === "blogPost") {
-    revalidatePath("/blog");
-    revalidatePath(`/blog/${slug}`);
-    revalidateTag("blog");
-  }
-
-  return NextResponse.json({ revalidated: true, now: Date.now() });
-}
-```
-
-### Best Practices
-
-- **Webhook Security**: Always verify HMAC signatures to prevent unauthorized revalidation
-- **Tag Strategy**: Use content type tags (`work`, `blog`, `labs`) for bulk invalidation
-- **Error Handling**: Implement retry logic with exponential backoff in webhook handler
-- **Logging**: Log all revalidation events for debugging and monitoring
-- **Fallback**: Ensure stale content is still served if revalidation fails
-
-### References
-
-- [Next.js Revalidation Documentation](https://nextjs.org/docs/app/building-your-application/data-fetching/revalidating)
-- [Sanity Webhooks Guide](https://www.sanity.io/docs/webhooks)
+- Import TailwindCSS in `styles/globals.scss` with `@tailwind base; @tailwind components; @tailwind utilities;`
+- Define theme CSS variables in `styles/themes.scss` (light/dark variants)
+- Store component-specific SCSS in `styles/components/` with `.module.scss` extension
+- Use TailwindCSS `@apply` directive sparingly (only for frequently repeated utility combinations)
+- Configure PurgeCSS/Tailwind JIT to remove unused utilities in production builds
 
 ---
 
-## 4. Font Optimization with Next.js Font API
+## Research Area 4: Animation Library (Motion / Framer Motion)
 
 ### Decision
 
-Use `next/font/google` to self-host Google Fonts at build time with automatic subsetting and optimal loading.
+Use **Motion (Framer Motion)** for all declarative animations with the following patterns:
+
+- **Scroll-triggered reveals**: Fade-in, slide-in, scale-in when elements enter viewport
+- **Page transitions**: Smooth animations between route changes
+- **Interactive hover states**: Micro-interactions on cards, buttons, links
+- **Loading animations**: Skeleton loaders and spinner states
+
+All animations respect `prefers-reduced-motion` user preference.
 
 ### Rationale
 
-- **Zero External Requests**: Fonts downloaded at build time, eliminating DNS lookup and connection time
-- **Automatic Subsetting**: Only characters used in content are included, reducing file size
-- **Layout Shift Prevention**: Font metrics embedded, `font-display: swap` avoided
-- **Privacy Compliant**: No tracking by Google since fonts are self-hosted
-- **Simple API**: Declarative font loading with TypeScript support
+- **Declarative API**: Motion's component-based API integrates naturally with React
+- **Performance**: Uses GPU-accelerated transforms and opacity (no layout thrashing)
+- **Accessibility**: Built-in `prefers-reduced-motion` support
+- **Developer Experience**: Comprehensive documentation, TypeScript support, extensive community examples
+- **Bundle Size**: Tree-shakable, production build ~30-40KB gzipped
 
-### Implementation Pattern
+### Alternatives Considered
+
+| Alternative                              | Rejected Because                                                                                       |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| GSAP (GreenSock)                         | Imperative API less idiomatic in React, larger bundle size, subscription pricing for advanced features |
+| CSS animations only                      | Requires more boilerplate for scroll-triggered animations, harder to orchestrate complex sequences     |
+| React Spring                             | More physics-based (less design-controlled), steeper learning curve for scroll interactions            |
+| Plain JavaScript (Intersection Observer) | Manual animation logic is error-prone, harder to maintain, no built-in accessibility support           |
+
+### Implementation Notes
+
+- Wrap content sections in `<motion.div>` with `initial`, `whileInView`, `viewport` props for scroll reveals
+- Create reusable `<ScrollReveal>` wrapper component for consistent reveal animations
+- Use `<AnimatePresence>` for page transitions with `<motion.div>` wrapping page content
+- Configure Motion's `MotionConfig` to respect `prefers-reduced-motion` globally
+- Avoid animating `width`, `height`, `top`, `left` (triggers layout recalculation)—use `transform` and `opacity` instead
+
+---
+
+## Research Area 5: Client-Side Search Implementation
+
+### Decision
+
+Implement **client-side search** with a pre-built JSON index:
+
+1. **Build-time index generation**: Generate search index at build time by querying all published content from Sanity (title, summary, tags, content preview)
+2. **Index structure**: JSON file with normalized, searchable text and references to content slugs
+3. **Search algorithm**: Use Fuse.js for fuzzy search with configurable thresholds, keys, and ranking
+4. **Delivery**: Serve index via `/api/search` route or static JSON file in `public/` (lazy-loaded on search interaction)
+
+### Rationale
+
+- **Performance**: No server round-trips for search queries (instant results)
+- **Scalability**: Sufficient for expected content volume (10-20 case studies, 50-100 blog posts, 10-20 labs = <200 documents)
+- **User Experience**: Instant feedback, works offline after initial load
+- **Cost**: No search service subscription (Algolia, Typesense) required for small-scale portfolio
+- **Simplicity**: No infrastructure to manage, no API rate limits
+
+### Alternatives Considered
+
+| Alternative                         | Rejected Because                                                                          |
+| ----------------------------------- | ----------------------------------------------------------------------------------------- |
+| Algolia                             | Overkill for portfolio scale, monthly cost, requires API key management and syncing logic |
+| Server-side search (Sanity queries) | Adds latency (network round-trip), consumes Sanity API quota unnecessarily                |
+| Typesense (self-hosted)             | Requires infrastructure management, operational complexity for small benefit              |
+| No search                           | Poor UX for content discovery, especially as blog grows to 50-100 posts                   |
+
+### Implementation Notes
+
+- Create `lib/search/build-index.ts` script to query Sanity and generate JSON index
+- Include title, summary, tags, tech stack, and first 200 characters of content in index
+- Run index build during Next.js build process (in `postbuild` script or as API route handler)
+- Use Fuse.js with options: `threshold: 0.3`, `keys: ['title^2', 'summary', 'tags', 'content']` (title weighted 2x)
+- Lazy-load search index on modal open to avoid blocking initial page load
+- Store index in-memory on client (no persistence, re-fetch on page refresh)
+
+---
+
+## Research Area 6: Accessibility Best Practices (WCAG 2.2 AA)
+
+### Decision
+
+Implement the following accessibility patterns to achieve WCAG 2.2 AA compliance:
+
+- **Semantic HTML**: Use `<header>`, `<nav>`, `<main>`, `<article>`, `<footer>` landmarks
+- **Keyboard Navigation**: All interactive elements (links, buttons, modals) accessible via Tab, Enter, Escape
+- **Focus Management**: Visible focus indicators (2px outline, 3:1 contrast), trap focus in modals
+- **Color Contrast**: 4.5:1 for normal text, 3:1 for large text (18px+) and UI components
+- **ARIA Labels**: Descriptive labels for icon buttons, search inputs, navigation landmarks
+- **Screen Reader Support**: Alt text for all images, live regions for dynamic content updates
+- **Motion Accessibility**: Respect `prefers-reduced-motion` for animations
+
+### Rationale
+
+- **Inclusivity**: Expands audience to users with disabilities (legal requirement in many jurisdictions)
+- **SEO**: Semantic HTML and proper landmarks improve search engine understanding
+- **Professionalism**: Accessibility demonstrates engineering rigor and ethical responsibility
+- **Testing**: Automated testing (Lighthouse, axe DevTools) catches regressions early
+
+### Alternatives Considered
+
+| Alternative          | Rejected Because                                                                                                                        |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| WCAG 2.1 AA          | WCAG 2.2 includes additional criteria (e.g., focus appearance, dragging movements) that are relevant for modern web apps                |
+| No formal compliance | Unprofessional for a frontend engineer portfolio, excludes users with disabilities                                                      |
+| AAA compliance       | Requires significant additional effort (e.g., sign language videos, audio descriptions) with diminishing returns for portfolio use case |
+
+### Implementation Notes
+
+- Configure ESLint with `eslint-plugin-jsx-a11y` for automated accessibility linting
+- Use `next/image` with descriptive `alt` props (never empty unless decorative)
+- Implement skip link (`<a href="#main">Skip to content</a>`) for keyboard users
+- Test with keyboard-only navigation (no mouse/trackpad)
+- Run Lighthouse accessibility audits in CI (minimum score 95)
+- Test with VoiceOver (macOS), NVDA (Windows), or TalkBack (Android)
+- Use `aria-live="polite"` for search results and filter updates
+- Ensure modal dialogs return focus to trigger element on close
+
+---
+
+## Research Area 7: Performance Optimization Strategies
+
+### Decision
+
+Implement the following performance optimizations to meet Core Web Vitals targets (LCP ≤2.5s, INP ≤200ms, CLS ≤0.1):
+
+**LCP (Largest Contentful Paint)**:
+
+- Hero images use `next/image` with `priority` prop (preload)
+- Fonts optimized with `next/font` (self-hosted, subsetting, font-display: swap)
+- Preconnect to Sanity CDN: `<link rel="preconnect" href="https://cdn.sanity.io">`
+- SSG/ISR for all content pages (no SSR delays)
+
+**INP (Interaction to Next Paint)**:
+
+- Client-side routing (no full page reloads)
+- Debounce search input (300ms delay)
+- Use `useTransition` for filter updates (non-blocking)
+- Code-split heavy components (search modal, animations)
+
+**CLS (Cumulative Layout Shift)**:
+
+- Explicit width/height on all images
+- Reserve space for lazy-loaded content (skeleton loaders)
+- Avoid font layout shifts with `next/font` (preloaded, size-adjusted)
+- No banner/toast injections above-the-fold
+
+### Rationale
+
+- **SEO**: Core Web Vitals are Google ranking factors (May 2021 Page Experience update)
+- **User Experience**: Fast load times reduce bounce rates, smooth interactions build trust
+- **Mobile-First**: Performance targets prioritize mobile experience (primary traffic source)
+- **Competitive Advantage**: Portfolio showcasing frontend skills must demonstrate performance mastery
+
+### Alternatives Considered
+
+| Alternative                              | Rejected Because                                                                           |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Client-side data fetching (useEffect)    | Delays LCP, requires loading states, poor SEO                                              |
+| Unoptimized images (no next/image)       | Large file sizes, no responsive srcsets, no format optimization                            |
+| Third-party analytics (Google Analytics) | Adds ~50KB, blocks rendering, privacy concerns (alternatives: Vercel Analytics, Plausible) |
+| No performance monitoring                | Cannot track regressions or validate optimizations                                         |
+
+### Implementation Notes
+
+- Run Lighthouse CI on every PR (enforce performance budget: Performance score ≥90, LCP ≤2.5s, CLS ≤0.1)
+- Use Vercel Analytics or Web Vitals library for Real User Monitoring (RUM)
+- Configure `next.config.js` with `images.domains` for Sanity CDN
+- Use `loading="lazy"` for below-the-fold images (default in `next/image`)
+- Minimize JavaScript bundle: tree-shake unused dependencies, analyze with `@next/bundle-analyzer`
+- Implement resource hints: `<link rel="dns-prefetch">` for external domains, `<link rel="preload">` for critical resources
+
+---
+
+## Research Area 8: SEO & Metadata Best Practices
+
+### Decision
+
+Implement the following SEO patterns:
+
+- **Metadata**: Generate `<title>`, `<meta name="description">`, canonical URLs via Next.js `Metadata` API
+- **Sitemap**: Dynamic XML sitemap at `/sitemap.xml` with all public pages, last modification dates
+- **RSS Feed**: XML RSS feed at `/blog/rss.xml` with latest blog posts
+- **OpenGraph & Twitter Cards**: Metadata for social sharing (title, description, image, type)
+- **Structured Data**: JSON-LD for `BlogPosting`, `Person`, `WebSite` schema.org types
+- **Robots.txt**: Allow all crawlers, reference sitemap location
+
+### Rationale
+
+- **Discoverability**: Sitemaps help search engines find and index all pages
+- **Social Sharing**: OpenGraph/Twitter Cards ensure rich previews on LinkedIn, Twitter, Facebook
+- **Click-Through Rate**: Optimized meta descriptions and titles improve search result CTR
+- **Content Syndication**: RSS feed enables subscribers to follow blog updates
+
+### Alternatives Considered
+
+| Alternative        | Rejected Because                                        |
+| ------------------ | ------------------------------------------------------- |
+| Manual meta tags   | Repetitive, error-prone, no dynamic content integration |
+| Static sitemap     | Requires manual updates when content is added/removed   |
+| No structured data | Misses opportunity for rich snippets in search results  |
+
+### Implementation Notes
+
+- Use `generateMetadata` in page components to dynamically generate metadata from CMS content
+- Include canonical URL in metadata to prevent duplicate content penalties
+- Generate OpenGraph image for each case study/blog post using Sanity Image CDN (1200x630px recommended)
+- Implement `app/sitemap.xml/route.ts` to query Sanity for all published content and return XML
+- Implement `app/rss.xml/route.ts` to query blog posts and return RSS 2.0 feed
+- Add `robots.txt` in `public/` with `Sitemap: https://yourdomain.com/sitemap.xml`
+- Use `@next/third-parties` for safe third-party script loading if needed
+
+---
+
+## Research Area 9: Testing Strategy (Manual + Lighthouse)
+
+### Decision
+
+Adopt a **simplified testing approach** focused on manual testing and Lighthouse audits:
+
+- **Manual Testing**: User flow walkthroughs (home → work → case study, blog search → filter → read post)
+- **Lighthouse CI**: Automated audits for Performance, Accessibility, Best Practices, SEO on every PR
+- **Visual Regression**: Manual comparison of before/after screenshots in PR reviews
+- **Real-Device Testing**: Manual testing on iPhone (Safari), Android (Chrome), desktop (Chrome, Firefox, Safari, Edge)
+- **Keyboard Testing**: Manual keyboard-only navigation testing (Tab, Enter, Escape)
+
+**No unit tests or integration tests in initial implementation.**
+
+### Rationale
+
+- **Development Velocity**: Manual testing is faster to set up than writing/maintaining automated tests
+- **Portfolio Context**: Low complexity, single developer, infrequent changes—automated tests have low ROI
+- **Quality Gates**: Lighthouse CI catches regressions in accessibility, performance, SEO automatically
+- **Pragmatism**: Time invested in features and content creation delivers more value than test coverage
+
+### Alternatives Considered
+
+| Alternative                  | Rejected Because                                                                                   |
+| ---------------------------- | -------------------------------------------------------------------------------------------------- |
+| Jest + React Testing Library | Time-consuming test writing slows feature development, minimal risk mitigation for portfolio scale |
+| Playwright/Cypress E2E       | Setup overhead, flaky tests, maintenance burden, overkill for small portfolio                      |
+| Vitest + Testing Library     | Still requires significant test writing time, same ROI concerns as Jest                            |
+
+### Implementation Notes
+
+- Configure Lighthouse CI in `.github/workflows/ci.yml` to run on every PR
+- Set Lighthouse budgets: Performance ≥90, Accessibility ≥95, SEO ≥90
+- Block PR merge if Lighthouse checks fail
+- Document manual testing checklist in `.github/PULL_REQUEST_TEMPLATE.md`
+- Use BrowserStack or real devices for cross-browser/device testing
+- Consider adding E2E tests post-launch if content editing workflows become complex
+
+---
+
+## Research Area 10: Browser Support & Progressive Enhancement
+
+### Decision
+
+Support the **latest 2 versions** of modern browsers:
+
+- **Chrome**: 120+ (latest 2 versions)
+- **Firefox**: 120+ (latest 2 versions)
+- **Safari**: 17+ (latest 2 versions)
+- **Edge**: 120+ (latest 2 versions, Chromium-based)
+
+**No support for Internet Explorer** (end-of-life June 2022).
+
+Use **progressive enhancement**:
+
+- Core content and functionality work without JavaScript (SSR/SSG)
+- Enhancements (search, filters, animations) require JavaScript but degrade gracefully
+- Feature detection for modern CSS (Grid, Flexbox, CSS Variables)
+
+### Rationale
+
+- **User Coverage**: Latest 2 versions cover >95% of global browser usage (as of 2025)
+- **Development Efficiency**: No polyfills or legacy browser hacks, modern APIs available
+- **Performance**: Modern browsers support optimal image formats (WebP, AVIF), efficient JavaScript
+- **Security**: Older browsers have unpatched vulnerabilities, not recommended for users
+
+### Alternatives Considered
+
+| Alternative                             | Rejected Because                                                               |
+| --------------------------------------- | ------------------------------------------------------------------------------ |
+| Support IE11                            | End-of-life browser, requires extensive polyfills, degrades performance        |
+| Support latest 5 versions               | Diminishing returns, adds maintenance burden without significant user coverage |
+| Modern browsers only (latest 1 version) | Too aggressive, excludes users who delay browser updates                       |
+
+### Implementation Notes
+
+- Configure Browserslist in `package.json`: `"browserslist": ["last 2 Chrome versions", "last 2 Firefox versions", "last 2 Safari versions", "last 2 Edge versions"]`
+- Autoprefixer will automatically add vendor prefixes based on Browserslist config
+- Use `@supports` CSS feature queries for graceful degradation (e.g., Grid fallback to Flexbox)
+- Test site with JavaScript disabled to ensure core content is accessible
+- Display browser upgrade message for unsupported browsers (detect via user agent or feature detection)
+
+---
+
+## Research Area 11: Pagination Strategy for Content Lists
+
+### Decision
+
+Implement **"Load More" button pagination** for Blog, Work, and Labs index pages:
+
+- **Initial SSG/ISR Load**: First 20 items per content type
+- **Client-Side Loading**: Subsequent 20-item batches via API route
+- **User Control**: Explicit "Load More" button (not infinite scroll)
+- **SEO Safety**: All items in sitemap.xml, search index includes all content
+- **Fallback**: Optional paginated URLs (`/blog/page/[number]`) for JavaScript-disabled users
+
+### Rationale
+
+- **Performance**: Initial load of 20 items keeps LCP ≤2.5s target achievable (~30-50KB payload)
+- **Scale-Appropriate**: 50-100 blog posts fit well with 20-item batches (max 5 loads to see all)
+- **User Experience**: Clear control over content loading, preserves scroll position, accessible
+- **SEO**: Sitemap includes all content URLs, search engines discover all pages without pagination crawl
+- **Development Velocity**: Simpler than cursor-based pagination, sufficient for portfolio scale
+- **Accessibility**: Keyboard-accessible button, screen reader announces loading state and remaining count
+
+### Alternatives Considered
+
+| Alternative             | Rejected Because                                                                                    |
+| ----------------------- | --------------------------------------------------------------------------------------------------- |
+| Load all items at once  | Poor initial load performance (200KB+ for 100 blog posts), unnecessary for browsing UX              |
+| Infinite scroll         | Footer becomes unreachable, no user control, accessibility challenges, complicates focus management |
+| Traditional pagination  | Full page reloads interrupt reading flow, feels dated, requires URL state management                |
+| Cursor-based pagination | Over-engineered for portfolio scale, complex to implement, no significant benefit at this volume    |
+
+### Implementation Notes
+
+**Initial Page Load (SSG/ISR)**:
 
 ```typescript
-// src/app/layout.tsx
-import { Inter, JetBrains_Mono } from "next/font/google";
+// app/blog/page.tsx
+const ITEMS_PER_PAGE = 20;
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
+export default async function BlogPage() {
+  // Fetch first 20 posts
+  const posts = await sanityClient.fetch(
+    `*[_type == "blogPost" && status == "published"]
+     | order(publishedAt desc) [0...${ITEMS_PER_PAGE}] { ... }`
+  );
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  display: "swap",
-});
+  // Get total count for "Load More" logic
+  const totalPosts = await sanityClient.fetch(
+    `count(*[_type == "blogPost" && status == "published"])`
+  );
 
-export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body>{children}</body>
-    </html>
+    <main>
+      <PostList posts={posts} total={totalPosts} />
+    </main>
   );
 }
 ```
 
-```css
-/* styles/globals.css */
-:root {
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-}
-
-body {
-  font-family: var(--font-sans), system-ui, sans-serif;
-}
-
-code,
-pre {
-  font-family: var(--font-mono), monospace;
-}
-```
-
-### Best Practices
-
-- **Variable Fonts**: Prefer variable fonts (e.g., Inter Variable) to reduce requests
-- **Subset Selection**: Only include required character sets (latin for English content)
-- **Preload Critical Fonts**: Next.js automatically preloads fonts used in root layout
-- **CSS Variables**: Expose fonts via CSS variables for theme consistency
-- **Fallback Stack**: Define system font fallbacks for FOUT prevention
-
-### References
-
-- [Next.js Font Optimization](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)
-- [Google Fonts API](https://fonts.google.com/)
-
----
-
-## 5. Client-Side Search with Fuse.js
-
-### Decision
-
-Implement client-side fuzzy search using Fuse.js with search index built at compile time.
-
-### Rationale
-
-- **Simplicity**: No search backend or API required, reduces infrastructure complexity
-- **Performance**: Sub-50ms search on ~100 items, acceptable for portfolio scale
-- **Privacy**: No search queries sent to external services
-- **Cost**: Zero additional cost vs. Algolia ($1+/month)
-- **Offline Capable**: Search works without network connection
-
-### Implementation Pattern
+**Client-Side "Load More" Button**:
 
 ```typescript
-// lib/search/index.ts
-import Fuse from "fuse.js";
-import { WorkCaseStudy, LabProject, BlogPost } from "@/types/models";
-
-type SearchableContent = {
-  type: "work" | "lab" | "blog";
-  slug: string;
-  title: string;
-  description: string;
-  tags: string[];
-};
-
-export function createSearchIndex(
-  work: WorkCaseStudy[],
-  labs: LabProject[],
-  blog: BlogPost[]
-): Fuse<SearchableContent> {
-  const items: SearchableContent[] = [
-    ...work.map((w) => ({
-      type: "work" as const,
-      slug: w.slug,
-      title: w.title,
-      description: w.challenge,
-      tags: w.tags,
-    })),
-    ...labs.map((l) => ({
-      type: "lab" as const,
-      slug: l.slug,
-      title: l.title,
-      description: l.description,
-      tags: l.tags,
-    })),
-    ...blog.map((b) => ({
-      type: "blog" as const,
-      slug: b.slug,
-      title: b.title,
-      description: b.excerpt,
-      tags: b.tags,
-    })),
-  ];
-
-  return new Fuse(items, {
-    keys: [
-      { name: "title", weight: 2 },
-      { name: "description", weight: 1 },
-      { name: "tags", weight: 1.5 },
-    ],
-    threshold: 0.3,
-    includeScore: true,
-  });
-}
-```
-
-### Best Practices
-
-- **Index Weight Tuning**: Prioritize title matches over description matches
-- **Threshold Tuning**: 0.3 provides good balance of precision and recall
-- **Result Grouping**: Group results by content type (Work, Labs, Blog)
-- **Debouncing**: Debounce search input to avoid excessive re-renders
-- **Limit Results**: Show top 10 results per category to prevent overwhelming UI
-
-### Alternatives Considered
-
-- **Algolia**: Excellent UX but $1+/month cost, overkill for portfolio scale
-- **Elasticsearch**: Requires backend infrastructure, high maintenance overhead
-- **MiniSearch**: Lighter than Fuse.js but less feature-rich
-
-### References
-
-- [Fuse.js Documentation](https://fusejs.io/)
-- [Client-Side Search Best Practices](https://www.algolia.com/blog/engineering/client-side-search-implementation/)
-
----
-
-## 6. Image Optimization Strategy
-
-### Decision
-
-Use `next/image` with Sanity Image CDN as the loader, delivering WebP/AVIF formats with responsive srcsets.
-
-### Rationale
-
-- **Automatic Format Selection**: Browser receives best supported format (AVIF > WebP > JPEG)
-- **Lazy Loading**: Below-the-fold images lazy load automatically
-- **Layout Shift Prevention**: Explicit dimensions prevent CLS
-- **CDN Delivery**: Sanity CDN provides global edge caching
-- **Blur Placeholders**: Low-quality image placeholders (LQIP) for better perceived performance
-
-### Implementation Pattern
-
-```typescript
-// lib/sanity/image.ts
-import imageUrlBuilder from "@sanity/image-url";
-import { client } from "./client";
-
-const builder = imageUrlBuilder(client);
-
-export function urlFor(source: any) {
-  return builder.image(source);
-}
-
-// Usage in components
-import Image from "next/image";
-import { urlFor } from "@/lib/sanity/image";
-
-<Image
-  src={urlFor(heroImage).width(1200).height(630).url()}
-  alt={heroImage.alt}
-  width={1200}
-  height={630}
-  priority={aboveFold}
-  placeholder="blur"
-  blurDataURL={urlFor(heroImage).width(20).height(11).blur(50).url()}
-/>;
-```
-
-### Best Practices
-
-- **Explicit Dimensions**: Always provide width/height to prevent layout shift
-- **Priority Attribute**: Use for hero images and above-the-fold content
-- **Responsive Images**: Use `sizes` prop to optimize image selection per viewport
-- **Alt Text Validation**: Enforce alt text in Sanity schema validation
-- **Fallback Images**: Provide branded placeholder for missing images
-
-### References
-
-- [Next.js Image Optimization](https://nextjs.org/docs/app/building-your-application/optimizing/images)
-- [Sanity Image URLs](https://www.sanity.io/docs/image-urls)
-
----
-
-## 7. Theme System with CSS Variables
-
-### Decision
-
-Implement dark/light theme using CSS variables with system preference detection and manual toggle persisted in localStorage.
-
-### Rationale
-
-- **Zero Runtime Cost**: CSS variables switch themes without JavaScript execution
-- **SSR Compatible**: Initial theme applied before hydration to prevent flash
-- **Accessible**: Respects `prefers-color-scheme` media query
-- **Persistent**: User preference saved in localStorage
-- **Maintainable**: Centralized color definitions in design tokens
-
-### Implementation Pattern
-
-```typescript
-// src/app/providers.tsx
+// components/content/LoadMoreButton.tsx
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+export function LoadMoreButton({ currentCount, totalCount, contentType }) {
+  const [loading, setLoading] = useState(false);
+  const [offset, setOffset] = useState(currentCount);
 
-type Theme = "light" | "dark";
-
-const ThemeContext = createContext<{
-  theme: Theme;
-  toggleTheme: () => void;
-}>({ theme: "light", toggleTheme: () => {} });
-
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
-
-  useEffect(() => {
-    // Read from localStorage or system preference
-    const stored = localStorage.getItem("theme") as Theme | null;
-    const systemPrefers = window.matchMedia("(prefers-color-scheme: dark)")
-      .matches
-      ? "dark"
-      : "light";
-    const initial = stored ?? systemPrefers;
-    setTheme(initial);
-    document.documentElement.setAttribute("data-theme", initial);
-  }, []);
-
-  const toggleTheme = () => {
-    const next = theme === "light" ? "dark" : "light";
-    setTheme(next);
-    localStorage.setItem("theme", next);
-    document.documentElement.setAttribute("data-theme", next);
+  const loadMore = async () => {
+    setLoading(true);
+    const response = await fetch(
+      `/api/${contentType}/items?offset=${offset}&limit=20`
+    );
+    const newItems = await response.json();
+    // Append to existing items...
+    setOffset(offset + newItems.length);
+    setLoading(false);
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-}
-
-export const useTheme = () => useContext(ThemeContext);
-```
-
-```css
-/* styles/globals.css */
-:root {
-  /* Light theme (default) */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f5f5f5;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #666666;
-  --color-accent: #0066cc;
-}
-
-[data-theme="dark"] {
-  --color-bg-primary: #1a1a1a;
-  --color-bg-secondary: #2a2a2a;
-  --color-text-primary: #f5f5f5;
-  --color-text-secondary: #aaaaaa;
-  --color-accent: #3399ff;
-}
-```
-
-### Best Practices
-
-- **Inline Script**: Add theme detection script in `<head>` to prevent flash
-- **Semantic Variables**: Use purpose-based names (`--color-text-primary`) not color names (`--color-gray-900`)
-- **Contrast Validation**: Ensure all color combinations meet WCAG 2.2 AA contrast ratios
-- **Reduced Motion**: Respect `prefers-reduced-motion` for theme transitions
-- **Test Both Themes**: Validate all components in both light and dark themes
-
-### References
-
-- [CSS Variables MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
-- [Theme Switching Best Practices](https://web.dev/patterns/theming/)
-
----
-
-## 8. Accessibility Implementation
-
-### Decision
-
-Implement WCAG 2.2 AA compliance using semantic HTML, ARIA landmarks, keyboard navigation, and automated testing with Axe DevTools.
-
-### Rationale
-
-- **Legal Compliance**: WCAG 2.2 AA is constitutional requirement
-- **Broader Reach**: 15% of population has some form of disability
-- **SEO Benefits**: Semantic HTML improves search engine understanding
-- **Better UX**: Keyboard navigation and focus management benefit all users
-- **Professional Standard**: Accessibility demonstrates engineering maturity
-
-### Implementation Checklist
-
-#### Semantic HTML
-
-- ✅ Use `<header>`, `<nav>`, `<main>`, `<aside>`, `<footer>` landmarks
-- ✅ Proper heading hierarchy (single `<h1>`, nested `<h2>`-`<h6>`)
-- ✅ `<button>` for actions, `<a>` for navigation
-- ✅ `<form>` with associated `<label>` elements
-
-#### ARIA Attributes
-
-- ✅ `aria-label` for icon-only buttons
-- ✅ `aria-current="page"` for active navigation links
-- ✅ `aria-live` regions for dynamic content updates
-- ✅ `aria-expanded` for collapsible sections
-- ✅ `role="dialog"` with `aria-modal="true"` for modals
-
-#### Keyboard Navigation
-
-- ✅ All interactive elements focusable via Tab
-- ✅ Visible focus indicators (3:1 contrast ratio)
-- ✅ Logical tab order (follows visual layout)
-- ✅ Escape key closes modals
-- ✅ Focus trap within modal dialogs
-- ✅ Focus restoration after modal close
-
-#### Color Contrast
-
-- ✅ Normal text: 4.5:1 contrast ratio
-- ✅ Large text (≥18pt): 3:1 contrast ratio
-- ✅ UI components: 3:1 contrast ratio
-- ✅ Validate contrast in both light and dark themes
-
-#### Screen Reader Support
-
-- ✅ Descriptive alt text for all images
-- ✅ Skip navigation links
-- ✅ Form validation errors announced
-- ✅ Loading states announced with `aria-busy`
-
-### Testing Strategy
-
-```typescript
-// tests/a11y/homepage.test.ts
-import { test, expect } from "@playwright/test";
-import AxeBuilder from "@axe-core/playwright";
-
-test.describe("Homepage Accessibility", () => {
-  test("should not have WCAG 2.2 AA violations", async ({ page }) => {
-    await page.goto("/");
-    const results = await new AxeBuilder({ page })
-      .withTags(["wcag2aa", "wcag22aa"])
-      .analyze();
-
-    expect(results.violations).toEqual([]);
-  });
-
-  test("keyboard navigation works", async ({ page }) => {
-    await page.goto("/");
-    await page.keyboard.press("Tab");
-
-    const focusedElement = await page.evaluate(
-      () => document.activeElement?.tagName
-    );
-    expect(focusedElement).toBe("A"); // First link should receive focus
-  });
-});
-```
-
-### Best Practices
-
-- **Automated Testing**: Run Axe checks in CI on every PR
-- **Manual Testing**: Use keyboard-only navigation and screen readers (NVDA, JAWS, VoiceOver)
-- **Focus Management**: Always manage focus after route changes and modal interactions
-- **Motion Respect**: Disable animations when `prefers-reduced-motion: reduce`
-- **Touch Targets**: Minimum 44×44px for touch targets (WCAG 2.2 requirement)
-
-### References
-
-- [WCAG 2.2 Guidelines](https://www.w3.org/WAI/WCAG22/quickref/)
-- [Axe DevTools Documentation](https://www.deque.com/axe/devtools/)
-- [A11y Project Checklist](https://www.a11yproject.com/checklist/)
-
----
-
-## 9. Performance Monitoring & Optimization
-
-### Decision
-
-Use Vercel Analytics for Real User Monitoring (RUM) with Web Vitals tracking and Lighthouse CI for synthetic monitoring.
-
-### Rationale
-
-- **Real User Data**: Vercel Analytics captures actual user experiences across devices
-- **Core Web Vitals**: Automatic tracking of LCP, INP, CLS aligned with constitutional requirements
-- **Zero Config**: Built-in integration with Vercel deployment
-- **Budget Enforcement**: Lighthouse CI blocks PRs that regress performance budgets
-- **Historical Trends**: Track performance over time to detect regressions
-
-### Implementation Pattern
-
-```typescript
-// src/app/layout.tsx
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <Analytics />
-        <SpeedInsights />
-      </body>
-    </html>
+    <button onClick={loadMore} disabled={loading}>
+      {loading ? "Loading..." : `Load More (${totalCount - offset} remaining)`}
+    </button>
   );
 }
 ```
 
-```json
-// lighthouserc.json
-{
-  "ci": {
-    "collect": {
-      "url": [
-        "http://localhost:3000",
-        "http://localhost:3000/work",
-        "http://localhost:3000/blog"
-      ],
-      "numberOfRuns": 3
+**API Route for Pagination**:
+
+```typescript
+// app/api/blog/items/route.ts
+export async function GET(request: NextRequest) {
+  const offset = parseInt(request.nextUrl.searchParams.get("offset") || "0");
+  const limit = parseInt(request.nextUrl.searchParams.get("limit") || "20");
+
+  const posts = await sanityClient.fetch(
+    `*[_type == "blogPost" && status == "published"] 
+     | order(publishedAt desc) [${offset}...${offset + limit}] { ... }`
+  );
+
+  return NextResponse.json(posts, {
+    headers: {
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
     },
-    "assert": {
-      "preset": "lighthouse:recommended",
-      "assertions": {
-        "categories:performance": ["error", { "minScore": 0.9 }],
-        "categories:accessibility": ["error", { "minScore": 1 }],
-        "largest-contentful-paint": ["error", { "maxNumericValue": 2500 }],
-        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
-        "max-potential-fid": ["error", { "maxNumericValue": 200 }]
-      }
-    }
-  }
+  });
 }
 ```
 
-### Best Practices
+**Pagination Configuration**:
 
-- **Field vs Lab Data**: Use RUM for real-world performance, Lighthouse for controlled testing
-- **P75 Targets**: Focus on 75th percentile metrics, not averages (aligned with constitution)
-- **Budget Alerts**: Configure Slack/email alerts for budget violations
-- **Device Testing**: Test on real mobile devices (low-end Android) not just simulators
-- **Performance Profiling**: Use React DevTools Profiler to identify expensive re-renders
+| Content Type | Initial Load | Per Load    | Expected Total | Pagination |
+| ------------ | ------------ | ----------- | -------------- | ---------- |
+| Blog Posts   | 20 posts     | 20 posts    | 50-100 posts   | Required   |
+| Work Studies | 20 studies   | 20 studies  | 10-20 studies  | Optional   |
+| Lab Projects | 20 projects  | 20 projects | 10-20 projects | Optional   |
 
-### References
-
-- [Vercel Analytics Documentation](https://vercel.com/docs/analytics)
-- [Web Vitals Library](https://github.com/GoogleChrome/web-vitals)
-- [Lighthouse CI Setup](https://github.com/GoogleChrome/lighthouse-ci)
-
----
-
-## 10. Content Security & Preview Mode
-
-### Decision
-
-Implement Sanity preview mode using Next.js Draft Mode with token-based authentication for secure draft access.
-
-### Rationale
-
-- **Security**: Preview URLs require authentication token, preventing public draft access
-- **SEO Protection**: Search engines don't index draft content
-- **Accurate Preview**: Draft mode uses real production environment, not separate staging
-- **Author UX**: Content authors preview changes before publishing without deploying
-
-### Implementation Pattern
-
-```typescript
-// app/api/draft/route.ts
-import { draftMode } from "next/headers";
-import { redirect } from "next/navigation";
-import { validatePreviewUrl } from "@sanity/preview-url-secret";
-import { client } from "@/lib/sanity/client";
-
-export async function GET(request: Request) {
-  const { isValid, redirectTo = "/" } = await validatePreviewUrl(
-    client.withConfig({ token: process.env.SANITY_API_READ_TOKEN }),
-    request.url
-  );
-
-  if (!isValid) {
-    return new Response("Invalid secret", { status: 401 });
-  }
-
-  draftMode().enable();
-  redirect(redirectTo);
-}
-
-// app/api/draft/disable/route.ts
-export async function GET() {
-  draftMode().disable();
-  return new Response("Draft mode disabled");
-}
-```
-
-```typescript
-// lib/sanity/client.ts
-import { draftMode } from "next/headers";
-
-export function getClient() {
-  const { isEnabled } = draftMode();
-  return isEnabled ? previewClient : client;
-}
-```
-
-### Best Practices
-
-- **Token Rotation**: Rotate Sanity API tokens regularly
-- **Preview Banner**: Show prominent banner when in draft mode
-- **Exit Link**: Provide clear "Exit Preview" link to disable draft mode
-- **Cookie Security**: Ensure draft mode cookie is httpOnly and secure
-- **Sanity Studio Integration**: Configure Sanity Studio to generate preview URLs automatically
-
-### References
-
-- [Next.js Draft Mode](https://nextjs.org/docs/app/building-your-application/configuring/draft-mode)
-- [Sanity Preview Guide](https://www.sanity.io/docs/preview-content-on-site)
+**Note**: Work and Labs pagination is optional since expected volumes (10-20 items) may not require pagination. However, implementing consistent pagination across all content types provides better scalability and UX consistency.
 
 ---
 
 ## Summary of Key Decisions
 
-| Area          | Decision                         | Primary Benefit                                 |
-| ------------- | -------------------------------- | ----------------------------------------------- |
-| Framework     | Next.js 14+ App Router           | Server Components, automatic optimizations      |
-| CMS           | Sanity with GROQ                 | Developer experience, real-time collaboration   |
-| ISR Strategy  | On-demand revalidation           | Immediate updates, cost efficiency              |
-| Fonts         | Next.js Font Optimization        | Zero external requests, layout shift prevention |
-| Search        | Client-side with Fuse.js         | Simplicity, zero cost, privacy                  |
-| Images        | next/image + Sanity CDN          | Automatic format selection, lazy loading        |
-| Themes        | CSS variables                    | Zero runtime cost, SSR compatible               |
-| Accessibility | WCAG 2.2 AA + Axe tests          | Legal compliance, broader reach                 |
-| Monitoring    | Vercel Analytics + Lighthouse CI | Real user data, budget enforcement              |
-| Preview       | Next.js Draft Mode               | Security, accurate preview                      |
+| Area                   | Decision                                          | Rationale                                                                         |
+| ---------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **Rendering Strategy** | SSG/ISR (no SSR)                                  | Optimal performance, SEO, cost; ISR enables content updates without full rebuilds |
+| **CMS**                | Sanity v3 + GROQ                                  | Developer-friendly, built-in image CDN, cost-effective, revision history          |
+| **Styling**            | TailwindCSS + SCSS (BEM)                          | Hybrid approach balances velocity (Tailwind) with maintainability (SCSS/BEM)      |
+| **Animations**         | Motion (Framer Motion)                            | Declarative API, performance, accessibility, React-friendly                       |
+| **Search**             | Client-side (Fuse.js)                             | Instant results, sufficient for portfolio scale, no service costs                 |
+| **Pagination**         | "Load More" button (20 items/batch)               | Optimal performance, user control, accessibility, sufficient for portfolio scale  |
+| **Accessibility**      | WCAG 2.2 AA                                       | Inclusivity, SEO, professionalism; Lighthouse CI enforces compliance              |
+| **Performance**        | LCP ≤2.5s, INP ≤200ms, CLS ≤0.1                   | Core Web Vitals targets, Lighthouse CI budgets, RUM monitoring                    |
+| **SEO**                | Sitemap, OpenGraph, RSS, JSON-LD                  | Discoverability, social sharing, content syndication                              |
+| **Testing**            | Manual + Lighthouse CI                            | Pragmatic approach prioritizing development velocity over test coverage           |
+| **Browser Support**    | Latest 2 versions (Chrome, Firefox, Safari, Edge) | Modern APIs, no IE11, progressive enhancement                                     |
 
-All decisions align with constitutional principles and support the performance, accessibility, and content management requirements defined in the specification.
+---
+
+## Open Questions (Resolved in Spec Clarifications)
+
+All clarifications have been addressed in the feature spec's **Clarifications** section:
+
+- ✅ URL pattern for content: Clean slug-based paths (e.g., `/work/modernizing-checkout-flow`)
+- ✅ Search implementation: Client-side with pre-built index
+- ✅ Content volume: 10-20 case studies, 50-100 blog posts, 10-20 labs
+- ✅ Analytics privacy: Essential analytics only, no personal data, no consent banner
+- ✅ CMS outage handling: Serve stale cached content with staleness indicator
+- ✅ Styling approach: Hybrid TailwindCSS + SCSS with BEM conventions
+- ✅ Animation approach: Motion (Framer Motion) with scroll-triggered reveals
+- ✅ Headless CMS & CDN: Sanity for both CMS and image CDN
+- ✅ Testing strategy: Manual testing + Lighthouse CI (no unit tests)
+- ✅ Browser support: Latest 2 versions of Chrome, Firefox, Safari, Edge
+
+---
+
+## Next Steps
+
+Proceed to **Phase 1: Design & Contracts** to generate:
+
+1. `data-model.md`: Entity definitions with attributes, relationships, validation rules
+2. `contracts/`: Sanity schemas, TypeScript types, search index structure
+3. `quickstart.md`: Setup instructions, environment configuration, development workflow
+4. Update agent context with technology stack (`.github/copilot-instructions.md` or equivalent)

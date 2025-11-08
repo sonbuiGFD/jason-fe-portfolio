@@ -1,540 +1,538 @@
-# Quickstart Guide
+# Quickstart Guide: FE Engineer Portfolio
 
-**Feature**: Portfolio Website  
-**Date**: October 28, 2025  
-**Purpose**: Get developers up and running quickly with the portfolio project
+**Date**: October 29, 2025  
+**Feature**: FE Engineer Portfolio  
+**Status**: Phase 1 Complete
+
+## Overview
+
+This guide provides setup instructions, environment configuration, and development workflow for the FE Engineer Portfolio built with Next.js 14+, Sanity CMS, TailwindCSS, and Motion (Framer Motion).
 
 ---
 
 ## Prerequisites
 
-Before starting, ensure you have:
+Ensure you have the following installed:
 
-- **Node.js**: Version 20 LTS or higher
-- **Package Manager**: npm, yarn, or pnpm
-- **Git**: For version control
-- **Vercel Account**: For deployment (free tier sufficient)
-- **Sanity Account**: For CMS (free tier sufficient)
-- **Code Editor**: VS Code recommended
+- **Node.js**: 18.17+ or 20.0+ (LTS recommended)
+- **npm**: 9.0+ or **pnpm**: 8.0+ (preferred for faster installs)
+- **Git**: 2.30+
+- **Code Editor**: VS Code recommended with extensions:
+  - ESLint
+  - Prettier
+  - Tailwind CSS IntelliSense
+  - Sanity.io
 
 ---
 
-## Initial Setup
+## Project Structure
 
-### 1. Clone Repository
+```text
+jason-fe-portfolio/
+├── app/                      # Next.js App Router pages
+├── components/               # React components
+├── lib/                      # Business logic & utilities
+├── styles/                   # Global styles & SCSS modules
+├── sanity/                   # Sanity CMS schemas & config
+├── public/                   # Static assets
+├── specs/                    # Feature specifications
+├── .github/                  # CI/CD workflows
+├── .specify/                 # Project constitution & templates
+├── next.config.js            # Next.js configuration
+├── tailwind.config.ts        # TailwindCSS configuration
+├── tsconfig.json             # TypeScript configuration
+├── .eslintrc.json            # ESLint configuration
+├── .prettierrc               # Prettier configuration
+└── package.json              # Dependencies & scripts
+```
+
+---
+
+## Setup Instructions
+
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/sonbuiGFD/sonbui.com.git
-cd sonbui.com
-git checkout 000-fe-portfolio
+git clone https://github.com/sonbuiGFD/jason-fe-portfolio.git
+cd jason-fe-portfolio
 ```
 
 ### 2. Install Dependencies
 
+Using npm:
+
 ```bash
 npm install
-# or
-yarn install
-# or
+```
+
+Using pnpm (recommended):
+
+```bash
 pnpm install
 ```
 
-### 3. Set Up Sanity CMS
+### 3. Configure Environment Variables
 
-#### Create Sanity Project
+Create a `.env.local` file in the project root:
 
-```bash
-npm create sanity@latest -- --project-id your-project-id --dataset production
+```env
+# Sanity CMS Configuration
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_API_VERSION=2025-01-01
+SANITY_API_TOKEN=your_read_write_token
+
+# Sanity Studio Configuration (for /admin route)
+SANITY_STUDIO_PROJECT_ID=your_project_id
+SANITY_STUDIO_DATASET=production
+
+# ISR Revalidation Secret (for webhook endpoint)
+REVALIDATION_SECRET=your_random_secret_string
+
+# Analytics (optional)
+NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your_analytics_id
+
+# Site Configuration
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-When prompted:
+**How to get Sanity credentials**:
 
-- Select "Create new project"
-- Choose project name: "sonbui-portfolio"
-- Select dataset: "production"
-- Output path: `./sanity`
+1. Sign up at [sanity.io](https://www.sanity.io/)
+2. Create a new project via Sanity CLI or dashboard
+3. Copy `Project ID` from project settings
+4. Generate an API token with `Editor` permissions (Settings → API → Tokens)
 
-#### Configure Sanity Schema
+### 4. Initialize Sanity Studio
 
-1. Copy schema from `specs/000-fe-portfolio/contracts/sanity-schema.ts` to `sanity/schemas/index.ts`
-2. Update `sanity/sanity.config.ts`:
-
-```typescript
-import { defineConfig } from "sanity";
-import { deskTool } from "sanity/desk";
-import { schemaTypes } from "./schemas";
-
-export default defineConfig({
-  name: "default",
-  title: "sonbui-portfolio",
-  projectId: "your-project-id",
-  dataset: "production",
-  plugins: [deskTool()],
-  schema: {
-    types: schemaTypes,
-  },
-});
-```
-
-#### Start Sanity Studio
+Navigate to the `sanity/` directory and initialize:
 
 ```bash
 cd sanity
-npm run dev
+npm install -g @sanity/cli  # Install Sanity CLI globally (if not already installed)
+sanity init                 # Follow prompts to link to your Sanity project
+cd ..
 ```
 
-Studio will be available at `http://localhost:3333`
-
-### 4. Configure Environment Variables
-
-Create `.env.local` in project root:
+Alternatively, if schemas are already defined in `sanity/schemas/`, deploy them:
 
 ```bash
-# Sanity Configuration
-NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
-NEXT_PUBLIC_SANITY_DATASET=production
-SANITY_API_READ_TOKEN=your-read-token
-
-# Webhook Secret (generate with: openssl rand -hex 32)
-SANITY_WEBHOOK_SECRET=your-webhook-secret
-
-# Preview Mode Secret (generate with: openssl rand -hex 32)
-SANITY_PREVIEW_SECRET=your-preview-secret
+cd sanity
+sanity deploy              # Deploy Sanity Studio to <your-project>.sanity.studio
+cd ..
 ```
 
-#### Generate Sanity API Token
+### 5. Seed Initial Content (Optional)
 
-1. Go to https://www.sanity.io/manage
-2. Select your project
-3. Navigate to "API" → "Tokens"
-4. Click "Add API token"
-5. Name: "Next.js Read Token"
-6. Permissions: "Viewer"
-7. Copy token to `.env.local`
+If you have sample content, import it:
 
-### 5. Start Development Server
+```bash
+cd sanity
+sanity dataset import <path-to-dataset>.ndjson production --replace
+cd ..
+```
+
+---
+
+## Development Workflow
+
+### Start Development Server
+
+Run the Next.js development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
 # or
 pnpm dev
 ```
 
-Application will be available at `http://localhost:3000`
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
----
+### Access Sanity Studio Locally
 
-## Project Structure Overview
-
-```text
-sonbui.com/
-├── src/
-│   ├── app/                 # Next.js App Router pages
-│   │   ├── layout.tsx       # Root layout
-│   │   ├── page.tsx         # Homepage
-│   │   ├── about/
-│   │   ├── work/
-│   │   ├── labs/
-│   │   ├── blog/
-│   │   └── api/
-│   │       ├── revalidate/  # Webhook handler
-│   │       └── draft/       # Preview mode
-│   ├── components/
-│   │   ├── ui/              # Reusable UI components
-│   │   ├── layouts/         # Layout components
-│   │   └── features/        # Feature-specific components
-│   ├── lib/
-│   │   ├── sanity/          # Sanity client & queries
-│   │   ├── search/          # Fuse.js search logic
-│   │   └── utils/           # Shared utilities
-│   ├── styles/
-│   │   └── globals.css      # Global styles & design tokens
-│   └── types/
-│       └── sanity.ts        # Sanity TypeScript types
-├── sanity/                  # Sanity Studio
-│   ├── schemas/
-│   └── sanity.config.ts
-├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── e2e/
-└── public/
-```
-
----
-
-## Key Development Tasks
-
-### Add Content via Sanity Studio
-
-1. **Create Author Profile** (required first)
-
-   - Navigate to "Author" in Sanity Studio
-   - Fill in all required fields
-   - Upload profile photo
-   - Save and publish
-
-2. **Create Tags and Tech Stack Items**
-
-   - Navigate to "Tag" or "Tech Stack"
-   - Add common tags (e.g., "React", "TypeScript", "Performance")
-   - These will be referenced by content items
-
-3. **Create Work Case Study**
-
-   - Navigate to "Work Case Study"
-   - Fill in title, company, role
-   - Generate slug automatically
-   - Upload hero image
-   - Write challenge, approach, impact
-   - Add tech stack references
-   - Add tags
-   - Set publish status to "Published"
-   - Set publish date
-   - Save
-
-4. **Create Lab Project**
-
-   - Similar to case study but with lab-specific fields
-   - Add live demo and source code URLs
-
-5. **Create Blog Post**
-   - Write content using Portable Text editor
-   - Add code blocks with syntax highlighting
-   - Calculate reading time (word count / 225)
-   - Reference author
-   - Add tags
-
-### Run Development Commands
+If Sanity Studio is embedded at `/admin`:
 
 ```bash
-# Development server
-npm run dev
+# Already running with Next.js dev server
+# Navigate to http://localhost:3000/admin
+```
+
+If Sanity Studio is separate:
+
+```bash
+cd sanity
+sanity start
+# Studio runs at http://localhost:3333
+```
+
+### Run Linting & Type Checking
+
+```bash
+# ESLint
+npm run lint
 
 # TypeScript type checking
 npm run type-check
+```
 
-# Linting
-npm run lint
+### Format Code
 
-# Format code
+```bash
 npm run format
+```
 
-# Run unit tests
-npm run test
+---
 
-# Run E2E tests
-npm run test:e2e
+## Build & Deployment
 
-# Build for production
+### Build for Production
+
+```bash
 npm run build
-
-# Start production server
-npm start
 ```
 
-### Configure Webhooks (After Deployment)
+This generates an optimized production build in `.next/` directory.
 
-1. Deploy to Vercel: `vercel deploy`
-2. Get production URL: `https://sonbui.com`
-3. In Sanity Studio:
-   - Go to "API" → "Webhooks"
-   - Click "Create webhook"
-   - Name: "ISR Revalidation"
-   - URL: `https://sonbui.com/api/revalidate`
-   - Dataset: "production"
-   - Trigger on: "Create", "Update", "Delete"
-   - Filter: `_type in ["workCaseStudy", "labProject", "blogPost"]`
-   - HTTP method: POST
-   - Secret: (your SANITY_WEBHOOK_SECRET)
-   - Save
-
----
-
-## Common Development Workflows
-
-### Adding a New Component
+### Preview Production Build Locally
 
 ```bash
-# Create component file
-touch src/components/ui/Button.tsx
-
-# Create test file
-touch tests/unit/components/ui/Button.test.tsx
+npm run start
 ```
 
-```typescript
-// src/components/ui/Button.tsx
-interface ButtonProps {
-  children: React.ReactNode;
-  variant?: "primary" | "secondary";
-  onClick?: () => void;
-}
-
-export function Button({
-  children,
-  variant = "primary",
-  onClick,
-}: ButtonProps) {
-  return (
-    <button className={`btn btn-${variant}`} onClick={onClick}>
-      {children}
-    </button>
-  );
-}
-```
-
-### Adding a New Page Route
-
-```bash
-# Create route directory
-mkdir -p src/app/resume
-
-# Create page file
-touch src/app/resume/page.tsx
-```
-
-```typescript
-// src/app/resume/page.tsx
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Resume | Jason Bui",
-  description: "Download my resume",
-};
-
-export default function ResumePage() {
-  return (
-    <main>
-      <h1>Resume</h1>
-      {/* Page content */}
-    </main>
-  );
-}
-```
-
-### Fetching Data from Sanity
-
-```typescript
-// lib/sanity/queries.ts
-import { client } from "./client";
-
-export async function getWorkCaseStudies() {
-  return client.fetch(`
-    *[_type == 'workCaseStudy' && publishStatus == 'published'] 
-    | order(publishDate desc) {
-      _id,
-      title,
-      slug,
-      company,
-      heroImage,
-      tags[]->{ name, slug }
-    }
-  `);
-}
-```
-
-```typescript
-// app/work/page.tsx
-import { getWorkCaseStudies } from "@/lib/sanity/queries";
-
-export default async function WorkPage() {
-  const caseStudies = await getWorkCaseStudies();
-
-  return (
-    <main>
-      <h1>Work</h1>
-      {caseStudies.map((cs) => (
-        <article key={cs._id}>
-          <h2>{cs.title}</h2>
-          {/* Render case study card */}
-        </article>
-      ))}
-    </main>
-  );
-}
-```
-
-### Implementing Search
-
-```typescript
-// lib/search/index.ts
-import Fuse from "fuse.js";
-
-export function createSearchIndex(data: any[]) {
-  return new Fuse(data, {
-    keys: ["title", "description", "tags"],
-    threshold: 0.3,
-  });
-}
-```
-
-```typescript
-// components/Search.tsx
-"use client";
-
-import { useState } from "use";
-import { createSearchIndex } from "@/lib/search";
-
-export function Search({ data }: { data: any[] }) {
-  const [query, setQuery] = useState("");
-  const fuse = createSearchIndex(data);
-  const results = query ? fuse.search(query) : [];
-
-  return (
-    <div>
-      <input
-        type="search"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search..."
-      />
-      {results.map((result) => (
-        <div key={result.item._id}>{result.item.title}</div>
-      ))}
-    </div>
-  );
-}
-```
-
----
-
-## Testing
-
-### Unit Tests (Vitest)
-
-```bash
-# Run all unit tests
-npm run test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Generate coverage report
-npm run test:coverage
-```
-
-Example test:
-
-```typescript
-// tests/unit/components/Button.test.tsx
-import { render, screen } from "@testing-library/react";
-import { Button } from "@/components/ui/Button";
-
-describe("Button", () => {
-  it("renders children correctly", () => {
-    render(<Button>Click me</Button>);
-    expect(screen.getByText("Click me")).toBeInTheDocument();
-  });
-});
-```
-
-### E2E Tests (Playwright)
-
-```bash
-# Run E2E tests
-npm run test:e2e
-
-# Run E2E tests in headed mode
-npm run test:e2e:headed
-
-# Open Playwright UI
-npm run test:e2e:ui
-```
-
-Example test:
-
-```typescript
-// tests/e2e/homepage.test.ts
-import { test, expect } from "@playwright/test";
-
-test("homepage loads correctly", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.locator("h1")).toContainText("Jason Bui");
-});
-```
-
-### Accessibility Tests
-
-```bash
-# Run accessibility tests
-npm run test:a11y
-```
-
-Example test:
-
-```typescript
-// tests/a11y/homepage.test.ts
-import { test, expect } from "@playwright/test";
-import AxeBuilder from "@axe-core/playwright";
-
-test("homepage has no accessibility violations", async ({ page }) => {
-  await page.goto("/");
-  const results = await new AxeBuilder({ page })
-    .withTags(["wcag2aa", "wcag22aa"])
-    .analyze();
-
-  expect(results.violations).toEqual([]);
-});
-```
-
----
-
-## Deployment
+Open [http://localhost:3000](http://localhost:3000) to preview.
 
 ### Deploy to Vercel
 
-1. **Connect Repository**
+1. **Connect Repository to Vercel**:
+
+   - Sign up at [vercel.com](https://vercel.com/)
+   - Import GitHub repository
+   - Vercel auto-detects Next.js configuration
+
+2. **Configure Environment Variables** in Vercel dashboard:
+
+   - Add all variables from `.env.local` (except `NEXT_PUBLIC_SITE_URL` which auto-populates)
+
+3. **Deploy**:
+   - Push to `main` branch triggers automatic deployment
+   - Preview deployments created for all branches
+
+### Configure ISR Revalidation Webhook
+
+To enable automatic cache invalidation when content is published, configure a Sanity webhook:
+
+1. **In Sanity project settings**:
+
+   - Go to **API** → **Webhooks**
+   - Create a new webhook:
+     - **Name**: ISR Revalidation
+     - **URL**: `https://yourdomain.com/api/revalidate?secret={{secrets.REVALIDATION_SECRET}}&type={{_type}}&slug={{slug.current}}`
+     - **Dataset**: `production`
+     - **Trigger on**: Create, Update, Delete
+     - **Filter**: `_type in ["workCaseStudy", "labProject", "blogPost", "author", "techStack", "tag"]`
+     - **HTTP method**: POST
+     - **Include drafts**: No (only published content)
+
+2. **Add webhook secret to Sanity**:
+
+   - Go to **API** → **Secrets**
+   - Create secret with key `REVALIDATION_SECRET`
+   - Use the same value as in your `.env.local` file
+
+3. **Test the webhook**:
 
    ```bash
-   vercel link
+   # Test locally (development)
+   curl -X POST "http://localhost:3000/api/revalidate?secret=YOUR_SECRET&type=blogPost&slug=test-post"
+   
+   # Test production
+   curl -X POST "https://yourdomain.com/api/revalidate?secret=YOUR_SECRET&type=blogPost&slug=test-post"
    ```
 
-2. **Configure Environment Variables**
+**How it works**: When content is published in Sanity Studio, the webhook automatically invalidates relevant pages using Next.js ISR revalidation, ensuring users see updated content within seconds without manual cache clearing.
 
-   - Go to Vercel dashboard
-   - Navigate to project settings
-   - Add all environment variables from `.env.local`
+---
 
-3. **Deploy**
+## Key Scripts
+
+| Script            | Command              | Description                               |
+| ----------------- | -------------------- | ----------------------------------------- |
+| `dev`             | `next dev`           | Start development server                  |
+| `build`           | `next build`         | Build production bundle                   |
+| `start`           | `next start`         | Start production server (after build)     |
+| `lint`            | `next lint`          | Run ESLint                                |
+| `lint:fix`        | `next lint --fix`    | Auto-fix ESLint errors                    |
+| `type-check`      | `tsc --noEmit`       | TypeScript type checking (no compilation) |
+| `format`          | `prettier --write .` | Format all files with Prettier            |
+| `format:check`    | `prettier --check .` | Check formatting without modifying        |
+| `test:lighthouse` | `lhci autorun`       | Run Lighthouse CI audits                  |
+
+---
+
+## Development Guidelines
+
+### Branch Strategy
+
+- **`main`**: Production-ready code (protected, requires PR + review)
+- **Feature branches**: `###-feature-name` (e.g., `000-fe-portfolio`, `001-work-case-studies`)
+- **Hotfix branches**: `hotfix/issue-description`
+
+### Commit Conventions
+
+Follow Conventional Commits format:
+
+```text
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+**Examples**:
+
+```bash
+git commit -m "feat(work): add case study filtering by tech stack"
+git commit -m "fix(blog): resolve reading time calculation for code blocks"
+git commit -m "docs(quickstart): update Sanity setup instructions"
+```
+
+### Pull Request Workflow
+
+1. Create feature branch from `main`:
 
    ```bash
-   # Production deployment
-   vercel --prod
-
-   # Preview deployment
-   vercel
+   git checkout -b 001-work-case-studies
    ```
 
-4. **Set Up Domains**
-   - Add custom domain in Vercel dashboard
-   - Configure DNS records
-   - Enable automatic HTTPS
+2. Implement feature (commit frequently with conventional commits)
 
-### Configure Vercel Analytics
+3. Push branch to GitHub:
 
-1. In Vercel dashboard, enable:
+   ```bash
+   git push origin 001-work-case-studies
+   ```
 
-   - Vercel Analytics (Real User Monitoring)
-   - Speed Insights (Core Web Vitals)
+4. Open Pull Request on GitHub:
 
-2. Add to `src/app/layout.tsx`:
+   - Add description with context and screenshots
+   - Link to feature spec (e.g., `specs/001-work-case-studies/spec.md`)
+   - Request code review
+
+5. Wait for CI checks to pass:
+
+   - ESLint (no warnings)
+   - TypeScript (no errors)
+   - Lighthouse CI (Performance ≥90, Accessibility ≥95, SEO ≥90)
+
+6. Address review feedback
+
+7. Merge to `main` (squash merge preferred)
+
+### Code Style
+
+- **TypeScript Strict Mode**: No `any` types, explicit types for function params/returns
+- **Component Structure**: Functional components with hooks, no class components
+- **Styling**: TailwindCSS utilities in JSX, SCSS modules for complex styles (BEM naming)
+- **Imports**: Absolute imports from `@/` alias (e.g., `import { Button } from '@/components/ui/Button'`)
+- **File Naming**: PascalCase for components (`Button.tsx`), camelCase for utilities (`readingTime.ts`)
+
+---
+
+## Testing Strategy
+
+### Manual Testing Checklist
+
+Before opening a PR, test the following:
+
+- [ ] **Functionality**: All features work as expected (happy paths + edge cases)
+- [ ] **Responsive Design**: Test on mobile (375px), tablet (768px), desktop (1440px) viewports
+- [ ] **Keyboard Navigation**: All interactive elements accessible via Tab, Enter, Escape
+- [ ] **Dark/Light Mode**: Toggle theme and verify no visual regressions
+- [ ] **Performance**: Check Lighthouse Performance score ≥90 (run `npm run test:lighthouse`)
+- [ ] **Accessibility**: Check Lighthouse Accessibility score ≥95, no ARIA violations
+- [ ] **Cross-Browser**: Test on Chrome, Firefox, Safari (macOS/iOS), Edge
+
+### Lighthouse CI Audits
+
+Lighthouse audits run automatically in CI on every PR. To run locally:
+
+```bash
+npm run test:lighthouse
+```
+
+**Budgets (must pass)**:
+
+- Performance: ≥90
+- Accessibility: ≥95
+- Best Practices: ≥90
+- SEO: ≥90
+
+---
+
+## Common Tasks
+
+### Add a New Page
+
+1. Create page file in `app/<route>/page.tsx`:
+
+   ```tsx
+   // app/about/page.tsx
+   import { Metadata } from "next";
+
+   export const metadata: Metadata = {
+     title: "About | Jason Bui",
+     description: "Learn more about Jason Bui, Senior Frontend Engineer",
+   };
+
+   export default function AboutPage() {
+     return (
+       <main>
+         <h1>About</h1>
+       </main>
+     );
+   }
+   ```
+
+2. Add navigation link in `components/layout/Header.tsx`
+
+### Add a New Component
+
+1. Create component file in `components/<category>/<ComponentName>.tsx`:
+
+   ```tsx
+   // components/ui/Button.tsx
+   import { ButtonHTMLAttributes } from "react";
+
+   interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+     variant?: "primary" | "secondary";
+   }
+
+   export function Button({
+     variant = "primary",
+     children,
+     ...props
+   }: ButtonProps) {
+     return (
+       <button className={`button button--${variant}`} {...props}>
+         {children}
+       </button>
+     );
+   }
+   ```
+
+2. Add SCSS styles in `styles/components/_button.scss` (if needed):
+
+   ```scss
+   .button {
+     @apply px-4 py-2 rounded-md font-medium transition-colors;
+
+     &--primary {
+       @apply bg-blue-600 text-white hover:bg-blue-700;
+     }
+
+     &--secondary {
+       @apply bg-gray-200 text-gray-900 hover:bg-gray-300;
+     }
+   }
+   ```
+
+### Query Sanity CMS
+
+1. Define GROQ query in `lib/sanity/queries.ts`:
 
    ```typescript
-   import { Analytics } from "@vercel/analytics/react";
-   import { SpeedInsights } from "@vercel/speed-insights/next";
+   export const getAllCaseStudiesQuery = groq`
+     *[_type == "workCaseStudy" && status == "published"] | order(publishedAt desc) {
+       _id,
+       title,
+       slug,
+       summary,
+       "heroImageUrl": heroImage.asset->url,
+       techStack[]->{name, slug},
+       publishedAt
+     }
+   `;
+   ```
 
-   export default function RootLayout({ children }) {
+2. Fetch data in page component:
+
+   ```tsx
+   import { sanityClient } from "@/lib/sanity/client";
+   import { getAllCaseStudiesQuery } from "@/lib/sanity/queries";
+
+   export default async function WorkPage() {
+     const caseStudies = await sanityClient.fetch(getAllCaseStudiesQuery);
+
      return (
-       <html>
-         <body>
-           {children}
-           <Analytics />
-           <SpeedInsights />
-         </body>
-       </html>
+       <main>
+         {caseStudies.map((cs) => (
+           <CaseStudyCard key={cs._id} {...cs} />
+         ))}
+       </main>
+     );
+   }
+   ```
+
+### Add Animation
+
+1. Wrap content in `<ScrollReveal>` component:
+
+   ```tsx
+   import { ScrollReveal } from "@/components/animations/ScrollReveal";
+
+   export default function Page() {
+     return (
+       <ScrollReveal animation="fade-up">
+         <h1>Animated Heading</h1>
+       </ScrollReveal>
+     );
+   }
+   ```
+
+2. Component implementation (example):
+
+   ```tsx
+   // components/animations/ScrollReveal.tsx
+   "use client";
+
+   import { motion } from "framer-motion";
+   import { ReactNode } from "react";
+
+   interface ScrollRevealProps {
+     children: ReactNode;
+     animation?: "fade-up" | "fade-in" | "scale-in";
+   }
+
+   const animations = {
+     "fade-up": {
+       initial: { opacity: 0, y: 20 },
+       whileInView: { opacity: 1, y: 0 },
+     },
+     "fade-in": {
+       initial: { opacity: 0 },
+       whileInView: { opacity: 1 },
+     },
+     "scale-in": {
+       initial: { opacity: 0, scale: 0.9 },
+       whileInView: { opacity: 1, scale: 1 },
+     },
+   };
+
+   export function ScrollReveal({
+     children,
+     animation = "fade-up",
+   }: ScrollRevealProps) {
+     return (
+       <motion.div
+         {...animations[animation]}
+         transition={{ duration: 0.5, ease: "easeOut" }}
+         viewport={{ once: true, margin: "-50px" }}
+       >
+         {children}
+       </motion.div>
      );
    }
    ```
@@ -543,57 +541,57 @@ test("homepage has no accessibility violations", async ({ page }) => {
 
 ## Troubleshooting
 
-### Sanity Connection Issues
-
-**Problem**: "Client configuration invalid" error
+### Issue: Sanity queries return empty results
 
 **Solution**:
 
-- Verify `NEXT_PUBLIC_SANITY_PROJECT_ID` is correct
-- Check API token has correct permissions
-- Ensure dataset name matches ("production")
+1. Check that content status is `published` (not `draft` or `review`)
+2. Verify GROQ query syntax in [Sanity Vision](https://www.sanity.io/docs/the-vision-plugin)
+3. Ensure API token has read permissions
 
-### Build Errors
-
-**Problem**: TypeScript errors during build
+### Issue: Images not loading from Sanity CDN
 
 **Solution**:
 
-```bash
-# Run type check to see all errors
-npm run type-check
+1. Check `next.config.js` includes Sanity CDN in `images.domains`:
 
-# Check for missing types
-npm install -D @types/node @types/react @types/react-dom
-```
+   ```javascript
+   module.exports = {
+     images: {
+       domains: ["cdn.sanity.io"],
+     },
+   };
+   ```
 
-### ISR Not Working
+2. Verify image asset exists in Sanity Studio (Assets tab)
 
-**Problem**: Content updates not appearing on site
-
-**Solution**:
-
-- Verify webhook URL is correct
-- Check webhook secret matches `.env` variable
-- Inspect Vercel function logs for errors
-- Test webhook manually with cURL:
-  ```bash
-  curl -X POST https://sonbui.com/api/revalidate \
-    -H "Content-Type: application/json" \
-    -H "sanity-webhook-signature: your-signature" \
-    -d '{"_type":"workCaseStudy","slug":"test-slug"}'
-  ```
-
-### Performance Issues
-
-**Problem**: Lighthouse score below 90
+### Issue: Lighthouse Performance score <90
 
 **Solution**:
 
-- Check image sizes (should use next/image)
-- Verify fonts are optimized (next/font)
-- Review third-party scripts (should be lazy-loaded)
-- Check for render-blocking resources
+1. Run Lighthouse in incognito mode (browser extensions can skew scores)
+2. Check for large images (use `next/image` with `priority` for above-fold)
+3. Analyze bundle size with `@next/bundle-analyzer`
+4. Disable animations temporarily to isolate performance issue
+
+### Issue: TypeScript errors after adding new Sanity schema
+
+**Solution**:
+
+1. Update type definitions in `lib/sanity/types.ts`
+2. Run `npm run type-check` to verify
+3. Restart TypeScript server in VS Code (Cmd+Shift+P → "Restart TS Server")
+
+---
+
+## Resources
+
+- **Next.js Docs**: [https://nextjs.org/docs](https://nextjs.org/docs)
+- **Sanity Docs**: [https://www.sanity.io/docs](https://www.sanity.io/docs)
+- **TailwindCSS Docs**: [https://tailwindcss.com/docs](https://tailwindcss.com/docs)
+- **Motion (Framer Motion) Docs**: [https://www.framer.com/motion/](https://www.framer.com/motion/)
+- **WCAG 2.2 Guidelines**: [https://www.w3.org/WAI/WCAG22/quickref/](https://www.w3.org/WAI/WCAG22/quickref/)
+- **Conventional Commits**: [https://www.conventionalcommits.org/](https://www.conventionalcommits.org/)
 
 ---
 
@@ -601,31 +599,23 @@ npm install -D @types/node @types/react @types/react-dom
 
 After completing setup:
 
-1. ✅ Create initial content in Sanity Studio
-2. ✅ Customize design tokens in `styles/globals.css`
-3. ✅ Implement homepage hero section
-4. ✅ Build reusable component library
-5. ✅ Set up CI/CD pipeline
-6. ✅ Configure accessibility testing
-7. ✅ Deploy to production
-8. ✅ Monitor Core Web Vitals
+1. Review the [Feature Specification](./spec.md) to understand requirements
+2. Review the [Implementation Plan](./plan.md) for technical architecture
+3. Review the [Data Model](./data-model.md) for content structure
+4. Start implementing features following the [Tasks](./tasks.md) (generated via `/speckit.tasks`)
 
 ---
 
-## Resources
+## Support
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Sanity Documentation](https://www.sanity.io/docs)
-- [Vercel Documentation](https://vercel.com/docs)
-- [Spec Document](./spec.md)
-- [Research Document](./research.md)
-- [Data Model](./data-model.md)
+For questions or issues:
+
+1. Check the [Feature Spec](./spec.md) and [Plan](./plan.md) for context
+2. Review the [Constitution](./.specify/memory/constitution.md) for project principles
+3. Open a GitHub issue with detailed description and steps to reproduce
+4. Tag relevant team members for review
 
 ---
 
-## Getting Help
-
-- **Project Issues**: Create GitHub issue in repository
-- **Sanity Support**: https://slack.sanity.io/
-- **Next.js Support**: https://github.com/vercel/next.js/discussions
-- **Vercel Support**: support@vercel.com
+**Last Updated**: October 29, 2025  
+**Maintained By**: Jason Bui

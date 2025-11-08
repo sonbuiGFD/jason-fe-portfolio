@@ -1,9 +1,9 @@
-# Tasks: Portfolio Website
+# Tasks: FE Engineer Portfolio
 
 **Input**: Design documents from `/specs/000-fe-portfolio/`  
 **Prerequisites**: plan.md ✅, spec.md ✅, research.md ✅, data-model.md ✅, contracts/ ✅
 
-**Tests**: Tests are NOT explicitly requested in the specification. Test tasks are included for critical user flows but can be skipped for MVP if needed.
+**Tests**: Manual testing and Lighthouse CI approach per research.md - NO unit tests required in initial implementation.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -15,10 +15,14 @@
 
 ## Path Conventions
 
-- Next.js App Router Web Application structure
-- Source code: `src/` at repository root
-- Tests: `tests/` at repository root
-- Sanity Studio: `sanity/` separate workspace
+Next.js App Router structure:
+
+- `app/` - Next.js pages and routing
+- `components/` - React components
+- `lib/` - Business logic and utilities
+- `styles/` - Global styles and SCSS modules
+- `sanity/` - Sanity CMS schemas and configuration
+- `public/` - Static assets
 
 ---
 
@@ -26,24 +30,18 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Initialize Next.js 14+ project with TypeScript in repository root using `create-next-app`
-- [ ] T002 Configure TypeScript strict mode in tsconfig.json with `strict: true` and no `any` types
-- [ ] T003 [P] Install and configure ESLint with Next.js recommended rules in .eslintrc.json
-- [ ] T004 [P] Install and configure Prettier in .prettierrc.json
-- [ ] T005 [P] Install and configure commitlint for Conventional Commits in .commitlintrc.json
-- [ ] T006 [P] Install Husky for git hooks and configure pre-commit linting in .husky/
-- [ ] T007 Create project directory structure per plan.md: src/app/, src/components/, src/lib/, src/styles/, src/types/
-- [ ] T008 Install Sanity CLI and initialize Sanity Studio in sanity/ directory
-- [ ] T009 Copy Sanity schema from specs/000-fe-portfolio/contracts/sanity-schema.ts to sanity/schemas/index.ts
-- [ ] T010 Configure Sanity project in sanity/sanity.config.ts with project ID and dataset
-- [ ] T011 [P] Install testing dependencies: Vitest, Playwright, @axe-core/playwright
-- [ ] T012 [P] Configure Vitest in vitest.config.ts for unit tests
-- [ ] T013 [P] Configure Playwright in playwright.config.ts for E2E tests
-- [ ] T014 Create .env.local template with required environment variables (Sanity project ID, dataset, tokens, webhook secrets)
-- [ ] T015 [P] Create .gitignore with Next.js, Sanity, and environment file patterns
-- [ ] T016 [P] Install additional dependencies: Fuse.js for search, Sanity Image Loader
-- [ ] T017 Configure next.config.js with image domains for Sanity CDN
-- [ ] T018 [P] Create package.json scripts for dev, build, test, lint, format
+- [x] T001 Initialize Next.js 14+ project with TypeScript and App Router in project root
+- [x] T002 [P] Install core dependencies: React 18+, Next.js 14+, TypeScript 5.3+, TailwindCSS 3.4+, Motion (Framer Motion) 11+
+- [x] T003 [P] Install Sanity dependencies: @sanity/client, @sanity/image-url, next-sanity, groq
+- [x] T004 [P] Configure TypeScript in tsconfig.json with strict mode and path aliases (@/)
+- [x] T005 [P] Configure TailwindCSS in tailwind.config.ts with custom theme tokens and content paths
+- [x] T006 [P] Configure ESLint in .eslintrc.json with Next.js, React, TypeScript, accessibility rules (eslint-plugin-jsx-a11y)
+- [x] T007 [P] Configure Prettier in .prettierrc with formatting rules
+- [x] T008 [P] Setup global styles in styles/globals.scss with TailwindCSS imports and CSS variables for dark/light themes
+- [x] T009 [P] Create SCSS theme variables in styles/themes.scss for light and dark mode color schemes
+- [x] T010 [P] Configure Next.js in next.config.js with image domains (cdn.sanity.io), experimental features, and build optimizations
+- [x] T011 [P] Setup environment variables template in .env.local.example with Sanity configuration placeholders
+- [x] T012 [P] Create project folder structure per plan.md: app/, components/, lib/, styles/, sanity/, public/
 
 ---
 
@@ -53,317 +51,264 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T019 Create Sanity client configuration in src/lib/sanity/client.ts with production and preview clients
-- [ ] T020 Create TypeScript types for Sanity documents in src/types/sanity.ts (Author, WorkCaseStudy, LabProject, BlogPost, Tag, TechStack)
-- [ ] T021 [P] Create domain model types in src/types/models.ts
-- [ ] T022 Implement Sanity image URL builder utility in src/lib/sanity/image.ts
-- [ ] T023 Create design tokens CSS variables in src/styles/globals.css (colors, typography, spacing)
-- [ ] T024 Implement theme provider component in src/app/providers.tsx with dark/light mode support
-- [ ] T025 Create root layout in src/app/layout.tsx with theme provider, metadata, and next/font configuration
-- [ ] T026 [P] Configure Google Fonts using next/font in src/app/layout.tsx (Inter, JetBrains Mono)
-- [ ] T027 Create base UI components: Button in src/components/ui/Button.tsx
-- [ ] T028 [P] Create base UI components: Link in src/components/ui/Link.tsx
-- [ ] T029 [P] Create base UI components: Card in src/components/ui/Card.tsx
-- [ ] T030 Create header layout component in src/components/layouts/Header.tsx with navigation and theme toggle
-- [ ] T031 Create footer layout component in src/components/layouts/Footer.tsx with social links and copyright
-- [ ] T032 Implement ISR revalidation webhook handler in src/app/api/revalidate/route.ts with HMAC signature verification
-- [ ] T033 [P] Implement draft preview mode endpoints in src/app/api/draft/route.ts and src/app/api/draft/disable/route.ts
-- [ ] T034 Create loading state component in src/components/ui/Loading.tsx with skeleton patterns
-- [ ] T035 [P] Create error state component in src/components/ui/Error.tsx with retry CTA
-- [ ] T036 [P] Create empty state component in src/components/ui/Empty.tsx with branded message
-- [ ] T037 Implement Fuse.js search utility in src/lib/search/index.ts with createSearchIndex function
-- [ ] T038 Create accessibility utilities for focus management in src/lib/utils/a11y.ts
+- [x] T013 Initialize Sanity project and create sanity.config.ts in sanity/ directory with project configuration
+- [x] T014 [P] Implement Author schema in sanity/schemas/author.ts with validation rules per data-model.md
+- [x] T015 [P] Implement TechStack schema in sanity/schemas/techStack.ts with category enum validation
+- [x] T016 [P] Implement Tag schema in sanity/schemas/tag.ts with slug auto-generation
+- [x] T017 [P] Implement WorkCaseStudy schema in sanity/schemas/workCaseStudy.ts with rich text blocks and references
+- [x] T018 [P] Implement LabProject schema in sanity/schemas/labProject.ts with demo/repository URL fields
+- [x] T019 [P] Implement BlogPost schema in sanity/schemas/blogPost.ts with code block support and reading time
+- [x] T020 Export all schemas in sanity/schemas/index.ts and configure in sanity.config.ts
+- [x] T021 Create Sanity client configuration in lib/sanity/client.ts with CDN and non-CDN client instances
+- [x] T022 [P] Define TypeScript types in lib/sanity/types.ts matching contracts/api-types.ts
+- [x] T023 [P] Create Sanity image URL builder helper in lib/sanity/image-builder.ts for responsive images
+- [x] T024 [P] Implement GROQ queries in lib/sanity/queries.ts for all content types per data-model.md access patterns
+- [x] T025 Create root layout in app/layout.tsx with metadata, font optimization, and theme provider structure
+- [x] T026 [P] Implement ThemeProvider context in components/layout/ThemeProvider.tsx with dark/light mode toggle and localStorage persistence
+- [x] T027 [P] Create Header component in components/layout/Header.tsx with global navigation and theme toggle
+- [x] T028 [P] Create Footer component in components/layout/Footer.tsx with social links and accessibility statement
+- [x] T029 [P] Create reusable Button component in components/ui/Button.tsx with variants and accessibility
+- [x] T030 [P] Create reusable Card component in components/ui/Card.tsx with consistent styling
+- [x] T031 [P] Implement LoadingState skeleton component in components/ui/LoadingState.tsx with animation
+- [x] T032 [P] Implement EmptyState component in components/ui/EmptyState.tsx with contextual messaging
+- [x] T033 [P] Implement ErrorState component in components/ui/ErrorState.tsx with retry functionality
+- [x] T034 [P] Create ScrollReveal animation wrapper in components/animations/ScrollReveal.tsx using Motion with viewport detection
+- [x] T035 [P] Create utility function for reading time calculation in lib/utils/reading-time.ts
+- [x] T036 [P] Create utility function for date formatting in lib/utils/date-formatter.ts
+- [x] T037 [P] Create utility function for slug generation in lib/utils/slug-generator.ts
+- [x] T038 Setup Lighthouse CI configuration in .github/workflows/lighthouse.yml with performance budgets (Performance ≥90, Accessibility ≥95, SEO ≥90)
+- [x] T039 [P] Configure Git pre-push hooks for ESLint and Prettier using husky or lint-staged
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
 ---
 
-## Phase 3: User Story 1 - Recruiter Quick Assessment (Priority: P1) 🎯 MVP
+## Phase 3: User Story 4 - Site-Wide Navigation and Responsiveness (Priority: P1) 🎯 MVP Foundation
 
-**Goal**: Recruiters can quickly assess the candidate's capabilities within 2-3 minutes by viewing the homepage and one case study with clear role, skills, and impact metrics.
+**Goal**: Establish accessible, responsive navigation and theme support that all other features depend on
 
-**Independent Test**: Navigate from homepage to one case study and back. Verify key information (role, skills, impact) visible without scrolling.
-
-### Implementation for User Story 1
-
-- [ ] T039 [P] [US1] Create GROQ query for homepage featured case studies in src/lib/sanity/queries.ts (getFeaturedCaseStudies)
-- [ ] T040 [P] [US1] Create GROQ query for single case study by slug in src/lib/sanity/queries.ts (getCaseStudyBySlug)
-- [ ] T041 [US1] Implement homepage in src/app/page.tsx with hero section showing name, role, tagline
-- [ ] T042 [US1] Create hero section component in src/components/features/Hero.tsx with profile photo and key skills
-- [ ] T043 [US1] Create case study card component in src/components/features/CaseStudyCard.tsx with title, company, role, impact preview
-- [ ] T044 [US1] Add featured case studies section to homepage in src/app/page.tsx (3-4 cards)
-- [ ] T045 [US1] Implement case study detail page in src/app/work/[slug]/page.tsx with SSG
-- [ ] T046 [US1] Create case study layout component in src/components/features/CaseStudyLayout.tsx with sections: Challenge, Approach, Impact, Tech Stack, Role
-- [ ] T047 [US1] Implement impact metrics display component in src/components/features/ImpactMetrics.tsx with before/after/improvement visualization
-- [ ] T048 [US1] Add visual elements (screenshots, diagrams) rendering in case study detail using next/image
-- [ ] T049 [US1] Implement CTAs at end of case study in src/components/features/CaseStudyCTA.tsx ("View Resume," "Contact Me," "See More Work")
-- [ ] T050 [US1] Configure generateStaticParams in src/app/work/[slug]/page.tsx for SSG of all published case studies
-- [ ] T051 [US1] Add OpenGraph metadata to case study pages in src/app/work/[slug]/page.tsx for social sharing
-- [ ] T052 [US1] Implement Portable Text renderer for challenge and approach sections in src/components/PortableText.tsx
-- [ ] T053 [US1] Create tech stack badge component in src/components/ui/TechBadge.tsx for displaying technologies
-- [ ] T054 [US1] Ensure all interactive elements have visible focus indicators (3:1 contrast) per WCAG 2.2 AA
-- [ ] T055 [US1] Test keyboard navigation from homepage to case study and back
-
-**Checkpoint**: At this point, User Story 1 should be fully functional. Recruiters can view homepage and case studies with all key information visible.
-
----
-
-## Phase 4: User Story 2 - Engineer Deep Dive Evaluation (Priority: P1)
-
-**Goal**: Engineers can evaluate technical thinking and architectural decisions through detailed case studies and side projects with code snippets, architecture diagrams, and measurable outcomes.
-
-**Independent Test**: Read a case study's technical sections and verify frameworks, patterns, metrics, and rationale are present. Visit Labs section and verify projects show what was built and learned.
-
-### Implementation for User Story 2
-
-- [ ] T056 [P] [US2] Create GROQ query for all lab projects in src/lib/sanity/queries.ts (getLabProjects)
-- [ ] T057 [P] [US2] Create GROQ query for single lab project by slug in src/lib/sanity/queries.ts (getLabProjectBySlug)
-- [ ] T058 [P] [US2] Create GROQ query for all blog posts in src/lib/sanity/queries.ts (getBlogPosts)
-- [ ] T059 [P] [US2] Create GROQ query for single blog post by slug in src/lib/sanity/queries.ts (getBlogPostBySlug)
-- [ ] T060 [US2] Enhance Portable Text renderer in src/components/PortableText.tsx to support code blocks with syntax highlighting
-- [ ] T061 [US2] Add syntax highlighter package (e.g., Prism.js or Shiki) and configure in src/components/PortableText.tsx
-- [ ] T062 [US2] Enhance case study approach section to render architecture diagrams and code examples
-- [ ] T063 [US2] Add rationale/alternatives subsection to case study approach rendering
-- [ ] T064 [US2] Implement Labs index page in src/app/labs/page.tsx with SSG
-- [ ] T065 [US2] Create lab project card component in src/components/features/LabCard.tsx with title, description, learnings, tech stack
-- [ ] T066 [US2] Implement lab project detail page in src/app/labs/[slug]/page.tsx with SSG
-- [ ] T067 [US2] Create lab project layout component in src/components/features/LabLayout.tsx with: description, learnings, tech stack, links to demo/source
-- [ ] T068 [US2] Add live demo and source code link buttons in src/components/features/LabLinks.tsx
-- [ ] T069 [US2] Display maintenance status badge in lab project cards and details in src/components/ui/StatusBadge.tsx
-- [ ] T070 [US2] Implement Blog index page in src/app/blog/page.tsx with SSG
-- [ ] T071 [US2] Create blog post card component in src/components/features/BlogCard.tsx with title, excerpt, date, reading time, tags
-- [ ] T072 [US2] Implement blog post detail page in src/app/blog/[slug]/page.tsx with SSG
-- [ ] T073 [US2] Create blog post layout component in src/components/features/BlogLayout.tsx with article structure
-- [ ] T074 [US2] Add copy-to-clipboard functionality for code blocks in src/components/CodeBlock.tsx
-- [ ] T075 [US2] Configure generateStaticParams for lab projects in src/app/labs/[slug]/page.tsx
-- [ ] T076 [US2] Configure generateStaticParams for blog posts in src/app/blog/[slug]/page.tsx
-- [ ] T077 [US2] Add related blog posts section to lab project details using shared tags
-- [ ] T078 [US2] Implement related case studies/projects linking in both directions
-- [ ] T079 [US2] Ensure code snippets have sufficient color contrast in both light and dark themes
-
-**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently. Engineers can read technical depth in case studies, explore labs, and read blog posts.
-
----
-
-## Phase 5: User Story 3 - Content Discovery and Navigation (Priority: P2)
-
-**Goal**: Visitors can find specific content by topic, technology, or content type using search and filters, with results updating instantly and helpful empty states.
-
-**Independent Test**: Use search/filter controls on list pages. Verify results update in <200ms, empty states are helpful, navigation remains consistent.
-
-### Implementation for User Story 3
-
-- [ ] T080 [P] [US3] Create GROQ query for global search index in src/lib/sanity/queries.ts (getSearchIndex)
-- [ ] T081 [P] [US3] Create GROQ query for work index with all case studies in src/lib/sanity/queries.ts (getAllCaseStudies)
-- [ ] T082 [US3] Implement Work index page in src/app/work/page.tsx with SSG and all case studies
-- [ ] T083 [US3] Create filter component in src/components/features/Filter.tsx with role, technology, and tag filters
-- [ ] T084 [US3] Implement client-side filtering logic in src/lib/utils/filters.ts with <200ms performance target
-- [ ] T085 [US3] Add filter UI to Work index page with result count display
-- [ ] T086 [US3] Create empty state component for filtered results in src/components/features/FilterEmptyState.tsx with suggested tags and "View All" link
-- [ ] T087 [US3] Implement global search component in src/components/features/GlobalSearch.tsx using Fuse.js
-- [ ] T088 [US3] Add global search to header navigation with dropdown results
-- [ ] T089 [US3] Group search results by content type (Work, Labs, Blog) in dropdown
-- [ ] T090 [US3] Implement search results preview with title and excerpt (first 100 chars)
-- [ ] T091 [US3] Add debouncing to search input to optimize performance in src/lib/utils/debounce.ts
-- [ ] T092 [US3] Create tag component in src/components/ui/Tag.tsx as clickable filter trigger
-- [ ] T093 [US3] Implement tag filtering across all content types (when clicked, show all content with that tag)
-- [ ] T094 [US3] Add tag filters to Blog index page with reading time and publish date sorting
-- [ ] T095 [US3] Add tag filters to Labs index page
-- [ ] T096 [US3] Ensure filter state persists in URL query parameters for shareable filtered views
-- [ ] T097 [US3] Test filter performance with 100+ items to ensure <200ms target met
-- [ ] T098 [US3] Implement keyboard navigation for search dropdown (arrow keys, Enter to select, Esc to close)
-
-**Checkpoint**: At this point, User Stories 1, 2, AND 3 should all work independently. Visitors can discover content through search and filters.
-
----
-
-## Phase 6: User Story 4 - Responsive and Accessible Experience (Priority: P2)
-
-**Goal**: All visitors including those using assistive technology, keyboard navigation, or mobile devices can access all content without barriers, meeting WCAG 2.2 AA compliance.
-
-**Independent Test**: Complete primary flows using keyboard-only navigation and screen reader. Verify touch targets ≥44×44px on mobile. Test dark mode contrast.
+**Independent Test**: Navigate the site on mobile and desktop, toggle dark/light mode, use keyboard-only navigation (Tab through all links), run Lighthouse accessibility audit (score ≥95), verify responsive breakpoints at 320px, 768px, 1024px, 1440px
 
 ### Implementation for User Story 4
 
-- [ ] T099 [P] [US4] Audit all components for semantic HTML (header, nav, main, aside, footer landmarks)
-- [ ] T100 [P] [US4] Audit heading hierarchy across all pages (single h1, nested h2-h6)
-- [ ] T101 [US4] Ensure all images have descriptive alt text (validate in Sanity schema and components)
-- [ ] T102 [US4] Implement focus trap for modal overlays in src/lib/utils/focusTrap.ts
-- [ ] T103 [US4] Add skip navigation link in src/components/layouts/Header.tsx
-- [ ] T104 [US4] Implement mobile-responsive navigation with hamburger menu in src/components/layouts/MobileNav.tsx
-- [ ] T105 [US4] Ensure all touch targets are ≥44×44px on mobile (buttons, links, filter controls)
-- [ ] T106 [US4] Test and adjust responsive breakpoints in src/styles/globals.css
-- [ ] T107 [US4] Validate color contrast ratios in both light and dark themes (4.5:1 for normal text, 3:1 for large text)
-- [ ] T108 [US4] Implement `prefers-reduced-motion` media query support in src/styles/globals.css to disable non-essential animations
-- [ ] T109 [US4] Add ARIA labels to icon-only buttons (theme toggle, mobile menu, search)
-- [ ] T110 [US4] Implement aria-current="page" for active navigation links
-- [ ] T111 [US4] Add aria-live regions for dynamic content updates (search results, filter results)
-- [ ] T112 [US4] Ensure form inputs have associated labels (if any forms exist)
-- [ ] T113 [US4] Configure Axe DevTools accessibility testing in tests/a11y/pages.test.ts
-- [ ] T114 [US4] Write accessibility test for homepage in tests/a11y/homepage.test.ts
-- [ ] T115 [US4] Write accessibility test for case study pages in tests/a11y/case-study.test.ts
-- [ ] T116 [US4] Write accessibility test for blog pages in tests/a11y/blog.test.ts
-- [ ] T117 [US4] Write keyboard navigation E2E test in tests/e2e/keyboard-nav.test.ts
-- [ ] T118 [US4] Test mobile responsive layouts on real devices (iOS Safari, Android Chrome)
-- [ ] T119 [US4] Validate INP (Interaction to Next Paint) ≤200ms for all interactive elements
+- [x] T040 [US4] Implement home page in app/page.tsx with hero section, overview, and scroll-triggered animations
+- [x] T041 [P] [US4] Implement About page in app/about/page.tsx with author bio and social links
+- [x] T042 [P] [US4] Create NavMenu component in components/navigation/NavMenu.tsx for desktop navigation with active states
+- [x] T043 [P] [US4] Create MobileMenu component in components/navigation/MobileMenu.tsx with slide-out drawer and close functionality
+- [x] T044 [US4] Integrate NavMenu and MobileMenu into Header component with responsive breakpoint logic
+- [x] T045 [US4] Implement keyboard navigation focus styles in styles/globals.scss with WCAG 2.2 AA compliant contrast (3:1 for UI components)
+- [x] T046 [US4] Add ARIA labels and semantic landmarks (header, nav, main, footer) across layout components
+- [x] T047 [P] [US4] Create component-specific SCSS for navigation in styles/components/\_navigation.scss with BEM naming conventions
+- [ ] T048 [US4] Test responsive design manually across mobile (375px), tablet (768px), desktop (1440px) and verify no horizontal scrolling
+- [ ] T049 [US4] Test keyboard navigation manually (Tab, Enter, Escape) and verify logical focus order and visible focus states
+- [ ] T050 [US4] Run Lighthouse accessibility audit and fix any issues to achieve score ≥95
 
-**Checkpoint**: At this point, all user stories work with full accessibility compliance. Site meets WCAG 2.2 AA standards.
+**Checkpoint**: At this point, navigation, theming, and responsive layout should be fully functional across all devices and accessibility compliant
 
 ---
 
-## Phase 7: User Story 5 - Social Sharing and Discovery (Priority: P3)
+## Phase 4: User Story 1 - Portfolio Discovery by Recruiter (Priority: P1) 🎯 MVP Core
 
-**Goal**: Content can be shared on social media with professional preview cards, discovered through search engines with proper metadata, and subscribed to via RSS.
+**Goal**: Enable recruiters to discover and read work case studies with filtering by tech stack and role type
 
-**Independent Test**: Paste URLs into social media platforms and verify preview cards. Check sitemap and RSS feed validity.
+**Independent Test**: Navigate from home page → Work Experience index → filter by "React" tech stack → open a case study detail page → verify all content loads with proper formatting, images from Sanity CDN, and social sharing metadata
+
+### Implementation for User Story 1
+
+- [x] T051 [P] [US1] Create Work index page in app/work/page.tsx with SSG/ISR, fetch published case studies with pagination (first 20 items)
+- [x] T052 [P] [US1] Create CaseStudyCard component in components/content/CaseStudyCard.tsx with title, summary, tech stack tags, hero image, and role type
+- [x] T053 [P] [US1] Create FilterBar component in components/content/FilterBar.tsx with tech stack and role type filter controls
+- [x] T054 [US1] Implement client-side filtering logic in Work index page to filter by tech stack and role type, update URL params
+- [x] T055 [US1] Add empty state handling in Work index when no case studies match filters using EmptyState component
+- [x] T056 [US1] Create Work case study detail page in app/work/[slug]/page.tsx with SSG/ISR, fetch single case study by slug
+- [x] T057 [US1] Implement generateStaticParams in app/work/[slug]/page.tsx to pre-render all published case study paths
+- [x] T058 [US1] Render case study detail page sections: problem statement, approach, architecture, impact with rich text rendering
+- [x] T059 [US1] Integrate Sanity image URL builder for hero images and inline images with next/image optimization
+- [x] T060 [US1] Add OpenGraph and Twitter Card metadata generation in generateMetadata for case study detail pages
+- [x] T061 [P] [US1] Create component-specific SCSS for case study cards in styles/components/\_card.scss with BEM naming conventions
+- [x] T062 [US1] Implement scroll-triggered animations for case study sections using ScrollReveal component
+- [ ] T063 [US1] Test Work index filtering manually (apply React filter, verify only React case studies appear, check URL updates)
+- [ ] T064 [US1] Test case study detail page manually (verify all sections render, images load from Sanity CDN, metadata present)
+- [ ] T065 [US1] Run Lighthouse performance audit on Work pages and optimize to achieve Performance score ≥90, LCP ≤2.5s
+
+**Checkpoint**: At this point, User Story 1 should be fully functional - recruiters can browse and read case studies with filtering
+
+---
+
+## Phase 5: User Story 2 - Technical Deep Dive by Peer Engineer (Priority: P2)
+
+**Goal**: Enable peer engineers to explore detailed case studies and side-project labs with technical depth
+
+**Independent Test**: Navigate to a case study detail page → verify architecture diagrams and technical decisions render → navigate to Labs index → filter by tech stack → open a lab project detail → verify experiment goal, learnings, and demo/repo links
+
+### Implementation for User Story 2
+
+- [x] T066 [P] [US2] Create Labs index page in app/labs/page.tsx with SSG/ISR, fetch published lab projects with pagination (first 20 items)
+- [x] T067 [P] [US2] Create LabProjectCard component in components/content/LabProjectCard.tsx with thumbnail, title, description, tech stack tags
+- [x] T068 [US2] Implement client-side filtering logic in Labs index page to filter by tech stack, reuse FilterBar component
+- [x] T069 [US2] Add empty state handling in Labs index when no projects match filters
+- [x] T070 [US2] Create Labs project detail page in app/labs/[slug]/page.tsx with SSG/ISR, fetch single lab project by slug
+- [x] T071 [US2] Implement generateStaticParams in app/labs/[slug]/page.tsx to pre-render all published lab project paths
+- [x] T072 [US2] Render lab project detail page sections: experiment goal, key learnings, tech stack, demo/repository links
+- [x] T073 [US2] Add OpenGraph and Twitter Card metadata generation in generateMetadata for lab project detail pages
+- [x] T074 [US2] Implement code snippet rendering with syntax highlighting in case study and lab project detail pages
+- [x] T075 [P] [US2] Create CodeBlock component in components/ui/CodeBlock.tsx with syntax highlighting (using prism-react-renderer or highlight.js) and copy-to-clipboard button
+- [x] T076 [US2] Integrate CodeBlock component into rich text rendering for case studies and lab projects
+- [x] T077 [P] [US2] Create component-specific SCSS for code blocks in styles/components/\_code-block.scss with BEM naming conventions
+- [ ] T078 [US2] Test Labs index filtering manually (apply tech stack filter, verify results, check URL updates)
+- [ ] T079 [US2] Test lab project detail page manually (verify all sections render, demo/repo links work, code syntax highlighting works)
+- [ ] T080 [US2] Test copy-to-clipboard functionality in code blocks and verify confirmation feedback
+- [ ] T081 [US2] Run Lighthouse performance audit on Labs pages and optimize to achieve Performance score ≥90
+
+**Checkpoint**: At this point, User Stories 1 AND 2 should both work independently - recruiters can view case studies, engineers can explore labs and see technical details
+
+---
+
+## Phase 6: User Story 3 - Content Discovery by Learner (Priority: P3)
+
+**Goal**: Enable learners to discover and read blog posts with search, filtering by tags, and related post suggestions
+
+**Independent Test**: Navigate to Blog index → search for "React hooks" → verify search results → filter by "Performance" tag → open a blog post → verify formatting, code snippets, reading time, and related posts section
+
+### Implementation for User Story 3
+
+- [x] T082 [P] [US3] Create Blog index page in app/blog/page.tsx with SSG/ISR, fetch published blog posts sorted by date with pagination (first 20 items)
+- [x] T083 [P] [US3] Create BlogPostCard component in components/content/BlogPostCard.tsx with title, summary, tags, reading time, publish date, author
+- [x] T084 [US3] Implement client-side filtering logic in Blog index page to filter by tags, reuse FilterBar component adapted for tags
+- [x] T085 [US3] Add empty state handling in Blog index when no posts match filters or search query
+- [x] T086 [US3] Create Blog post detail page in app/blog/[slug]/page.tsx with SSG/ISR, fetch single blog post by slug
+- [x] T087 [US3] Implement generateStaticParams in app/blog/[slug]/page.tsx to pre-render all published blog post paths
+- [x] T088 [US3] Render blog post detail page with full content, author info, publish/update dates, reading time, tags
+- [x] T089 [US3] Integrate CodeBlock component for code snippets in blog post content with language-specific syntax highlighting
+- [x] T090 [US3] Add OpenGraph and Twitter Card metadata generation in generateMetadata for blog post detail pages
+- [x] T091 [P] [US3] Create RelatedPosts component in components/content/RelatedPosts.tsx to fetch and display related posts by shared tags
+- [x] T092 [US3] Integrate RelatedPosts component at end of blog post detail page with GROQ query for related content
+- [x] T093 [US3] Build search index generation script in lib/search/build-index.ts to query all published content and create JSON index per search-index-schema.json
+- [x] T094 [P] [US3] Implement client-side search logic in lib/search/search-client.ts using Fuse.js with fuzzy matching (threshold: 0.3, weighted keys)
+- [x] T095 [P] [US3] Create SearchModal component in components/navigation/SearchModal.tsx with input, results grouping by type, keyboard navigation
+- [x] T096 [US3] Create search API route in app/api/search/route.ts to serve pre-built search index as JSON
+- [x] T097 [US3] Integrate SearchModal into Header component with global keyboard shortcut (Cmd+K / Ctrl+K) and click trigger
+- [ ] T098 [US3] Test Blog index filtering manually (apply tag filter, verify results, check URL updates)
+- [ ] T099 [US3] Test blog post detail page manually (verify content renders, reading time accurate, related posts appear)
+- [ ] T100 [US3] Test search functionality manually (search for "React", verify grouped results, test keyboard navigation)
+- [ ] T101 [US3] Run Lighthouse performance audit on Blog pages and optimize to achieve Performance score ≥90
+
+**Checkpoint**: All three main content types (Work, Labs, Blog) should now be independently functional with search and filtering
+
+---
+
+## Phase 7: User Story 5 - Content Governance and Editorial Workflow (Priority: P2)
+
+**Goal**: Enable content author to manage content through Sanity CMS with draft/review/published workflow, ensuring only published content appears on public site
+
+**Independent Test**: Create a blog post in Sanity Studio with "draft" status → verify it doesn't appear on public Blog index → change status to "published" → verify it appears on public site after ISR revalidation
 
 ### Implementation for User Story 5
 
-- [ ] T120 [P] [US5] Implement generateMetadata function for homepage in src/app/page.tsx with OpenGraph and Twitter Card tags
-- [ ] T121 [P] [US5] Implement generateMetadata function for case study pages in src/app/work/[slug]/page.tsx
-- [ ] T122 [P] [US5] Implement generateMetadata function for lab project pages in src/app/labs/[slug]/page.tsx
-- [ ] T123 [P] [US5] Implement generateMetadata function for blog post pages in src/app/blog/[slug]/page.tsx
-- [ ] T124 [US5] Ensure all OpenGraph images are 1200×630px and properly formatted
-- [ ] T125 [US5] Add canonical URLs to all page metadata
-- [ ] T126 [US5] Implement JSON-LD structured data for Person schema on homepage in src/lib/utils/structuredData.ts
-- [ ] T127 [US5] Implement JSON-LD structured data for Article schema on blog posts
-- [ ] T128 [US5] Implement JSON-LD structured data for BreadcrumbList on detail pages
-- [ ] T129 [US5] Create sitemap.xml generation in src/app/sitemap.ts with all published pages
-- [ ] T130 [US5] Create robots.txt in src/app/robots.ts allowing all crawlers except draft/preview routes
-- [ ] T131 [US5] Implement RSS feed generation in src/app/rss.xml/route.ts with RSS 2.0 format
-- [ ] T132 [US5] Include full content or excerpts in RSS feed items
-- [ ] T133 [US5] Add social share buttons to blog posts in src/components/features/ShareButtons.tsx (Twitter, LinkedIn, Copy Link)
-- [ ] T134 [US5] Implement copy link functionality with clipboard API
-- [ ] T135 [US5] Test OpenGraph preview cards on Twitter, LinkedIn, and Facebook using preview tools
-- [ ] T136 [US5] Validate sitemap.xml format using XML validators
-- [ ] T137 [US5] Validate RSS feed format using RSS validators
+- [x] T102 [US5] Implement status filtering in all GROQ queries in lib/sanity/queries.ts to exclude draft and review content (status == "published")
+- [x] T103 [P] [US5] Create ISR revalidation API route in app/api/revalidate/route.ts with secret validation and tag-based revalidation
+- [x] T104 [US5] Configure ISR revalidation in Work index and detail pages with revalidate option (e.g., 3600 seconds)
+- [x] T105 [US5] Configure ISR revalidation in Labs index and detail pages with revalidate option
+- [x] T106 [US5] Configure ISR revalidation in Blog index and detail pages with revalidate option
+- [x] T107 [US5] Add 404 handling for unpublished content in detail pages (redirect to 404 or show "not found" message)
+- [x] T108 [US5] Create custom 404 page in app/not-found.tsx with branded messaging and navigation links
+- [ ] T109 [US5] Test content governance manually in Sanity Studio (create draft content, verify not visible, publish, verify visible after revalidation) - **MANUAL TESTING REQUIRED**
+- [x] T110 [US5] Document Sanity webhook configuration in quickstart.md for ISR revalidation on content publish
 
-**Checkpoint**: Content is optimized for social sharing and search engine discovery. All metadata and feeds are valid.
+**Checkpoint**: Content workflow is secure - only published content visible on public site, draft/review content hidden
 
 ---
 
-## Phase 8: User Story 6 - Content Governance and Publishing (Priority: P3)
+## Phase 8: User Story 6 - SEO and Content Discovery by Search Engines (Priority: P2)
 
-**Goal**: Content author can manage editorial workflows (draft → review → publish) with draft content filtered from production and ISR revalidation within 60s.
+**Goal**: Enable search engines to crawl and index the portfolio with proper metadata, sitemaps, and RSS feeds for organic traffic
 
-**Independent Test**: Create draft post in CMS, verify it doesn't appear in production. Publish it and confirm appearance within 60s. Test preview mode for drafts.
+**Independent Test**: Validate sitemap.xml in browser → validate RSS feed at /blog/rss.xml using W3C Feed Validator → test social share link on Twitter/LinkedIn (verify OpenGraph preview) → run Lighthouse SEO audit (score ≥90)
 
 ### Implementation for User Story 6
 
-- [ ] T138 [P] [US6] Ensure all GROQ queries filter by `publishStatus == 'published'` in production client
-- [ ] T139 [US6] Test draft filtering by creating draft content in Sanity and verifying it doesn't appear on site
-- [ ] T140 [US6] Configure Sanity webhook in Sanity dashboard to call /api/revalidate endpoint
-- [ ] T141 [US6] Add webhook payload parsing and validation in src/app/api/revalidate/route.ts
-- [ ] T142 [US6] Implement revalidatePath and revalidateTag logic for each content type (work, labs, blog)
-- [ ] T143 [US6] Add exponential backoff retry logic (3 retries) for webhook failures
-- [ ] T144 [US6] Implement webhook error logging to monitoring service in src/lib/utils/logger.ts
-- [ ] T145 [US6] Configure draft mode preview URLs in Sanity Studio presentation tool
-- [ ] T146 [US6] Test preview mode by accessing preview URL and verifying draft content visible
-- [ ] T147 [US6] Add "Exit Preview" banner component in src/components/PreviewBanner.tsx when in draft mode
-- [ ] T148 [US6] Implement archived content handling (remove from lists, keep accessible via direct URL)
-- [ ] T149 [US6] Add "This content is archived" notice component in src/components/ArchivedNotice.tsx
-- [ ] T150 [US6] Test ISR revalidation timing: publish content in CMS, verify appearance on site within 60s
-- [ ] T151 [US6] Monitor webhook delivery and revalidation success rates
-- [ ] T152 [US6] Test content status transitions: draft → published → archived → published
+- [ ] T111 [P] [US6] Create dynamic sitemap route in app/sitemap.xml/route.ts to query all published content and generate XML sitemap
+- [ ] T112 [P] [US6] Create dynamic RSS feed route in app/rss.xml/route.ts to query latest blog posts and generate RSS 2.0 feed
+- [ ] T113 [P] [US6] Create robots.txt in public/robots.txt with sitemap reference and crawler permissions
+- [ ] T114 [US6] Implement generateMetadata in all page components (home, about, work, labs, blog) with title, description, canonical URL
+- [ ] T115 [US6] Add structured data (JSON-LD) for WebSite schema in root layout
+- [ ] T116 [P] [US6] Add structured data (JSON-LD) for BlogPosting schema in blog post detail pages
+- [ ] T117 [P] [US6] Add structured data (JSON-LD) for Person schema in About page using author data from Sanity
+- [ ] T118 [US6] Implement social sharing functionality (copy link button) on case studies, lab projects, and blog posts
+- [ ] T119 [US6] Test sitemap.xml manually (verify all published pages included, valid XML format)
+- [ ] T120 [US6] Test RSS feed manually (verify latest posts included, valid RSS 2.0 format)
+- [ ] T121 [US6] Test OpenGraph metadata manually (share links on Twitter/LinkedIn, verify preview images and descriptions)
+- [ ] T122 [US6] Run Lighthouse SEO audit and fix any issues to achieve score ≥90
 
-**Checkpoint**: Content governance workflows are complete. Authors can safely manage content through editorial states.
+**Checkpoint**: Portfolio is fully discoverable by search engines with proper metadata and feeds
 
 ---
 
-## Phase 9: Additional Pages & Features
+## Phase 9: User Story 7 - Observability and Success Tracking (Priority: P3)
 
-**Purpose**: Core pages not directly tied to a single user story but essential for portfolio completeness
+**Goal**: Enable portfolio owner to track visitor engagement through telemetry events to measure success and inform content strategy
 
-- [ ] T153 [P] Create About page in src/app/about/page.tsx with author bio, skills, career timeline
-- [ ] T154 [P] Create author query in src/lib/sanity/queries.ts (getAuthor)
-- [ ] T155 Implement skills/expertise display component in src/components/features/Skills.tsx
-- [ ] T156 Implement career timeline component in src/components/features/Timeline.tsx
-- [ ] T157 Create resume/CV download page or link in navigation
-- [ ] T158 Implement 404 page in src/app/not-found.tsx with branded error message and navigation
-- [ ] T159 Implement 500 error page in src/app/error.tsx with error boundary
-- [ ] T160 Add favicon and web app manifest in src/app/
-- [ ] T161 Configure analytics (Vercel Analytics) in src/app/layout.tsx
-- [ ] T162 Configure Speed Insights in src/app/layout.tsx
+**Independent Test**: Trigger telemetry events (view case study, copy link, scroll milestones) → verify events logged with correct metadata (page URL, timestamp, action type) → review analytics dashboard (if integrated)
 
----
+### Implementation for User Story 7
 
-## Phase 10: Performance Optimization & Monitoring
+- [ ] T123 [P] [US7] Create telemetry events utility in lib/telemetry/events.ts with privacy-first event logging (no personal data)
+- [ ] T124 [P] [US7] Integrate telemetry event tracking for page views on all content detail pages (case studies, labs, blog posts)
+- [ ] T125 [P] [US7] Integrate telemetry event tracking for "Copy Link" actions on share buttons
+- [ ] T126 [P] [US7] Integrate telemetry event tracking for scroll depth milestones (25%, 50%, 75%, 100%) on long content pages
+- [ ] T127 [US7] Configure Vercel Analytics or Plausible Analytics integration for privacy-first analytics tracking
+- [ ] T128 [US7] Test telemetry events manually (trigger page view, copy link, scroll events) and verify events logged correctly
+- [ ] T129 [US7] Document analytics integration and event tracking in quickstart.md
 
-**Purpose**: Ensure Core Web Vitals thresholds are met and performance is monitored
-
-- [ ] T163 [P] Configure Lighthouse CI in lighthouserc.json with performance budgets
-- [ ] T164 [P] Set performance budget thresholds: LCP ≤2.5s, INP ≤200ms, CLS ≤0.1
-- [ ] T165 Run Lighthouse on all key pages (homepage, work index, case study detail, blog post)
-- [ ] T166 Optimize images: verify all use next/image, proper dimensions, lazy loading
-- [ ] T167 Optimize fonts: verify next/font is configured correctly, no external requests
-- [ ] T168 Audit third-party scripts and ensure lazy loading where appropriate
-- [ ] T169 Add preconnect links for Sanity CDN in src/app/layout.tsx
-- [ ] T170 Test Core Web Vitals on real mobile devices (low-end Android)
-- [ ] T171 Configure Vercel Analytics to track Core Web Vitals in production
-- [ ] T172 Set up alerts for Core Web Vitals regressions
-- [ ] T173 Validate performance scores meet constitutional requirements (≥90 Lighthouse score)
+**Checkpoint**: Portfolio owner can track engagement metrics without collecting personal data
 
 ---
 
-## Phase 11: Testing & Quality Assurance
+## Phase 10: Pagination and Performance Optimization
 
-**Purpose**: Comprehensive testing across user stories
+**Goal**: Implement "Load More" pagination for all content indices to handle scale and maintain performance
 
-- [ ] T174 [P] Write unit test for theme toggle functionality in tests/unit/theme.test.ts
-- [ ] T175 [P] Write unit test for search index creation in tests/unit/search.test.ts
-- [ ] T176 [P] Write unit test for filter utility in tests/unit/filters.test.ts
-- [ ] T177 Write E2E test for recruiter flow (homepage → case study → back) in tests/e2e/recruiter-flow.test.ts
-- [ ] T178 Write E2E test for engineer flow (case study technical sections → labs → blog) in tests/e2e/engineer-flow.test.ts
-- [ ] T179 Write E2E test for content discovery (search → filter → tag navigation) in tests/e2e/discovery-flow.test.ts
-- [ ] T180 Write E2E test for content publishing workflow in tests/e2e/publishing.test.ts
-- [ ] T181 Validate all forms (if any) have proper validation and error messages
-- [ ] T182 Test error scenarios: network failures, missing images, API errors
-- [ ] T183 Test empty states: no search results, no filtered results, no content
-- [ ] T184 Cross-browser testing (Chrome, Firefox, Safari, Edge)
-- [ ] T185 Mobile device testing (iOS, Android)
-- [ ] T186 Run full accessibility audit and fix any violations
+**Independent Test**: Navigate to Blog index → verify first 20 posts load → click "Load More" button → verify next 20 posts append without page reload → check Lighthouse Performance score ≥90
 
----
+### Implementation for Pagination
 
-## Phase 12: Documentation & Deployment
+- [ ] T130 [P] Create pagination API route for Work case studies in app/api/work/items/route.ts accepting offset and limit params
+- [ ] T131 [P] Create pagination API route for Labs projects in app/api/labs/items/route.ts accepting offset and limit params
+- [ ] T132 [P] Create pagination API route for Blog posts in app/api/blog/items/route.ts accepting offset and limit params
+- [ ] T133 [P] Create LoadMoreButton component in components/content/LoadMoreButton.tsx with loading state and remaining count
+- [ ] T134 Integrate LoadMoreButton into Work index page with client-side fetch logic to append new items
+- [ ] T135 Integrate LoadMoreButton into Labs index page with client-side fetch logic
+- [ ] T136 Integrate LoadMoreButton into Blog index page with client-side fetch logic
+- [ ] T137 Test "Load More" functionality manually on all indices (verify items append, loading states, total count accurate)
+- [ ] T138 Run Lighthouse performance audit on paginated pages and verify Performance score ≥90, LCP ≤2.5s maintained
 
-**Purpose**: Prepare for production deployment
-
-- [ ] T187 [P] Create README.md with project setup instructions
-- [ ] T188 [P] Document environment variables in .env.example
-- [ ] T189 Review and validate quickstart.md is up-to-date
-- [ ] T190 Create deployment guide in docs/deployment.md
-- [ ] T191 Configure Vercel project and connect repository
-- [ ] T192 Set environment variables in Vercel dashboard
-- [ ] T193 Configure custom domain in Vercel (sonbui.com)
-- [ ] T194 Set up Sanity Studio deployment (sanity.studio subdomain or /studio route)
-- [ ] T195 Configure Sanity webhook to production URL
-- [ ] T196 Test production build locally with `npm run build && npm start`
-- [ ] T197 Deploy to production and verify all functionality
-- [ ] T198 Validate ISR revalidation in production environment
-- [ ] T199 Monitor initial production metrics (Core Web Vitals, error rates)
-- [ ] T200 Create content authoring guide for Sanity Studio users
+**Checkpoint**: All content indices support pagination with optimal performance
 
 ---
 
-## Phase 13: Polish & Cross-Cutting Concerns
+## Phase 11: Polish & Cross-Cutting Concerns
 
-**Purpose**: Final improvements and optimizations
+**Purpose**: Improvements that affect multiple user stories and final quality assurance
 
-- [ ] T201 [P] Code cleanup: remove console.logs, debug code, TODO comments
-- [ ] T202 [P] Refactor duplicated code into shared utilities
-- [ ] T203 [P] Run ESLint and fix all warnings
-- [ ] T204 [P] Run Prettier formatting on all files
-- [ ] T205 Optimize bundle size: analyze with Next.js bundle analyzer
-- [ ] T206 Add loading indicators for slow network connections
-- [ ] T207 Implement error tracking with Sentry or similar service
-- [ ] T208 Add animation polish (transitions, micro-interactions) respecting prefers-reduced-motion
-- [ ] T209 Review and optimize SEO for all pages (titles, descriptions, keywords)
-- [ ] T210 Final accessibility review with screen reader testing
-- [ ] T211 Security audit: check for exposed secrets, validate input sanitization
-- [ ] T212 Performance audit: review React DevTools profiler for expensive re-renders
-- [ ] T213 Validate all constitutional requirements are met
-- [ ] T214 Create project handoff documentation
+- [ ] T139 [P] Add page transition animations using PageTransition component in components/animations/PageTransition.tsx wrapping page content
+- [ ] T140 [P] Implement CMS outage handling with stale content banner in all pages when Sanity queries fail (serve cached data)
+- [ ] T141 [P] Optimize all images in Sanity Studio (ensure proper dimensions, compression, WebP/AVIF format support)
+- [ ] T142 [P] Add preconnect link tags for Sanity CDN in root layout head for faster image loading
+- [ ] T143 [P] Configure font optimization with next/font for all custom fonts (if any) or system font stack
+- [ ] T144 [P] Add meta viewport tag and charset in root layout for proper mobile rendering
+- [ ] T145 Implement browser support detection and upgrade message for unsupported browsers (IE11 and older)
+- [ ] T146 Test site manually with JavaScript disabled (verify core content accessible via SSR/SSG)
+- [ ] T147 Test dark/light mode toggle across all pages and verify no visual regressions or contrast issues
+- [ ] T148 Test animations respect prefers-reduced-motion setting (disable animations when enabled)
+- [ ] T149 [P] Run cross-browser testing manually on Chrome, Firefox, Safari (macOS/iOS), Edge (latest 2 versions)
+- [ ] T150 [P] Run real-device testing on iPhone (Safari), Android (Chrome), tablet, desktop
+- [ ] T151 [P] Run final Lighthouse audits on all key pages (home, work index, work detail, labs, blog) and verify all scores meet targets
+- [ ] T152 Update README.md with project overview, setup instructions, deployment guide
+- [ ] T153 Update quickstart.md with any new configuration steps discovered during implementation
+- [ ] T154 [P] Code cleanup and refactoring: remove dead code, consolidate utilities, improve TypeScript types
+- [ ] T155 [P] Security review: validate all environment variables, check for exposed secrets, review CORS settings
+- [ ] T156 Run complete manual testing workflow per quickstart.md to validate all user stories end-to-end
+- [ ] T157 Document known issues or technical debt in GitHub issues for post-launch improvements
 
 ---
 
@@ -373,214 +318,157 @@
 
 - **Setup (Phase 1)**: No dependencies - can start immediately
 - **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3-8)**: All depend on Foundational phase completion
-  - US1 (Recruiter Assessment): Can start after Foundational - MVP target ✅
-  - US2 (Engineer Evaluation): Can start after Foundational - Also P1 priority
-  - US3 (Content Discovery): Can start after Foundational - Depends on US1, US2 content existing
-  - US4 (Accessibility): Can start after Foundational - Applies to all pages
-  - US5 (Social Sharing): Can start after US1, US2 have pages to share
-  - US6 (Content Governance): Can start after Foundational - Infrastructure concern
-- **Additional Pages (Phase 9)**: Can run in parallel with user stories
-- **Performance (Phase 10)**: After major implementation complete
-- **Testing (Phase 11)**: Throughout development, final pass after implementation
-- **Deployment (Phase 12)**: After testing complete
-- **Polish (Phase 13)**: After deployment, ongoing
+- **User Story 4 (Phase 3)**: Depends on Foundational completion - Foundation for all other stories (navigation, theming, responsive layout)
+- **User Story 1 (Phase 4)**: Depends on Foundational + US4 completion - MVP core feature
+- **User Story 2 (Phase 5)**: Depends on Foundational + US4 completion - Can run parallel with US1 if staffed
+- **User Story 3 (Phase 6)**: Depends on Foundational + US4 completion - Can run parallel with US1/US2 if staffed
+- **User Story 5 (Phase 7)**: Depends on US1, US2, US3 completion (requires content pages to exist)
+- **User Story 6 (Phase 8)**: Depends on US1, US2, US3 completion (requires content to generate sitemap/RSS)
+- **User Story 7 (Phase 9)**: Depends on US1, US2, US3 completion (requires pages to track)
+- **Pagination (Phase 10)**: Depends on US1, US2, US3 completion (enhances existing indices)
+- **Polish (Phase 11)**: Depends on all user stories being complete
 
 ### User Story Dependencies
 
-- **User Story 1 (P1 - MVP)**: Independent after Foundational
-- **User Story 2 (P1)**: Independent after Foundational, enhances US1
-- **User Story 3 (P2)**: Depends on US1 & US2 having content to search/filter
-- **User Story 4 (P2)**: Independent, applies across all stories
-- **User Story 5 (P3)**: Depends on US1 & US2 having pages to share
-- **User Story 6 (P3)**: Independent infrastructure concern
+- **User Story 4 (Site Navigation - P1)**: FOUNDATION - Must complete before any content stories
+- **User Story 1 (Portfolio Discovery - P1)**: Independent after US4 - No dependencies on other content stories
+- **User Story 2 (Technical Deep Dive - P2)**: Independent after US4 - Can start in parallel with US1
+- **User Story 3 (Content Discovery - P3)**: Independent after US4 - Can start in parallel with US1/US2
+- **User Story 5 (Content Governance - P2)**: Depends on US1, US2, US3 having content pages to apply governance to
+- **User Story 6 (SEO - P2)**: Depends on US1, US2, US3 having content to index
+- **User Story 7 (Observability - P3)**: Depends on US1, US2, US3 having pages to track
 
 ### Within Each User Story
 
-- GROQ queries before page implementation
-- Components before pages that use them
-- Layout components before detail pages
-- SSG configuration after page implementation
-- Metadata after page content complete
+- Layout and navigation components (US4) before content pages
+- Sanity schemas before page queries
+- Index pages before detail pages (establish patterns)
+- Component creation before integration
+- Core functionality before animations/polish
+- Manual testing before Lighthouse audits
+- Story complete before moving to next priority
 
 ### Parallel Opportunities
 
-**Setup Phase**:
-
-- T003 (ESLint), T004 (Prettier), T005 (commitlint), T006 (Husky) can run together
-- T011 (testing deps), T012 (Vitest), T013 (Playwright), T015 (gitignore), T016 (additional deps) can run together
-- T018 (package.json scripts) can run in parallel with config files
-
-**Foundational Phase**:
-
-- T021 (model types) can run with T020 (Sanity types)
-- T026 (fonts), T027-T029 (UI components), T034-T036 (state components) can run together
-- T033 (preview endpoints) can run with T032 (revalidation)
-
-**User Story 1**:
-
-- T039 (queries) and T040 (queries) can run together
-- T042 (hero), T043 (card) can be built in parallel
-- T052 (Portable Text), T053 (tech badge) can run together
-
-**User Story 2**:
-
-- T056-T059 (all queries) can run in parallel
-- T064 (Labs index), T070 (Blog index) can run in parallel
-- T065 (lab card), T071 (blog card) can run in parallel
-- T066 (lab detail), T072 (blog detail) can run in parallel
-
-**User Story 3**:
-
-- T080-T082 (queries) can run together
-- T084 (filter logic), T091 (debounce) can run in parallel
-- T092 (tag component), T093 (tag filtering) require sequential order
-
-**User Story 4**:
-
-- T099 (semantic HTML audit), T100 (heading audit), T101 (alt text audit) can run together
-- T113-T116 (all a11y tests) can run in parallel
-
-**User Story 5**:
-
-- T120-T123 (all metadata functions) can run in parallel
-- T126-T128 (structured data) can run in parallel
-- T129 (sitemap), T130 (robots.txt), T131 (RSS) can run in parallel
-
-**User Story 6**:
-
-- T138 (query filtering), T141 (webhook parsing) can run in parallel
-- Testing tasks can be parallelized
-
-**Throughout**:
-
-- Different user stories can be worked on in parallel by different team members after Foundational phase
+- **Setup Phase**: All tasks marked [P] (T002-T012) can run in parallel
+- **Foundational Phase**: Tasks T014-T019 (schemas), T022-T024 (Sanity utilities), T026-T037 (components) can run in parallel
+- **Once US4 Completes**: US1, US2, US3 can all start in parallel (if team capacity allows)
+- **Within Each Story**: Tasks marked [P] within the same story can run in parallel (e.g., T051 and T052 in US1)
 
 ---
 
-## Parallel Example: User Story 1 (Recruiter Assessment)
+## Parallel Example: User Story 1 (Work Case Studies)
 
 ```bash
-# Launch queries together:
-Task: "Create GROQ query for homepage featured case studies"
-Task: "Create GROQ query for single case study by slug"
+# Can run in parallel (different files):
+T051: "Create Work index page in app/work/page.tsx"
+T052: "Create CaseStudyCard component in components/content/CaseStudyCard.tsx"
+T053: "Create FilterBar component in components/content/FilterBar.tsx"
+T061: "Create SCSS for cards in styles/components/_card.scss"
 
-# Build components in parallel:
-Task: "Create hero section component"
-Task: "Create case study card component"
-Task: "Implement Portable Text renderer"
-Task: "Create tech stack badge component"
-
-# Different pages can be built simultaneously:
-Task: "Implement homepage"
-Task: "Implement case study detail page"
-```
-
----
-
-## Parallel Example: Multiple User Stories (After Foundational Complete)
-
-```bash
-# Team can split by user story:
-Developer A: User Story 1 (T039-T055) - Homepage & Case Studies
-Developer B: User Story 2 (T056-T079) - Labs & Blog
-Developer C: User Story 4 (T099-T119) - Accessibility
-Developer D: User Story 6 (T138-T152) - Content Governance
+# Must run sequentially (same file or dependencies):
+T054: "Implement filtering logic in Work index" (depends on T051, T052, T053)
+T056: "Create case study detail page" (can start after T051 pattern established)
+T062: "Add scroll animations" (depends on T056 having content)
 ```
 
 ---
 
 ## Implementation Strategy
 
-### MVP First (User Stories 1 & 2 Only)
+### MVP First (US4 + US1 Only)
 
-**Goal**: Ship core portfolio functionality that delivers recruiter and engineer value
+1. Complete Phase 1: Setup
+2. Complete Phase 2: Foundational (CRITICAL - blocks all stories)
+3. Complete Phase 3: User Story 4 (Navigation & Responsive Design) - FOUNDATION
+4. Complete Phase 4: User Story 1 (Work Case Studies)
+5. **STOP and VALIDATE**: Test US1 independently (browse case studies, filter by tech stack, read detail pages)
+6. Deploy/demo if ready - this is a functional MVP showcasing professional work
 
-1. Complete **Phase 1**: Setup (T001-T018)
-2. Complete **Phase 2**: Foundational (T019-T038) - CRITICAL blocker
-3. Complete **Phase 3**: User Story 1 - Recruiter Assessment (T039-T055)
-4. Complete **Phase 4**: User Story 2 - Engineer Deep Dive (T056-T079)
-5. Add **About page** from Phase 9 (T153-T156)
-6. **VALIDATE**: Test core flows independently
-7. **Minimal Testing**: Run accessibility tests (T114-T116) and key E2E tests (T177-T178)
-8. **Deploy MVP**: Phase 12 deployment (T191-T199)
+### Incremental Delivery
 
-**MVP Delivered**: Portfolio with homepage, case studies, labs, blog, and about page. Ready for recruiters and engineers.
+1. Complete Setup + Foundational + US4 → Foundation ready (navigation, theming, responsive)
+2. Add User Story 1 (Work) → Test independently → Deploy/Demo (MVP!)
+3. Add User Story 2 (Labs) → Test independently → Deploy/Demo
+4. Add User Story 3 (Blog + Search) → Test independently → Deploy/Demo
+5. Add User Story 5 (Content Governance) → Test → Deploy
+6. Add User Story 6 (SEO) → Test → Deploy
+7. Add User Story 7 (Analytics) → Test → Deploy
+8. Add Pagination (Phase 10) → Test → Deploy
+9. Polish (Phase 11) → Final QA → Production Launch
 
-### Incremental Delivery (Recommended)
-
-**Release 1 (MVP - Weeks 1-3)**:
-
-- Phase 1: Setup
-- Phase 2: Foundational
-- Phase 3: User Story 1 (Recruiter)
-- Phase 4: User Story 2 (Engineer)
-- Phase 9: About page
-- Phase 12: Deploy
-
-**Release 2 (Enhanced Discovery - Week 4)**:
-
-- Phase 5: User Story 3 (Content Discovery with search/filters)
-- Test and deploy incrementally
-
-**Release 3 (Accessibility & SEO - Week 5)**:
-
-- Phase 6: User Story 4 (Full accessibility compliance)
-- Phase 7: User Story 5 (Social sharing & SEO)
-- Phase 10: Performance optimization
-- Test and deploy
-
-**Release 4 (Content Management - Week 6)**:
-
-- Phase 8: User Story 6 (Content governance)
-- Phase 11: Comprehensive testing
-- Phase 13: Polish
+Each increment adds value without breaking previous functionality.
 
 ### Parallel Team Strategy
 
-**With 3-4 developers after Foundational phase completes**:
+With multiple developers:
 
-- **Dev A**: User Story 1 + User Story 2 (core content pages)
-- **Dev B**: User Story 3 (search & filtering)
-- **Dev C**: User Story 4 + User Story 5 (accessibility & SEO)
-- **Dev D**: User Story 6 + Phase 9 (content governance & additional pages)
-
-Stories integrate independently, merge when complete.
+1. Team completes Setup + Foundational + US4 together
+2. Once US4 is done (navigation foundation ready):
+   - Developer A: User Story 1 (Work)
+   - Developer B: User Story 2 (Labs)
+   - Developer C: User Story 3 (Blog + Search)
+3. Stories complete and integrate independently
+4. Proceed to dependent stories (US5, US6, US7) sequentially or as capacity allows
 
 ---
 
-## Task Summary
+## Total Task Count Summary
 
-- **Total Tasks**: 214
-- **Setup Phase**: 18 tasks
-- **Foundational Phase**: 20 tasks (CRITICAL - blocks all user stories)
-- **User Story 1 (P1 - MVP)**: 17 tasks
-- **User Story 2 (P1)**: 24 tasks
-- **User Story 3 (P2)**: 19 tasks
-- **User Story 4 (P2)**: 21 tasks
-- **User Story 5 (P3)**: 18 tasks
-- **User Story 6 (P3)**: 15 tasks
-- **Additional Pages**: 10 tasks
-- **Performance**: 11 tasks
-- **Testing**: 13 tasks
-- **Deployment**: 14 tasks
-- **Polish**: 14 tasks
+- **Phase 1 (Setup)**: 12 tasks
+- **Phase 2 (Foundational)**: 27 tasks (T013-T039)
+- **Phase 3 (US4 - Navigation)**: 11 tasks (T040-T050)
+- **Phase 4 (US1 - Work)**: 15 tasks (T051-T065)
+- **Phase 5 (US2 - Labs)**: 16 tasks (T066-T081)
+- **Phase 6 (US3 - Blog)**: 20 tasks (T082-T101)
+- **Phase 7 (US5 - Content Governance)**: 9 tasks (T102-T110)
+- **Phase 8 (US6 - SEO)**: 12 tasks (T111-T122)
+- **Phase 9 (US7 - Observability)**: 7 tasks (T123-T129)
+- **Phase 10 (Pagination)**: 9 tasks (T130-T138)
+- **Phase 11 (Polish)**: 19 tasks (T139-T157)
 
-**Parallelizable Tasks**: 89 tasks marked with [P]
+**Total**: 157 tasks
 
-**MVP Scope** (Recommended): Phases 1, 2, 3, 4, and subset of Phase 9 (About page) = ~80 tasks for functional portfolio
+**Parallel Opportunities**: 47+ tasks marked [P] across all phases
 
-**Full Feature Complete**: All 214 tasks
+**Independent Test Criteria**: Each user story phase includes specific manual test scenarios
+
+**Suggested MVP Scope**: Phase 1 (Setup) + Phase 2 (Foundational) + Phase 3 (US4 - Navigation) + Phase 4 (US1 - Work Case Studies) = 65 tasks for functional MVP
+
+---
+
+## Format Validation
+
+✅ ALL tasks follow the required checklist format:
+
+- `- [ ]` checkbox at start
+- Sequential Task ID (T001-T157)
+- `[P]` marker for parallelizable tasks
+- `[US#]` story label for user story tasks (US1-US7)
+- Clear description with exact file path
+- No tasks use placeholder markers like "...existing code..."
+
+✅ Tasks organized by user story for independent implementation and testing
+
+✅ Each user story includes independent test criteria for validation
+
+✅ Dependencies clearly documented with suggested execution order
+
+✅ MVP scope identified (Setup + Foundational + US4 + US1 = 65 tasks)
 
 ---
 
 ## Notes
 
-- [P] tasks = different files, no dependencies, can run in parallel
-- [Story] label (US1-US6) maps task to specific user story for traceability
-- Each user story should be independently completable and testable
-- Tests are included but can be deprioritized for MVP if needed (spec doesn't explicitly require TDD)
-- Commit after each task or logical group
-- Stop at any checkpoint to validate story independently
-- Constitutional requirements validated in Phase 10 and Phase 13
-- All file paths are explicit and follow Next.js App Router conventions
+- Manual testing approach per research.md - no unit tests required initially
+- Lighthouse CI runs automatically on all PRs to validate performance, accessibility, SEO
+- All animations must respect `prefers-reduced-motion` user preference
+- SCSS files use BEM naming conventions with underscores (block**element**modifier)
+- Images served through Sanity CDN with automatic optimization
+- Content status filtering ensures only published content visible on public site
+- ISR revalidation triggered via webhooks for content freshness (60 seconds)
+- Search index pre-built at build time for instant client-side search
+- Pagination uses "Load More" pattern (20 items per batch) for optimal performance
+- Cross-browser testing required: Chrome, Firefox, Safari, Edge (latest 2 versions)
+- Real-device testing required: iPhone, Android, tablet, desktop
+- All pages must achieve Lighthouse scores: Performance ≥90, Accessibility ≥95, SEO ≥90

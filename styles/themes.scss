@@ -1,0 +1,205 @@
+// SCSS Theme Variables for Light and Dark Modes
+// ============================================================================
+// CSS/SCSS NAMING CONVENTION GUIDE
+// ============================================================================
+// Use BEM (Block Element Modifier) naming convention with double underscores
+// Format: block__element__modifier
+// 
+// Examples:
+//   - .card__header__title
+//   - .nav__item__active
+//   - .button__icon__large
+//   - .hero__content__centered
+//
+// Note: Use __ (double underscore) for ALL separators, including modifiers
+// ============================================================================
+
+// Light Mode Theme Variables
+$light-theme: (
+    // Background colors
+    background-primary: #ffffff,
+    background-secondary: #f9fafb,
+    background-tertiary: #f3f4f6,
+    // Foreground/text colors
+    foreground-primary: #171717,
+    foreground-secondary: #525252,
+    foreground-muted: #9ca3af,
+    // Brand colors
+    primary: #3b82f6,
+    primary-hover: #2563eb,
+    secondary: #6366f1,
+    secondary-hover: #4f46e5,
+    accent: #ec4899,
+    accent-hover: #db2777,
+    // UI colors
+    border: #e5e7eb,
+    border-hover: #d1d5db,
+    success: #10b981,
+    warning: #f59e0b,
+    error: #ef4444,
+    // Shadows
+    shadow-sm: rgba(0, 0, 0, 0.05),
+    shadow-md: rgba(0, 0, 0, 0.1),
+    shadow-lg: rgba(0, 0, 0, 0.15),
+);
+
+// Dark Mode Theme Variables
+$dark-theme: (
+    // Background colors
+    background-primary: #171717,
+    background-secondary: #262626,
+    background-tertiary: #404040,
+    // Foreground/text colors
+    foreground-primary: #ffffff,
+    foreground-secondary: #d4d4d4,
+    foreground-muted: #6b7280,
+    // Brand colors
+    primary: #60a5fa,
+    primary-hover: #3b82f6,
+    secondary: #818cf8,
+    secondary-hover: #6366f1,
+    accent: #f472b6,
+    accent-hover: #ec4899,
+    // UI colors
+    border: #374151,
+    border-hover: #4b5563,
+    success: #34d399,
+    warning: #fbbf24,
+    error: #f87171,
+    // Shadows
+    shadow-sm: rgba(0, 0, 0, 0.3),
+    shadow-md: rgba(0, 0, 0, 0.4),
+    shadow-lg: rgba(0, 0, 0, 0.5),
+);
+
+// Spacing scale (8px base)
+$spacing: (
+    xs: 0.25rem,
+    // 4px
+    sm: 0.5rem,
+    // 8px
+    md: 1rem,
+    // 16px
+    lg: 1.5rem,
+    // 24px
+    xl: 2rem,
+    // 32px
+    2xl: 3rem,
+    // 48px
+    3xl: 4rem,
+    // 64px
+    4xl: 6rem,
+    // 96px
+);
+
+// Typography scale
+$font-sizes: (
+    xs: 0.75rem,
+    // 12px
+    sm: 0.875rem,
+    // 14px
+    base: 1rem,
+    // 16px
+    lg: 1.125rem,
+    // 18px
+    xl: 1.25rem,
+    // 20px
+    2xl: 1.5rem,
+    // 24px
+    3xl: 1.875rem,
+    // 30px
+    4xl: 2.25rem,
+    // 36px
+    5xl: 3rem,
+    // 48px
+    6xl: 3.75rem,
+    // 60px
+);
+
+// Font weights
+$font-weights: (
+    normal: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
+);
+
+// Border radius
+$border-radius: (
+    none: 0,
+    sm: 0.25rem,
+    // 4px
+    md: 0.5rem,
+    // 8px
+    lg: 0.75rem,
+    // 12px
+    xl: 1rem,
+    // 16px
+    2xl: 1.5rem,
+    // 24px
+    full: 9999px,
+);
+
+// Breakpoints (mobile-first)
+$breakpoints: (
+    sm: 640px,
+    md: 768px,
+    lg: 1024px,
+    xl: 1280px,
+    2xl: 1536px,
+);
+
+// Z-index scale
+$z-index: (
+    base: 0,
+    dropdown: 10,
+    sticky: 20,
+    modal-backdrop: 30,
+    modal: 40,
+    popover: 50,
+    tooltip: 60,
+);
+
+// Transitions
+$transitions: (
+    fast: 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    base: 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    slow: 500ms cubic-bezier(0.4, 0, 0.2, 1),
+);
+
+// Helper function to get theme value
+@function get-theme-value($key, $mode: "light") {
+    @if $mode =="light" {
+        @if map-has-key($light-theme, $key) {
+            @return map-get($light-theme, $key);
+        }
+
+        @else {
+            @error "Key '#{$key}' does not exist in light theme config.";
+        }
+    }
+
+    @else {
+        @if map-has-key($dark-theme, $key) {
+            @return map-get($dark-theme, $key);
+        }
+
+        @else {
+            @error "Key '#{$key}' does not exist in dark theme config.";
+        }
+    }
+}
+
+// Helper mixin for dark mode styles
+@mixin dark-mode {
+    .dark & {
+        @content;
+    }
+}
+
+// Helper mixin for responsive breakpoints
+@mixin breakpoint($size) {
+    @media (min-width: map-get($breakpoints, $size)) {
+        @content;
+    }
+}
