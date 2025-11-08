@@ -7,10 +7,7 @@ import {
   type WorkFrontmatter,
   type LabFrontmatter,
 } from "../markdown";
-import type {
-  SearchIndex,
-  SearchIndexItem,
-} from "../../specs/000-fe-portfolio/contracts/api-types";
+import type { SearchIndex, SearchIndexItem } from "../../types/api";
 
 /**
  * Build Search Index Script
@@ -136,7 +133,7 @@ function transformToSearchItem(type: "blog" | "work" | "lab") {
     const content = item.content.substring(0, 500);
 
     return {
-      _id: item.slug,
+      id: item.slug,
       type,
       title: item.frontmatter.title,
       url: `/${type}/${item.slug}`,

@@ -6,7 +6,7 @@ import type {
   SearchQuery,
   SearchResult,
   SearchResponse,
-} from "../../specs/000-fe-portfolio/contracts/api-types";
+} from "../../types/api";
 
 /**
  * Extended search query interface for internal use

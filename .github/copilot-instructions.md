@@ -4,7 +4,7 @@ Auto-generated from all feature plans. Last updated: 2025-10-29
 
 ## Active Technologies
 
-- TypeScript 5.3+, JavaScript ES2022+ + Next.js 14+ (App Router), React 18+, TailwindCSS 4.1+, Motion (Framer Motion) 11+, Sanity CMS 3+, GROQ (Sanity query language), SVGR (SVG as React components) (000-fe-portfolio)
+- TypeScript 5.3+, JavaScript ES2022+ + Next.js 14+ (App Router), React 18+, TailwindCSS 4.1+, Motion (Framer Motion) 11+, SVGR (SVG as React components) (000-fe-portfolio)
 
 ## Project Structure
 
@@ -108,7 +108,7 @@ Apply this convention to:
 ## Recent Changes
 
 - 000-fe-portfolio: Updated to TailwindCSS 4.1 with CSS-based configuration using `@theme` directive (October 30, 2025)
-- 000-fe-portfolio: Added TypeScript 5.3+, JavaScript ES2022+ + Next.js 14+ (App Router), React 18+, Motion (Framer Motion) 11+, Sanity CMS 3+, GROQ (Sanity query language), SVGR (SVG as React components)
+- 000-fe-portfolio: Added TypeScript 5.3+, JavaScript ES2022+ + Next.js 14+ (App Router), React 18+, Motion (Framer Motion) 11+, SVGR (SVG as React components)
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

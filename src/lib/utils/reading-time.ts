@@ -1,10 +1,12 @@
+import type { ContentBlock } from "../../types/api";
+
 /**
  * Calculate Reading Time
  *
  * Estimates reading time in minutes based on word count.
  * Uses average reading speed of 200 words per minute.
  *
- * @param content - Sanity block content array
+ * @param content - Content block array
  * @returns Reading time in minutes (rounded up)
  *
  * @example
@@ -13,16 +15,16 @@
  * // => 5 (minutes)
  * ```
  */
-export function calculateReadingTime(content: any[]): number {
+export function calculateReadingTime(content: ContentBlock): number {
   if (!content || content.length === 0) {
     return 1; // Minimum 1 minute
   }
 
-  // Extract text from Sanity block content
+  // Extract text from content blocks
   const text = content
     .map((block) => {
-      if (block._type === "block" && block.children) {
-        return block.children.map((child: any) => child.text || "").join("");
+      if (block.type === "block" && "children" in block) {
+        return block.children.map((child) => child.text || "").join("");
       }
       return "";
     })
@@ -48,20 +50,20 @@ export function formatWordCount(wordCount: number): string {
 }
 
 /**
- * Extract plain text from Sanity block content
+ * Extract plain text from content blocks
  *
- * @param content - Sanity block content array
+ * @param content - Content block array
  * @returns Plain text string
  */
-export function extractPlainText(content: any[]): string {
+export function extractPlainText(content: ContentBlock): string {
   if (!content || content.length === 0) {
     return "";
   }
 
   return content
     .map((block) => {
-      if (block._type === "block" && block.children) {
-        return block.children.map((child: any) => child.text || "").join("");
+      if (block.type === "block" && "children" in block) {
+        return block.children.map((child) => child.text || "").join("");
       }
       return "";
     })

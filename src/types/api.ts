@@ -1,35 +1,33 @@
 /**
  * TypeScript Type Definitions for FE Engineer Portfolio
  *
- * These types correspond to the Sanity CMS schemas and define the shape
- * of data returned from GROQ queries.
+ * Generic types for content management, independent of any specific CMS.
  */
 
 // ============================================================================
 // Base Types
 // ============================================================================
 
-export interface SanityDocument {
-  _id: string;
-  _type: string;
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
+export interface Document {
+  id: string;
+  type: string;
+  createdAt: string;
+  updatedAt?: string;
+  rev?: string;
 }
 
-export interface SanityReference {
-  _ref: string;
-  _type: "reference";
+export interface Reference {
+  id: string;
 }
 
-export interface SanitySlug {
-  _type: "slug";
+export interface Slug {
   current: string;
 }
 
-export interface SanityImage {
-  _type: "image";
-  asset: SanityReference;
+export interface Image {
+  type: "image";
+  url: string;
+  alt?: string;
   hotspot?: {
     x: number;
     y: number;
@@ -44,46 +42,44 @@ export interface SanityImage {
   };
 }
 
-export interface SanityBlock {
-  _type: "block";
-  _key: string;
+export interface Block {
+  type: "block";
+  key: string;
   style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
   children: Array<{
-    _type: "span";
-    _key: string;
+    type: "span";
+    key: string;
     text: string;
     marks?: string[];
   }>;
   markDefs?: Array<{
-    _type: string;
-    _key: string;
-    [key: string]: any;
+    type: string;
+    key: string;
+    [key: string]: unknown;
   }>;
 }
 
-export interface SanityCodeBlock {
-  _type: "code";
-  _key: string;
+export interface CodeBlock {
+  type: "code";
+  key: string;
   language?: string;
   code: string;
   filename?: string;
 }
 
-export type SanityBlockContent = Array<
-  SanityBlock | SanityImage | SanityCodeBlock
->;
+export type ContentBlock = Array<Block | Image | CodeBlock>;
 
 // ============================================================================
 // Author Type
 // ============================================================================
 
-export interface Author extends SanityDocument {
-  _type: "author";
+export interface Author extends Document {
+  type: "author";
   name: string;
-  slug: SanitySlug;
+  slug: Slug;
   role: string;
   bio: string;
-  profileImage: SanityImage;
+  profileImage: Image;
   email?: string;
   socialLinks: {
     github?: string;
@@ -94,10 +90,10 @@ export interface Author extends SanityDocument {
 
 // Author projection for queries (common fields only)
 export interface AuthorPreview {
-  _id: string;
+  id: string;
   name: string;
   role: string;
-  profileImage: SanityImage;
+  profileImage: Image;
 }
 
 // ============================================================================
@@ -106,20 +102,20 @@ export interface AuthorPreview {
 
 export type TechStackCategory = "language" | "framework" | "tool" | "platform";
 
-export interface TechStack extends SanityDocument {
-  _type: "techStack";
+export interface TechStack extends Document {
+  type: "techStack";
   name: string;
-  slug: SanitySlug;
+  slug: Slug;
   category: TechStackCategory;
-  icon?: SanityImage;
+  icon?: Image;
   description?: string;
 }
 
 // TechStack projection for queries
 export interface TechStackPreview {
-  _id: string;
+  id: string;
   name: string;
-  slug: SanitySlug;
+  slug: Slug;
   category: TechStackCategory;
 }
 
@@ -127,18 +123,18 @@ export interface TechStackPreview {
 // Tag Type
 // ============================================================================
 
-export interface Tag extends SanityDocument {
-  _type: "tag";
+export interface Tag extends Document {
+  type: "tag";
   name: string;
-  slug: SanitySlug;
+  slug: Slug;
   description?: string;
 }
 
 // Tag projection for queries
 export interface TagPreview {
-  _id: string;
+  id: string;
   name: string;
-  slug: SanitySlug;
+  slug: Slug;
 }
 
 // ============================================================================
@@ -153,30 +149,30 @@ export type ContentStatus = "draft" | "review" | "published";
 
 export type RoleType = "Lead Engineer" | "Senior Engineer" | "Engineer";
 
-export interface WorkCaseStudy extends SanityDocument {
-  _type: "workCaseStudy";
+export interface WorkCaseStudy extends Document {
+  type: "workCaseStudy";
   title: string;
-  slug: SanitySlug;
+  slug: Slug;
   summary: string;
-  heroImage: SanityImage;
-  problemStatement: SanityBlockContent;
-  approach: SanityBlockContent;
-  architecture: SanityBlockContent;
-  impact: SanityBlockContent;
-  techStack: SanityReference[]; // References to TechStack
+  heroImage: Image;
+  problemStatement: ContentBlock;
+  approach: ContentBlock;
+  architecture: ContentBlock;
+  impact: ContentBlock;
+  techStack: Reference[]; // References to TechStack
   roleType: RoleType;
   status: ContentStatus;
-  author: SanityReference; // Reference to Author
+  author: Reference; // Reference to Author
   publishedAt?: string; // ISO 8601 datetime
 }
 
 // WorkCaseStudy projection for index pages
 export interface WorkCaseStudyCard {
-  _id: string;
+  id: string;
   title: string;
-  slug: SanitySlug;
+  slug: Slug;
   summary: string;
-  heroImageUrl: string; // Resolved from Sanity Image CDN
+  heroImageUrl: string; // Resolved from Image CDN
   techStack: TechStackPreview[];
   roleType: RoleType;
   publishedAt: string;
@@ -193,29 +189,29 @@ export interface WorkCaseStudyDetail
 // LabProject Type
 // ============================================================================
 
-export interface LabProject extends SanityDocument {
-  _type: "labProject";
+export interface LabProject extends Document {
+  type: "labProject";
   title: string;
-  slug: SanitySlug;
+  slug: Slug;
   description: string;
-  thumbnail: SanityImage;
-  experimentGoal: SanityBlockContent;
-  keyLearnings: SanityBlockContent;
-  techStack: SanityReference[]; // References to TechStack
+  thumbnail: Image;
+  experimentGoal: ContentBlock;
+  keyLearnings: ContentBlock;
+  techStack: Reference[]; // References to TechStack
   demoUrl?: string;
   repositoryUrl?: string;
   status: ContentStatus;
-  author: SanityReference; // Reference to Author
+  author: Reference; // Reference to Author
   publishedAt?: string; // ISO 8601 datetime
 }
 
 // LabProject projection for index pages
 export interface LabProjectCard {
-  _id: string;
+  id: string;
   title: string;
-  slug: SanitySlug;
+  slug: Slug;
   description: string;
-  thumbnailUrl: string; // Resolved from Sanity Image CDN
+  thumbnailUrl: string; // Resolved from Image CDN
   techStack: TechStackPreview[];
   demoUrl?: string;
   repositoryUrl?: string;
@@ -233,29 +229,29 @@ export interface LabProjectDetail
 // BlogPost Type
 // ============================================================================
 
-export interface BlogPost extends SanityDocument {
-  _type: "blogPost";
+export interface BlogPost extends Document {
+  type: "blogPost";
   title: string;
-  slug: SanitySlug;
+  slug: Slug;
   summary: string;
-  heroImage: SanityImage;
-  content: SanityBlockContent;
-  tags: SanityReference[]; // References to Tag
-  techStack?: SanityReference[]; // Optional references to TechStack
+  heroImage: Image;
+  content: ContentBlock;
+  tags: Reference[]; // References to Tag
+  techStack?: Reference[]; // Optional references to TechStack
   readingTime?: number; // In minutes
   status: ContentStatus;
-  author: SanityReference; // Reference to Author
+  author: Reference; // Reference to Author
   publishedAt?: string; // ISO 8601 datetime
   updatedAt?: string; // ISO 8601 datetime
 }
 
 // BlogPost projection for index pages
 export interface BlogPostCard {
-  _id: string;
+  id: string;
   title: string;
-  slug: SanitySlug;
+  slug: Slug;
   summary: string;
-  heroImageUrl: string; // Resolved from Sanity Image CDN
+  heroImageUrl: string; // Resolved from Image CDN
   tags: TagPreview[];
   readingTime: number;
   publishedAt: string;
@@ -275,7 +271,7 @@ export interface BlogPostDetail
 // ============================================================================
 
 export interface SearchIndexItem {
-  _id: string;
+  id: string;
   type: "work" | "lab" | "blog";
   title: string;
   url: string;
@@ -386,34 +382,34 @@ export interface SearchResponse {
 // Utility Types
 // ============================================================================
 
-// Extract slug string from SanitySlug
-export type SlugString<T extends { slug: SanitySlug }> = T["slug"]["current"];
+// Extract slug string from Slug
+export type SlugString<T extends { slug: Slug }> = T["slug"]["current"];
 
-// Omit Sanity metadata fields
-export type OmitSanityMeta<T> = Omit<
+// Omit document metadata fields
+export type OmitDocumentMeta<T> = Omit<
   T,
-  "_id" | "_type" | "_createdAt" | "_updatedAt" | "_rev"
+  "id" | "type" | "createdAt" | "updatedAt" | "rev"
 >;
 
 // Resolve reference to actual type
 export type ResolveReference<T, R> = Omit<
   T,
-  keyof { [K in keyof T]: T[K] extends SanityReference ? K : never }[keyof T]
+  keyof { [K in keyof T]: T[K] extends Reference ? K : never }[keyof T]
 > &
   R;
 
 // ============================================================================
-// Form Types (for Sanity Studio)
+// Form Types
 // ============================================================================
 
-export interface WorkCaseStudyFormData extends OmitSanityMeta<WorkCaseStudy> {
-  _id?: string;
+export interface WorkCaseStudyFormData extends OmitDocumentMeta<WorkCaseStudy> {
+  id?: string;
 }
 
-export interface LabProjectFormData extends OmitSanityMeta<LabProject> {
-  _id?: string;
+export interface LabProjectFormData extends OmitDocumentMeta<LabProject> {
+  id?: string;
 }
 
-export interface BlogPostFormData extends OmitSanityMeta<BlogPost> {
-  _id?: string;
+export interface BlogPostFormData extends OmitDocumentMeta<BlogPost> {
+  id?: string;
 }

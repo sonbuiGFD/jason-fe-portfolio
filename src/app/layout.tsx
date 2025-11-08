@@ -69,8 +69,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://cdn.sanity.io" />
-        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body>

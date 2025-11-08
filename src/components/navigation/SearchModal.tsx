@@ -4,10 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { useSearch } from "@/lib/search/search-client";
-import type {
-  SearchResult,
-  SearchResponse,
-} from "@/specs/000-fe-portfolio/contracts/api-types";
+import type { SearchResult, SearchResponse } from "@/types/api";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -193,7 +190,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 <div className="p-2">
                   {results.map((result, index) => (
                     <button
-                      key={result.item._id}
+                      key={result.item.id}
                       onClick={() => {
                         router.push(result.item.url);
                         onClose();

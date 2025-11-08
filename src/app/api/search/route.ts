@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
-import type { SearchIndex } from "@/specs/000-fe-portfolio/contracts/api-types";
+import type { SearchIndex } from "@/types/api";
 
 /**
  * Search API Route
