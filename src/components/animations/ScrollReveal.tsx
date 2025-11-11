@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode } from "react";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -16,7 +16,6 @@ interface ScrollRevealProps {
  *
  * Wraps content with scroll-triggered animations using Motion (Framer Motion).
  * Automatically respects user's prefers-reduced-motion setting.
- * Only animates after initial hydration to prevent blank screens and blinks.
  *
  * @example
  * ```tsx
@@ -33,14 +32,6 @@ export function ScrollReveal({
   className = "",
 }: ScrollRevealProps) {
   const shouldReduceMotion = useReducedMotion();
-  const [isReady, setIsReady] = useState(false);
-
-  // Wait for component to mount before enabling animations
-  useEffect(() => {
-    // Small delay to ensure hydration is complete
-    const timer = setTimeout(() => setIsReady(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Animation variants
   const animations = {
@@ -68,8 +59,8 @@ export function ScrollReveal({
 
   const selectedAnimation = animations[animation];
 
-  // If user prefers reduced motion or animations not ready, render without motion
-  if (shouldReduceMotion || !isReady) {
+  // If user prefers reduced motion, skip animation
+  if (shouldReduceMotion) {
     return <div className={className}>{children}</div>;
   }
 
@@ -80,12 +71,11 @@ export function ScrollReveal({
       transition={{
         duration,
         delay,
-        ease: [0.25, 0.4, 0.25, 1],
+        ease: [0.25, 0.4, 0.25, 1], // Custom easing for smooth animation
       }}
       viewport={{
-        once: true,
-        margin: "-50px",
-        amount: 0.3,
+        once: true, // Animate only once when scrolling into view
+        margin: "-50px", // Trigger 50px before element enters viewport
       }}
       className={className}
     >

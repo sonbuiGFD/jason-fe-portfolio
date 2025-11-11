@@ -6,8 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "npm run build:search-index && next build",
+    "build": "npm run build:search-index && next build && npm run postbuild:spa-redirect",
     "build:search-index": "tsx src/lib/search/build-index.ts",
+    "postbuild:spa-redirect": "tsx scripts/inject-spa-redirect.ts",
     "export": "npm run build",
     "start": "next start",
     "lint": "eslint .",
