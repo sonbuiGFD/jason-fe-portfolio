@@ -4,6 +4,7 @@ const basePath = "/jason-fe-portfolio";
 const nextConfig = {
   output: "export",
   basePath,
+  trailingSlash: true,
   env: {
     NEXT_PUBLIC_BASE_PATH: basePath,
   },

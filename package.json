@@ -8,7 +8,7 @@
     "dev": "next dev",
     "build": "npm run build:search-index && next build",
     "build:search-index": "tsx src/lib/search/build-index.ts",
-    "export": "npm run build && touch out/.nojekyll",
+    "export": "npm run build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
