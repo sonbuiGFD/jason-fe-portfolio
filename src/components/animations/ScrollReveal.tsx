@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { type ReactNode } from "react";
+import { type ReactNode, useState, useEffect } from "react";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -32,6 +32,12 @@ export function ScrollReveal({
   className = "",
 }: ScrollRevealProps) {
   const shouldReduceMotion = useReducedMotion();
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Only enable animations after component mounts on client
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Animation variants
   const animations = {
@@ -59,8 +65,8 @@ export function ScrollReveal({
 
   const selectedAnimation = animations[animation];
 
-  // If user prefers reduced motion, skip animation
-  if (shouldReduceMotion) {
+  // If user prefers reduced motion or not mounted yet, skip animation
+  if (shouldReduceMotion || !isMounted) {
     return <div className={className}>{children}</div>;
   }
 
