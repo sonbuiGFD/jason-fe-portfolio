@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { type ReactNode, useState, useEffect } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -16,6 +16,7 @@ interface ScrollRevealProps {
  *
  * Wraps content with scroll-triggered animations using Motion (Framer Motion).
  * Automatically respects user's prefers-reduced-motion setting.
+ * Only animates after initial hydration to prevent blank screens and blinks.
  *
  * @example
  * ```tsx
@@ -32,11 +33,13 @@ export function ScrollReveal({
   className = "",
 }: ScrollRevealProps) {
   const shouldReduceMotion = useReducedMotion();
-  const [isMounted, setIsMounted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
-  // Only enable animations after component mounts on client
+  // Wait for component to mount before enabling animations
   useEffect(() => {
-    setIsMounted(true);
+    // Small delay to ensure hydration is complete
+    const timer = setTimeout(() => setIsReady(true), 100);
+    return () => clearTimeout(timer);
   }, []);
 
   // Animation variants
@@ -65,8 +68,8 @@ export function ScrollReveal({
 
   const selectedAnimation = animations[animation];
 
-  // If user prefers reduced motion or not mounted yet, skip animation
-  if (shouldReduceMotion || !isMounted) {
+  // If user prefers reduced motion or animations not ready, render without motion
+  if (shouldReduceMotion || !isReady) {
     return <div className={className}>{children}</div>;
   }
 
@@ -77,11 +80,12 @@ export function ScrollReveal({
       transition={{
         duration,
         delay,
-        ease: [0.25, 0.4, 0.25, 1], // Custom easing for smooth animation
+        ease: [0.25, 0.4, 0.25, 1],
       }}
       viewport={{
-        once: true, // Animate only once when scrolling into view
-        margin: "-50px", // Trigger 50px before element enters viewport
+        once: true,
+        margin: "-50px",
+        amount: 0.3,
       }}
       className={className}
     >

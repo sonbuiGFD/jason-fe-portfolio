@@ -8,3 +8,21 @@
 @use "./components/card";
 @use "./components/code-block";
 @use "./components/pagination";
+
+/* Prevent FOUC (Flash of Unstyled Content) for animations */
+/* Content is visible by default, Motion animations override when JS loads */
+.layout {
+    opacity: 1;
+}
+
+/* Prevent layout shift during hydration */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Ensure smooth transitions when animations kick in */
+* {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
