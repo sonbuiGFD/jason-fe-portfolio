@@ -37,14 +37,9 @@ const ITEMS_PER_PAGE = 15;
  * Displays all published blog posts with pagination.
  * Fully static generation with no revalidation.
  */
-export default async function BlogPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}) {
-  // Await searchParams (Next.js 15+ requirement)
-  const params = await searchParams;
-  const currentPage = parseInt(params.page || "1", 10);
+export default async function BlogPage() {
+  // Static export - always show page 1 (client-side pagination can be added later)
+  const currentPage = 1;
 
   // Fetch paginated blog posts from markdown
   const { items: blogPosts, pagination } =

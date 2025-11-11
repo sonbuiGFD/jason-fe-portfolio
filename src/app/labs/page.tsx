@@ -35,16 +35,9 @@ export const metadata: Metadata = {
  * Displays all published lab projects with static generation and pagination.
  * No filtering functionality - replaced with pagination for better performance.
  */
-export default async function LabsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}) {
-  // Await searchParams (Next.js 15+ requirement)
-  const params = await searchParams;
-
-  // Parse page from URL params (default to 1)
-  const currentPage = parseInt(params.page || "1", 10);
+export default async function LabsPage() {
+  // Static export - always show page 1 (client-side pagination can be added later)
+  const currentPage = 1;
   const itemsPerPage = 12; // Labs: 12 items per page
 
   // Fetch paginated lab projects

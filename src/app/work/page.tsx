@@ -37,14 +37,9 @@ const ITEMS_PER_PAGE = 10;
  * Displays all published work case studies with pagination.
  * Fully static generation with no revalidation.
  */
-export default async function WorkPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string }>;
-}) {
-  // Await searchParams (Next.js 15+ requirement)
-  const params = await searchParams;
-  const currentPage = parseInt(params.page || "1", 10);
+export default async function WorkPage() {
+  // Static export - always show page 1 (client-side pagination can be added later)
+  const currentPage = 1;
 
   // Fetch paginated case studies from markdown
   const { items: caseStudies, pagination } =

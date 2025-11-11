@@ -63,7 +63,9 @@ export class SearchClient {
   async initialize(): Promise<void> {
     try {
       // Fetch search index from static JSON file
-      const response = await fetch("/search-index.json");
+      // Use relative path with basePath support for GitHub Pages
+      const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+      const response = await fetch(`${basePath}/search-index.json`);
       if (!response.ok) {
         throw new Error(`Failed to fetch search index: ${response.statusText}`);
       }
