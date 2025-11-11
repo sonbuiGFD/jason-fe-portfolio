@@ -3,7 +3,7 @@ title: "CSS Grid Layout Explorer"
 date: "2025-09-20"
 summary: "An interactive tool for learning and experimenting with CSS Grid properties in real-time."
 techStack: ["Vue.js", "CSS Grid", "TypeScript", "Vite"]
-thumbnail: "/images/labs/grid-explorer-thumb.jpg"
+thumbnail: "https://placehold.co/600x400"
 demoUrl: "https://grid-explorer-demo.vercel.app"
 repoUrl: "https://github.com/username/css-grid-explorer"
 ---

@@ -4,7 +4,7 @@ date: "2025-10-15"
 summary: "Led the redesign and implementation of a streamlined checkout process, reducing cart abandonment by 35%."
 role: "Lead Frontend Engineer"
 techStack: ["React", "TypeScript", "Next.js", "TailwindCSS", "Stripe"]
-heroImage: "/images/work/checkout-hero.jpg"
+heroImage: "https://placehold.co/600x400"
 impact:
   - metric: "35% reduction in cart abandonment"
   - metric: "50% faster checkout completion time"

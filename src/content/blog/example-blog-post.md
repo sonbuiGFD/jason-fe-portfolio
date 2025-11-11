@@ -4,7 +4,7 @@ date: "2025-11-01"
 author: "Jason Developer"
 summary: "Learn practical techniques to improve React application performance, from memoization to code splitting."
 tags: ["React", "Performance", "JavaScript"]
-heroImage: "/images/blog/react-performance.jpg"
+heroImage: "https://placehold.co/600x400"
 ---
 
 # Getting Started with React Performance Optimization
