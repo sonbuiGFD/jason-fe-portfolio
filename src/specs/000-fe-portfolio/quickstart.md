@@ -93,7 +93,7 @@ REVALIDATION_SECRET=your_random_secret_string
 NEXT_PUBLIC_VERCEL_ANALYTICS_ID=your_analytics_id
 
 # Site Configuration
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=https://sonbui.com
 ```
 
 **How to get Sanity credentials**:

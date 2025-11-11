@@ -287,7 +287,7 @@ Create a `.env.local` file for local development:
 
 ```env
 # Site Configuration
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=https://sonbui.com
 NEXT_PUBLIC_SITE_NAME=Jason Bui - Frontend Engineer
 
 # Analytics (optional - Vercel Analytics or Plausible)

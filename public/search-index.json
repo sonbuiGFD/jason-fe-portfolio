@@ -1,5 +1,50 @@
 {
-  "blogPosts": [],
-  "workCaseStudies": [],
-  "labProjects": []
+  "blogPosts": [
+    {
+      "id": "example-blog-post",
+      "type": "blog",
+      "title": "Getting Started with React Performance Optimization",
+      "url": "/blog/example-blog-post",
+      "summary": "Learn practical techniques to improve React application performance, from memoization to code splitting.",
+      "tags": [
+        "React",
+        "Performance",
+        "JavaScript"
+      ],
+      "content": "\n# Getting Started with React Performance Optimization\n\nPerformance is crucial for modern web applications. In this guide, we'll explore practical techniques to optimize your React applications.\n\n## Understanding React Rendering\n\nReact's virtual DOM is efficient, but unnecessary re-renders can still impact performance. Let's explore how to identify and fix these issues.\n\n### Key Concepts\n\n1. **Virtual DOM reconciliation**\n2. **Component re-rendering triggers**\n3. **Memoization strategies**\n\n## C"
+    }
+  ],
+  "workCaseStudies": [
+    {
+      "id": "modernizing-checkout-flow",
+      "type": "work",
+      "title": "Modernizing E-Commerce Checkout Flow",
+      "url": "/work/modernizing-checkout-flow",
+      "summary": "Led the redesign and implementation of a streamlined checkout process, reducing cart abandonment by 35%.",
+      "tags": [
+        "React",
+        "TypeScript",
+        "Next.js",
+        "TailwindCSS",
+        "Stripe"
+      ],
+      "content": "\n# Modernizing E-Commerce Checkout Flow\n\n## Problem Statement\n\nOur e-commerce platform suffered from a complex, multi-step checkout process that led to high cart abandonment rates (65%). User research revealed friction points including:\n\n- Too many form fields (15+ inputs)\n- Slow page loads between steps\n- Confusing payment options\n- No guest checkout option\n- Poor mobile experience\n\n## Approach\n\n### User Research & Analysis\n\nWe conducted user interviews, analyzed heatmaps, and studied checkout "
+    }
+  ],
+  "labProjects": [
+    {
+      "id": "css-grid-explorer",
+      "type": "lab",
+      "title": "CSS Grid Layout Explorer",
+      "url": "/lab/css-grid-explorer",
+      "summary": "An interactive tool for learning and experimenting with CSS Grid properties in real-time.",
+      "tags": [
+        "Vue.js",
+        "CSS Grid",
+        "TypeScript",
+        "Vite"
+      ],
+      "content": "\n# CSS Grid Layout Explorer\n\n## Experiment Goal\n\nCreate an interactive learning tool that helps developers understand CSS Grid by visualizing how different properties affect layout in real-time.\n\n## Motivation\n\nWhile learning CSS Grid, I found existing documentation lacked interactive examples. I wanted to build a tool where you could adjust properties and immediately see the results.\n\n## Approach\n\n### Design Philosophy\n\n- **Visual first**: Show, don't just tell\n- **Immediate feedback**: Changes"
+    }
+  ]
 }

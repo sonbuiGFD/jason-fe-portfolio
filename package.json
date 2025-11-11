@@ -6,8 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run build:search-index && next build",
     "build:search-index": "tsx src/lib/search/build-index.ts",
+    "export": "npm run build && touch out/.nojekyll",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -26,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/sonbuiGFD/jason-fe-portfolio/issues"
   },
-  "homepage": "https://github.com/sonbuiGFD/jason-fe-portfolio#readme",
+  "homepage": "https://sonbuiGFD.github.io/jason-fe-portfolio",
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.16",
     "@types/hast": "^3.0.4",
