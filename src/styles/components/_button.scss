@@ -23,7 +23,6 @@
   /* Primary Variant */
   &__primary {
     background-color: rgb(var(--color-primary));
-    color: white;
 
     &:hover:not(:disabled) {
       opacity: 0.9;
