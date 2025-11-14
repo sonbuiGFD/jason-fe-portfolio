@@ -1,10 +1,11 @@
 "use client";
 
 import { motion, useMotionValue, useSpring } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function SectionHero() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isLightOn, setIsLightOn] = useState(true);
 
   // Green dots parallax (faster movement)
   const mouseX = useMotionValue(0);
@@ -84,6 +85,8 @@ function SectionHero() {
       tree2MouseY.set(0);
       bgMouseX.set(0);
       bgMouseY.set(0);
+      eyeX.set(0);
+      eyeY.set(0);
     };
 
     container.addEventListener("mousemove", handleMouseMove);
@@ -102,6 +105,8 @@ function SectionHero() {
     tree2MouseY,
     bgMouseX,
     bgMouseY,
+    eyeX,
+    eyeY,
   ]);
 
   return (
@@ -476,13 +481,53 @@ function SectionHero() {
                 </g>
               </g>
               <g id="LÔNG_MÀY" data-name="LÔNG MÀY">
-                <path
+                {/* Right eyebrow - Light ON */}
+                <motion.path
                   className="cls-22"
                   d="M984.89,408.65v9.96s26.68-17.61,47.49-1.25c-.34-.27-.51-3.05-.66-3.55-.84-2.78-2.37-5.34-4.46-7.37-5.45-5.31-13.8-6.74-21.09-5.55-3.6.59-7.26,1.69-10.72,2.82-1.38.45-10.56,3.24-10.56,4.94Z"
+                  animate={{
+                    opacity: isLightOn ? 1 : 0,
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeInOut",
+                  }}
                 />
-                <path
+                {/* Right eyebrow - Light OFF */}
+                <motion.path
+                  className="cls-22"
+                  d="M983.86,404.84v13.65s29.47-5.54,47.67,9.69c0,0,2.37-21.96-47.67-23.34Z"
+                  animate={{
+                    opacity: isLightOn ? 0 : 1,
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeInOut",
+                  }}
+                />
+                {/* Left eyebrow - Light ON */}
+                <motion.path
                   className="cls-22"
                   d="M962.6,418.5v-10.51c0-1.83-9.6-5.06-11.12-5.56-6.01-2-12.57-2.36-18.76-1.01-1.19.26-2.4.6-3.39,1.31-1.67,1.21-1.98,3.75-2.48,5.64-.35,1.32-.64,2.66-.75,4.02-.04.48.33,3.27.14,3.47,0,0,11.39-12.7,36.35,2.63Z"
+                  animate={{
+                    opacity: isLightOn ? 1 : 0,
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeInOut",
+                  }}
+                />
+                {/* Left eyebrow - Light OFF */}
+                <motion.path
+                  className="cls-22"
+                  d="M961.53,420.66v-13.65c-37.4,2.97-36.01,19.99-37.01,19.78,0,0,19.82-9.49,37.01-6.13Z"
+                  animate={{
+                    opacity: isLightOn ? 0 : 1,
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeInOut",
+                  }}
                 />
               </g>
               <path
@@ -523,11 +568,28 @@ function SectionHero() {
                   <circle className="cls-44" cx="938.12" cy="450.88" r="2.71" />
                 </motion.g>
               </g>
-              <path
-                id="MIỆNG"
-                className="cls-42"
-                d="M960.66,507.1c16.25-.28,30.94-7.72,44.18-16.46,6.97-4.79,7-4.89,1.39,1.65-11.32,11.72-29.32,20.35-45.57,14.81h0Z"
-              />
+              <g id="MIỆNG">
+                <motion.path
+                  className="cls-42"
+                  d="M960.66,507.1c16.25-.28,30.94-7.72,44.18-16.46,6.97-4.79,7-4.89,1.39,1.65-11.32,11.72-29.32,20.35-45.57,14.81h0Z"
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: isLightOn ? 1 : 0 }}
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeInOut",
+                  }}
+                />
+                <motion.path
+                  className="cls-42"
+                  d="M950.57,503.01c15.81,6.83,33.95,3.06,50.07-.88,2.36-.66,4.73-1.33,7.16-1.89-2.2,1.14-4.46,2.17-6.72,3.21-10.38,4.22-21.73,6.71-32.97,5.73-6.16-.7-12.64-2.19-17.54-6.17h0Z"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isLightOn ? 0 : 1 }}
+                  transition={{
+                    duration: 0.3,
+                    ease: "easeInOut",
+                  }}
+                />
+              </g>
             </motion.g>
             <motion.g
               id="TAY_TRÁI"
@@ -1859,16 +1921,49 @@ function SectionHero() {
               d="M1090.14,677.55l79.65,18.73s18.46-69.89,2.11-97.06c-7.36-12.22-20.54-27.55-36.42-25.93-7.79.79-14.66,5.31-17.73,12.43-2.04,4.73-4.11,9.39-5.86,14.24-4.41,12.23-8.05,24.74-11.49,37.27-3.68,13.37-7.14,26.82-10.26,40.33Z"
             />
           </motion.g>
-          <g id="BÓNG_ĐÈN" data-name="BÓNG ĐÈN">
+          <motion.g
+            id="light_box"
+            data-name="BÓNG ĐÈN"
+            onClick={() => setIsLightOn(!isLightOn)}
+            style={{ cursor: "pointer" }}
+            animate={{
+              filter: isLightOn
+                ? "drop-shadow(0 0 20px rgba(254, 249, 195, 0.8)) drop-shadow(0 0 40px rgba(254, 249, 195, 0.4))"
+                : "drop-shadow(0 0 0px rgba(254, 249, 195, 0))",
+            }}
+            transition={{
+              duration: 0.4,
+              ease: "easeInOut",
+            }}
+          >
             <g>
-              <path
-                className="cls-73"
+              <motion.path
+                initial={{ fill: "#f6c230" }}
+                animate={{
+                  fill: isLightOn ? "#f6c230" : "#7b7e83",
+                }}
+                transition={{
+                  duration: 0.3,
+                  ease: "easeInOut",
+                }}
                 d="M1036.57,182.45c0-21-17.03-38.03-38.03-38.03s-38.03,17.03-38.03,38.03c0,7.45,2.15,14.4,5.86,20.27h-.02l.3.44c.48.73.97,1.45,1.49,2.14l11.32,16.25v10.65h38.06v-10.65l10.55-15.15c5.31-6.54,8.5-14.87,8.5-23.95Z"
               />
               <path d="M1018.59,233.26h-40.09l-.1-1.06v-10.31l-11.13-15.98c-.47-.63-.98-1.35-1.51-2.17l-1.45-2.08h.19c-3.31-5.85-5.05-12.45-5.05-19.21,0-21.55,17.54-39.09,39.09-39.09s39.09,17.54,39.09,39.09c0,8.94-3.1,17.69-8.74,24.62l-10.31,14.81v11.38ZM980.53,231.14h35.93v-9.92l10.74-15.42c5.38-6.62,8.31-14.89,8.31-23.35,0-20.38-16.58-36.96-36.96-36.96s-36.96,16.58-36.96,36.96c0,6.99,1.97,13.8,5.7,19.7l.25.4c.53.81,1,1.49,1.47,2.11l11.53,16.56v9.92Z" />
             </g>
             <g>
-              <circle className="cls-28" cx="998.54" cy="249.8" r="12.71" />
+              <motion.circle
+                initial={{ fill: "#f6c230" }}
+                animate={{
+                  fill: isLightOn ? "#f6c230" : "#7b7e83",
+                }}
+                transition={{
+                  duration: 0.3,
+                  ease: "easeInOut",
+                }}
+                cx="998.54"
+                cy="249.8"
+                r="12.71"
+              />
               <path d="M998.54,263.57c-7.59,0-13.77-6.18-13.77-13.77s6.18-13.77,13.77-13.77,13.77,6.18,13.77,13.77-6.18,13.77-13.77,13.77ZM998.54,238.15c-6.42,0-11.65,5.22-11.65,11.65s5.22,11.65,11.65,11.65,11.65-5.22,11.65-11.65-5.22-11.65-11.65-11.65Z" />
             </g>
             <path d="M1012.4,187.23c-1.67-1.46-3.16-1.45-4.11-1.18-3.09.86-4.97,5.48-5.82,8.15-.48,1.53-.76,3.08-.9,4.63h-6.81c-.14-1.56-.41-3.11-.9-4.63-.85-2.67-2.73-7.29-5.82-8.16-.95-.26-2.44-.28-4.11,1.18-2.01,1.76-2.17,3.49-1.95,4.63.79,4.05,7.59,7.21,10.75,8.48.09,1.87.02,3.76-.04,5.62-.04,1.25-.09,2.49-.09,3.72v20.48h2.13v-20.48c0-1.21.04-2.42.09-3.65.06-1.67.12-3.37.07-5.07h6.56c-.05,1.7.01,3.4.07,5.08.04,1.22.09,2.44.09,3.65v20.48h2.13v-20.48c0-1.23-.04-2.47-.09-3.72-.06-1.86-.13-3.75-.04-5.62,3.16-1.26,9.96-4.42,10.75-8.48.22-1.14.07-2.87-1.95-4.63ZM984.07,191.46c-.06-.32-.25-1.3,1.26-2.62.76-.66,1.33-.8,1.71-.8.2,0,.35.04.43.06,1.8.5,3.48,3.95,4.37,6.75.32,1.01.54,2.05.68,3.11-3.69-1.6-8-4.16-8.45-6.49ZM1012.26,191.46c-.45,2.33-4.76,4.89-8.45,6.49.14-1.05.36-2.09.68-3.11.89-2.8,2.56-6.25,4.36-6.75.08-.02.23-.06.43-.06.38,0,.96.14,1.71.8,1.51,1.32,1.32,2.3,1.26,2.62Z" />
@@ -1896,80 +1991,90 @@ function SectionHero() {
               />
               <path d="M1014.1,241.96h-31.1c-3.44,0-6.23-2.79-6.23-6.23s2.79-6.23,6.23-6.23h31.1c3.44,0,6.23,2.79,6.23,6.23s-2.79,6.23-6.23,6.23ZM982.99,231.63c-2.26,0-4.1,1.84-4.1,4.1s1.84,4.1,4.1,4.1h31.1c2.26,0,4.1-1.84,4.1-4.1s-1.84-4.1-4.1-4.1h-31.1Z" />
             </g>
-            <rect
-              className="cls-73"
-              x="995.17"
-              y="104.76"
-              width="6.33"
-              height="27.69"
-              rx="3.16"
-              ry="3.16"
-            />
-            <rect
-              className="cls-73"
-              x="948.29"
-              y="126.12"
-              width="6.33"
-              height="27.69"
-              rx="3.16"
-              ry="3.16"
-              transform="translate(179.7 713.78) rotate(-45)"
-            />
-            <rect
-              className="cls-73"
-              x="941.56"
-              y="212.17"
-              width="6.33"
-              height="27.69"
-              rx="3.16"
-              ry="3.16"
-              transform="translate(1452.94 1053.85) rotate(-135)"
-            />
-            <rect
-              className="cls-73"
-              x="930.88"
-              y="170.43"
-              width="6.33"
-              height="27.69"
-              rx="3.16"
-              ry="3.16"
-              transform="translate(749.77 1118.33) rotate(-90)"
-            />
-            <rect
-              className="cls-73"
-              x="1061.83"
-              y="170.43"
-              width="6.33"
-              height="27.69"
-              rx="3.16"
-              ry="3.16"
-              transform="translate(880.72 1249.27) rotate(-90)"
-            />
-            <rect
-              className="cls-73"
-              x="1051.15"
-              y="212.17"
-              width="6.33"
-              height="27.69"
-              rx="3.16"
-              ry="3.16"
-              transform="translate(148.98 811.71) rotate(-45)"
-            />
-            <rect
-              className="cls-73"
-              x="1045.21"
-              y="126.12"
-              width="6.33"
-              height="27.69"
-              rx="3.16"
-              ry="3.16"
-              transform="translate(1690.72 980.26) rotate(-135)"
-            />
-            <path
-              className="cls-34"
-              d="M1026.29,178.14c-1.2,0-2.31-.76-2.7-1.96-4.53-14.05-12.46-14.89-12.79-14.92-1.54-.13-2.72-1.48-2.61-3.02.11-1.54,1.39-2.69,2.95-2.64.49.03,12.04.84,17.85,18.84.48,1.49-.34,3.09-1.83,3.57-.29.09-.58.14-.87.14Z"
-            />
-          </g>
+            <motion.g
+              animate={{
+                opacity: isLightOn ? 1 : 0,
+              }}
+              transition={{
+                duration: 0.3,
+                ease: "easeInOut",
+              }}
+            >
+              <rect
+                className="cls-73"
+                x="995.17"
+                y="104.76"
+                width="6.33"
+                height="27.69"
+                rx="3.16"
+                ry="3.16"
+              />
+              <rect
+                className="cls-73"
+                x="948.29"
+                y="126.12"
+                width="6.33"
+                height="27.69"
+                rx="3.16"
+                ry="3.16"
+                transform="translate(179.7 713.78) rotate(-45)"
+              />
+              <rect
+                className="cls-73"
+                x="941.56"
+                y="212.17"
+                width="6.33"
+                height="27.69"
+                rx="3.16"
+                ry="3.16"
+                transform="translate(1452.94 1053.85) rotate(-135)"
+              />
+              <rect
+                className="cls-73"
+                x="930.88"
+                y="170.43"
+                width="6.33"
+                height="27.69"
+                rx="3.16"
+                ry="3.16"
+                transform="translate(749.77 1118.33) rotate(-90)"
+              />
+              <rect
+                className="cls-73"
+                x="1061.83"
+                y="170.43"
+                width="6.33"
+                height="27.69"
+                rx="3.16"
+                ry="3.16"
+                transform="translate(880.72 1249.27) rotate(-90)"
+              />
+              <rect
+                className="cls-73"
+                x="1051.15"
+                y="212.17"
+                width="6.33"
+                height="27.69"
+                rx="3.16"
+                ry="3.16"
+                transform="translate(148.98 811.71) rotate(-45)"
+              />
+              <rect
+                className="cls-73"
+                x="1045.21"
+                y="126.12"
+                width="6.33"
+                height="27.69"
+                rx="3.16"
+                ry="3.16"
+                transform="translate(1690.72 980.26) rotate(-135)"
+              />
+              <path
+                className="cls-34"
+                d="M1026.29,178.14c-1.2,0-2.31-.76-2.7-1.96-4.53-14.05-12.46-14.89-12.79-14.92-1.54-.13-2.72-1.48-2.61-3.02.11-1.54,1.39-2.69,2.95-2.64.49.03,12.04.84,17.85,18.84.48,1.49-.34,3.09-1.83,3.57-.29.09-.58.14-.87.14Z"
+              />
+            </motion.g>
+          </motion.g>
         </g>
       </svg>
     </div>

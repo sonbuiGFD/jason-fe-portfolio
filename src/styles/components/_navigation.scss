@@ -7,7 +7,11 @@
   left: 0;
   right: 0;
   z-index: 40;
-  background-color: color-mix(in srgb, var(--color-background) 10%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--color-background) 10%,
+    transparent
+  );
   backdrop-filter: blur(12px);
 
   &__container {
@@ -140,7 +144,11 @@
       transition: background-color 150ms;
 
       &:hover {
-        background-color: color-mix(in srgb, var(--color-muted) 10%, transparent);
+        background-color: color-mix(
+          in srgb,
+          var(--color-muted) 10%,
+          transparent
+        );
       }
 
       &:focus-visible {
@@ -149,7 +157,11 @@
       }
 
       &__active {
-        background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+        background-color: color-mix(
+          in srgb,
+          var(--color-primary) 10%,
+          transparent
+        );
         color: var(--color-primary);
         font-weight: 600;
       }
@@ -191,7 +203,11 @@
 
     &__active {
       color: var(--color-primary);
-      background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--color-primary) 10%,
+        transparent
+      );
     }
   }
 }
@@ -279,7 +295,11 @@
     }
 
     &__active {
-      background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+      background-color: color-mix(
+        in srgb,
+        var(--color-primary) 10%,
+        transparent
+      );
       color: var(--color-primary);
       font-weight: 600;
     }
@@ -288,5 +308,5 @@
 
 /* Ensure body has padding for fixed header */
 body {
-  padding-top: 4rem;
+  // padding-top: 4rem;
 }

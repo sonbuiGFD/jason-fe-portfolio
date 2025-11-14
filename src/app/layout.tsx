@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+// import { Header } from "@/components/layout/Header";
+// import { Footer } from "@/components/layout/Footer";
 import "@/styles/tailwind.css";
 import "@/styles/globals.scss";
 
@@ -82,11 +82,11 @@ export default function RootLayout({
             <a href="#main" className="skip-link">
               Skip to content
             </a>
-            <Header />
+            {/* <Header /> */}
             <main id="main" className="main" role="main">
               {children}
             </main>
-            <Footer />
+            {/* <Footer /> */}
           </div>
         </ThemeProvider>
       </body>
