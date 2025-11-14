@@ -116,8 +116,6 @@ function SectionHero() {
       className="hero__graphic min-h-screen"
     >
       <svg
-        id="Layer_2"
-        data-name="Layer 2"
         className="hero__svg"
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -1804,7 +1802,7 @@ function SectionHero() {
             style={{
               x: bgSpringX,
               y: bgSpringY,
-              scale: 1.01,
+              scale: 1.05,
             }}
           >
             <g className="cls-38">
@@ -1925,6 +1923,8 @@ function SectionHero() {
             id="light_box"
             data-name="BÓNG ĐÈN"
             onClick={() => setIsLightOn(!isLightOn)}
+            onMouseEnter={() => setIsLightOn(!isLightOn)}
+            onMouseLeave={() => setIsLightOn(!isLightOn)}
             style={{ cursor: "pointer" }}
             animate={{
               filter: isLightOn
