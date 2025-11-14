@@ -9,19 +9,9 @@
 @use "./components/code-block";
 @use "./components/pagination";
 
-
-html {
-    scroll-behavior: smooth;
-}
-
 /* Ensure smooth transitions when animations kick in */
 * {
     backface-visibility: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-
-/* Layout wrapper */
-.layout {
-    min-height: 100vh;
 }

@@ -16,6 +16,7 @@ interface ScrollRevealProps {
  *
  * Wraps content with scroll-triggered animations using Motion (Framer Motion).
  * Automatically respects user's prefers-reduced-motion setting.
+ * Elements already in viewport on page load will animate immediately.
  *
  * @example
  * ```tsx
@@ -37,23 +38,23 @@ export function ScrollReveal({
   const animations = {
     "fade-up": {
       initial: { opacity: 0, y: 20 },
-      whileInView: { opacity: 1, y: 0 },
+      animate: { opacity: 1, y: 0 },
     },
     "fade-in": {
       initial: { opacity: 0 },
-      whileInView: { opacity: 1 },
+      animate: { opacity: 1 },
     },
     "scale-in": {
       initial: { opacity: 0, scale: 0.95 },
-      whileInView: { opacity: 1, scale: 1 },
+      animate: { opacity: 1, scale: 1 },
     },
     "slide-left": {
       initial: { opacity: 0, x: -20 },
-      whileInView: { opacity: 1, x: 0 },
+      animate: { opacity: 1, x: 0 },
     },
     "slide-right": {
       initial: { opacity: 0, x: 20 },
-      whileInView: { opacity: 1, x: 0 },
+      animate: { opacity: 1, x: 0 },
     },
   };
 
@@ -67,7 +68,7 @@ export function ScrollReveal({
   return (
     <motion.div
       initial={selectedAnimation.initial}
-      whileInView={selectedAnimation.whileInView}
+      whileInView={selectedAnimation.animate}
       transition={{
         duration,
         delay,
@@ -75,7 +76,8 @@ export function ScrollReveal({
       }}
       viewport={{
         once: true, // Animate only once when scrolling into view
-        margin: "-50px", // Trigger 50px before element enters viewport
+        margin: "0px", // Trigger immediately when element enters viewport
+        amount: 0.1, // Trigger when 10% of element is visible
       }}
       className={className}
     >

@@ -149,15 +149,6 @@ export default tseslint.config(
     },
   },
 
-  // Sanity-specific files (more lenient rules)
-  {
-    files: ["sanity/**/*.{ts,tsx}"],
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "jsx-a11y/heading-has-content": "off",
-    },
-  },
-
   // Config files (more lenient rules)
   {
     files: ["*.config.{js,ts,mjs,cjs}", "scripts/**/*.{js,ts}"],
