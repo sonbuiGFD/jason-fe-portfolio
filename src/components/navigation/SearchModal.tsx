@@ -161,7 +161,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="search-modal__content w-full max-w-2xl mt-20 bg-background border border-border rounded-lg shadow-2xl overflow-hidden"
+            className="search-modal__content w-full max-w-2xl mt-20 bg-background border border-border bg-white dark:bg-black/50 rounded-lg shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Search Input */}

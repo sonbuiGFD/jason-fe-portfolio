@@ -1,11 +1,13 @@
 "use client";
 
+import { useTheme } from "@/components/layout/ThemeProvider";
 import { motion, useMotionValue, useSpring } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-function SectionHero() {
+function HeroGraphic() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isLightOn, setIsLightOn] = useState(true);
+  const { theme, setTheme } = useTheme();
+  const isLightOn = theme === "light";
 
   // Green dots parallax (faster movement)
   const mouseX = useMotionValue(0);
@@ -108,6 +110,10 @@ function SectionHero() {
     eyeX,
     eyeY,
   ]);
+
+  const handleChangeLightMode = (lightOn: boolean) => {
+    setTheme(lightOn ? "light" : "dark");
+  };
 
   return (
     <div
@@ -887,11 +893,11 @@ function SectionHero() {
               d="M710.49,725.15h-320c-2.96,0-5.45-2.21-5.81-5.14l-30.5-249.73c-.27-2.21,1.53-4.12,3.75-3.97l315.23,20.04c2.39.15,4.34,1.96,4.67,4.33l32.66,234.48Z"
             />
             <polygon
-              className="cls-41"
+              className={`${isLightOn ? "fill-[#cfeff7]" : "cls-41"} transition-colors duration-500`}
               points="668.16 499.68 368.3 479.88 393.96 715.26 696.65 711.7 668.16 499.68"
             />
             <polygon
-              className="cls-71"
+              className={`${isLightOn ? "fill-[#fdfdfe]" : "cls-40"} transition-colors duration-500`}
               points="379.37 492.54 656.69 509.95 682.01 697.07 403.11 699.44 379.37 492.54"
             />
             <line
@@ -1922,17 +1928,23 @@ function SectionHero() {
           <motion.g
             id="light_box"
             data-name="BÓNG ĐÈN"
-            onClick={() => setIsLightOn(!isLightOn)}
-            onMouseEnter={() => setIsLightOn(!isLightOn)}
-            onMouseLeave={() => setIsLightOn(!isLightOn)}
+            onClick={() => handleChangeLightMode(!isLightOn)}
             style={{ cursor: "pointer" }}
             animate={{
               filter: isLightOn
                 ? "drop-shadow(0 0 20px rgba(254, 249, 195, 0.8)) drop-shadow(0 0 40px rgba(254, 249, 195, 0.4))"
                 : "drop-shadow(0 0 0px rgba(254, 249, 195, 0))",
+              scale: 1,
             }}
+            whileHover={{
+              scale: 1.05,
+              filter: isLightOn
+                ? "drop-shadow(0 0 30px rgba(254, 249, 195, 0.9)) drop-shadow(0 0 60px rgba(254, 249, 195, 0.6))"
+                : "drop-shadow(0 0 15px rgba(254, 249, 195, 0.5))",
+            }}
+            whileTap={{ scale: 0.95 }}
             transition={{
-              duration: 0.4,
+              duration: 0.3,
               ease: "easeInOut",
             }}
           >
@@ -2081,4 +2093,4 @@ function SectionHero() {
   );
 }
 
-export default SectionHero;
+export default HeroGraphic;
