@@ -51,7 +51,7 @@ export function Header() {
   return (
     <>
       <header className="header" role="banner">
-        <div className="header__container">
+        <div className="header__container container-custom">
           {/* Logo/Brand */}
           <Link href="/" className="header__logo" aria-label="Home">
             <span className="header__logo__text">Jason Bui</span>

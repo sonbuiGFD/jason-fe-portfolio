@@ -11,7 +11,10 @@ function HeroGraphicMobile() {
   };
 
   return (
-    <div id="hero__graphic_mobile" className="hero__graphic_mobile">
+    <div
+      id="hero__graphic_mobile"
+      className="hero__graphic_mobile min-h-screen"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
