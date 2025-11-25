@@ -12,6 +12,7 @@ function SectionHero() {
   const [isMobile, setIsMobile] = useState(false);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const frontTextRef = useRef<HTMLDivElement>(null);
 
   const measureText = (
     fontSize: number,
@@ -97,6 +98,21 @@ function SectionHero() {
 
       // Apply the calculated font size
       title.style.fontSize = `${optimalFontSize}px`;
+
+      // Update position of hero__text__front to match title dimensions
+      if (frontTextRef.current) {
+        // Force reflow to get accurate dimensions after font size change
+        void title.offsetHeight;
+        const titleRect = title.getBoundingClientRect();
+        const titleHeight = title.offsetHeight;
+
+        // Set top position to match title height
+        frontTextRef.current.style.top = `${titleHeight}px`;
+
+        // Set left position to match title's left edge relative to viewport
+        frontTextRef.current.style.left = `${titleRect.left}px`;
+        frontTextRef.current.classList.remove("opacity-0");
+      }
     };
 
     // Initial calculation
@@ -110,16 +126,23 @@ function SectionHero() {
 
   return (
     <section className="hero">
-      <div className="hero__content">
+      <div className="hero__text__bg">
         <div className="container-custom" ref={containerRef}>
-          <p className="hero__subtitle">Crafting Digital Experiences</p>
-          <Link href="/work" aria-label="View My Work" className="hero__btn">
-            View My Work
-          </Link>
           <h1 className="hero__title" ref={titleRef}>
-            JASON
+            JASON BUI
           </h1>
         </div>
+      </div>
+      <div className="hero__text__front opacity-0" ref={frontTextRef}>
+        <p className="hero__subtitle">Crafting Digital Experiences</p>
+        <Link
+          href="/work"
+          title="View My Work"
+          aria-label="View My Work"
+          className="hero__btn"
+        >
+          View My Work
+        </Link>
       </div>
       {isMobile ? <HeroGraphicMobile /> : <HeroGraphic />}
     </section>
