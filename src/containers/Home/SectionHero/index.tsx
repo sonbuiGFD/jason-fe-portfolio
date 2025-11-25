@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
+
 import HeroGraphic from "./HeroGraphic";
 import HeroGraphicMobile from "./HeroGraphicMobile";
 
@@ -110,10 +112,10 @@ function SectionHero() {
     <section className="hero">
       <div className="hero__content">
         <div className="container-custom" ref={containerRef}>
-          <p className="hero__subtitle">
-            I'm a Frontend Engineer, <br />
-            aka
-          </p>
+          <p className="hero__subtitle">Crafting Digital Experiences</p>
+          <Link href="/work" aria-label="View My Work" className="hero__btn">
+            View My Work
+          </Link>
           <h1 className="hero__title" ref={titleRef}>
             JASON
           </h1>

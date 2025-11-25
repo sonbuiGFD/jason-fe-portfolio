@@ -25,7 +25,7 @@ $light-theme: (
   foreground-secondary: #525252,
   foreground-muted: #9ca3af,
   // Brand colors
-  primary: #28B195,
+  primary: #1a9a7d,
   primary-hover: #70dec3,
   secondary: #3b82f6,
   secondary-hover: #6366f1,
@@ -54,7 +54,7 @@ $dark-theme: (
   foreground-secondary: #d4d4d4,
   foreground-muted: #6b7280,
   // Brand colors
-  primary: #28B195,
+  primary: #70dec3,
   primary-hover: #70dec3,
   secondary: #3b82f6,
   secondary-hover: #6366f1,
@@ -88,8 +88,7 @@ $spacing: (
   // 48px
   3xl: 4rem,
   // 64px
-  4xl: 6rem,
-  // 96px
+  4xl: 6rem, // 96px
 );
 
 // Typography scale
@@ -112,8 +111,7 @@ $font-sizes: (
   // 36px
   5xl: 3rem,
   // 48px
-  6xl: 3.75rem,
-  // 60px
+  6xl: 3.75rem, // 60px
 );
 
 // Font weights
@@ -169,22 +167,16 @@ $transitions: (
 
 // Helper function to get theme value
 @function get-theme-value($key, $mode: "light") {
-  @if $mode =="light" {
+  @if $mode == "light" {
     @if map-has-key($light-theme, $key) {
       @return map-get($light-theme, $key);
-    }
-
-    @else {
+    } @else {
       @error "Key '#{$key}' does not exist in light theme config.";
     }
-  }
-
-  @else {
+  } @else {
     @if map-has-key($dark-theme, $key) {
       @return map-get($dark-theme, $key);
-    }
-
-    @else {
+    } @else {
       @error "Key '#{$key}' does not exist in dark theme config.";
     }
   }
